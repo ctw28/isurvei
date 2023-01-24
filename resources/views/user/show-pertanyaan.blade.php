@@ -12,18 +12,17 @@
                 <input type="hidden" name="bagian_id" value="{{$bagianData->id}}">
                 <input type="hidden" name="awal" value="{{$awal}}">
                 <input type="hidden" name="akhir" value="{{$akhir}}">
+                <input type="hidden" name="sesi_id" value="{{$sesi_id}}">
                 @foreach ($bagianData->pertanyaan as $tanya)
                 {!!$tanya->form!!}
                 @endforeach
 
-
-
                 @if($akhir==true)
-                <button type="button" class="btn btn-dark" onclick="kembali('{{$bagianData->bagianDirect->bagian_id_direct_back}}')">Kembali</button>
+                <button type="button" class="btn btn-dark" onclick="kembali('{{$survei_id}}','{{$bagianData->bagianDirect->bagian_id_direct_back}}')">Kembali</button>
                 <button type="submit" class="btn btn-warning" onclick="return confirm('Yakin Selesai?')">Selesai</button>
                 @else
                 @if($awal==false)
-                <button type="button" class="btn btn-dark" onclick="kembali('{{$bagianData->bagianDirect->bagian_id_direct_back}}')">Kembali</button>
+                <button type="button" class="btn btn-dark" onclick="kembali('{{$survei_id}}','{{$bagianData->bagianDirect->bagian_id_direct_back}}')">Kembali</button>
                 @endif
                 <button type="submit" class="btn btn-primary">Simpan dan Lanjut</button>
                 @endif
@@ -37,9 +36,10 @@
 
 @section('js')
 <script>
-    async function kembali(bagianId) {
-        let urlBack = "{{route('user.show.pertanyaan',':bagianId')}}"
+    async function kembali(surveId, bagianId) {
+        let urlBack = "{{route('user.show.pertanyaan',[':surveiId',':bagianId'])}}"
         urlBack = urlBack.replace(':bagianId', bagianId)
+        urlBack = urlBack.replace(':surveiId', surveId)
         window.location.replace(urlBack);
 
         // alert(bagianId)

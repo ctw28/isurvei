@@ -25,7 +25,7 @@
                     <td>{{$item->survei_nama}}</td>
                     <td>{{$item->survei_deskripsi}}</td>
                     <td>
-                        <a href="{{route('user.show.pertanyaan',$item->bagianAwalAkhir->bagian_id_first)}}" class="btn btn-info">
+                        <a href="{{route('user.show.pertanyaan',[$item->id,$item->bagianAwalAkhir->bagian_id_first])}}" class="btn btn-info">
                             Isi Kuisioner
                         </a>
 
@@ -35,12 +35,6 @@
 
                 </body>
         </table>
-        <ul>
-        </ul>
-        <!-- <p><b>Petunjuk</b> : <br>
-
-            Berikan jawaban pada tiap-tiap pertanyaan yang telah disediakan berikut ini sesuai dengan keadaan Anda.</p>
-        <a href="{{route('user.show.pertanyaan',$first->bagian_id_first)}}" class="btn btn-primary">Isi Kuisioner</a> -->
     </div>
 </div>
 @endsection

@@ -89,7 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/dashboard', [UserController::class, 'index'])->name('user.dashboard');
         Route::get('/riwayat-survei', [UserController::class, 'riwayat'])->name('user.survei.riwayat');
         // Route::get('/dashboard', [UserController::class, 'index'])->name('mahasiswa.survei.list');
-        Route::get('/bagian/{bagianId}', [UserController::class, 'showPertanyaan'])->name('user.show.pertanyaan');
+        Route::get('survei/{id}/bagian/{bagianId}', [UserController::class, 'showPertanyaan'])->name('user.show.pertanyaan');
         Route::post('/survei/{surveiId}/bagian/simpan-jawaban/{bagianId}', [UserController::class, 'storeJawaban'])->name('user.store.jawaban');
     });
 });
