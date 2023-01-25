@@ -176,20 +176,39 @@ class ApiController extends Controller
     {
 
         $id = $request->id;
-        $data = Survei::with(['sesi' => function ($sesi) use ($id) {
-            $sesi->with(['user.userPegawai.pegawai' => function ($pegawai) use ($id) {
-                $pegawai->where('pegawai_nomor_induk', $id);
-            }])
-                ->whereHas('user.userPegawai.pegawai', function ($pegawai) use ($id) {
+        $data = [];
+        if ($request->kategori == "dosen" || $request->kategori == "pegawai") {
+
+            $data = Survei::with(['sesi' => function ($sesi) use ($id) {
+                $sesi->with(['user.userPegawai.pegawai' => function ($pegawai) use ($id) {
                     $pegawai->where('pegawai_nomor_induk', $id);
-                });
-            // ->where('sesi_status', "0");
-        }])
-            ->where([
-                'survei_untuk' => $request->kategori,
-                'harus_diisi' => true,
-            ])
-            ->get();
+                }])
+                    ->whereHas('user.userPegawai.pegawai', function ($pegawai) use ($id) {
+                        $pegawai->where('pegawai_nomor_induk', $id);
+                    });
+                // ->where('sesi_status', "0");
+            }])
+                ->where([
+                    'survei_untuk' => $request->kategori,
+                    'harus_diisi' => true,
+                ])
+                ->get();
+        } else {
+            $data = Survei::with(['sesi' => function ($sesi) use ($id) {
+                $sesi->with(['user.userMahasiswa.mahasiswa' => function ($pegawai) use ($id) {
+                    $pegawai->where('nim', $id);
+                }])
+                    ->whereHas('user.userMahasiswa.mahasiswa', function ($pegawai) use ($id) {
+                        $pegawai->where('nim', $id);
+                    });
+                // ->where('sesi_status', "0");
+            }])
+                ->where([
+                    'survei_untuk' => $request->kategori,
+                    'harus_diisi' => true,
+                ])
+                ->get();
+        }
         $status = [];
         foreach ($data as $item) {
             if (count($item->sesi) == 0) {

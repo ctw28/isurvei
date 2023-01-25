@@ -20,8 +20,8 @@ class CreateJawabansTable extends Migration
             $table->string('jawaban');
 
             $table->timestamps();
-            $table->foreign('sesi_id')->references('id')->on('survei_sesis');
-            $table->foreign('pertanyaan_id')->references('id')->on('survei_pertanyaans');
+            $table->foreign('sesi_id')->references('id')->on('survei_sesis')->onDelete('cascade');
+            $table->foreign('pertanyaan_id')->references('id')->on('survei_pertanyaans')->onDelete('cascade');
         });
     }
 
