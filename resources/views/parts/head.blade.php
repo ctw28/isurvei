@@ -1,6 +1,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>I-SURVEI</title>
+<title>I-SURVEI IAIN KENDARI</title>
 <meta name="description" content="An empty page with a fluid vertical layout." />
 <!-- Favicon Tags Start -->
 <link rel="apple-touch-icon-precomposed" sizes="57x57" href="img/favicon/apple-touch-icon-57x57.png" />

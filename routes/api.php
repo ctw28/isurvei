@@ -34,3 +34,5 @@ Route::get('filter-data', [ApiController::class, 'getfilteredData'])->name('get.
 
 
 Route::get('survei/{id}/partisipan', [ApiController::class, 'getParticipants'])->name('get.participant');
+
+Route::post('cek-ikut-survei', [ApiController::class, 'isParticipated'])->name('is.participated');

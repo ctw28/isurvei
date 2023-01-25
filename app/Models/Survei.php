@@ -31,6 +31,6 @@ class Survei extends Model
     }
     public function sesi()
     {
-        return $this->hasMany('App\Models\Survei');
+        return $this->hasMany('App\Models\SurveiSesi');
     }
 }

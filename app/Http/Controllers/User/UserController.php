@@ -42,11 +42,13 @@ class UserController extends Controller
             $role = "pegawai";
         else if (Auth::user()->roleDefault()->role->nama_role == "dosen")
             $role = "dosen";
-        $data['survei'] = Survei::with('bagianAwalAkhir')->where([
+        $data['survei'] = Survei::with(['sesi' => function ($sesi) {
+            $sesi->where('user_id', Auth::user()->id);
+        }, 'bagianAwalAkhir'])->where([
             'survei_untuk' => $role,
             'is_aktif' => 1,
-        ])->get();
-        $data['first'] = BagianAwalAkhir::where('survei_id', 4)->first();
+        ])->orderBy('harus_diisi', 'DESC')->get();
+        // $data['first'] = BagianAwalAkhir::where('survei_id', 4)->first();
         // return $data;
         return view('user.dashboard', $data);
     }

@@ -170,4 +170,51 @@ class ApiController extends Controller
         // }
         // return $users;
     }
+
+
+    public function isParticipated(Request $request)
+    {
+
+        $id = $request->id;
+        $data = Survei::with(['sesi' => function ($sesi) use ($id) {
+            $sesi->with(['user.userPegawai.pegawai' => function ($pegawai) use ($id) {
+                $pegawai->where('pegawai_nomor_induk', $id);
+            }])
+                ->whereHas('user.userPegawai.pegawai', function ($pegawai) use ($id) {
+                    $pegawai->where('pegawai_nomor_induk', $id);
+                });
+            // ->where('sesi_status', "0");
+        }])
+            ->where([
+                'survei_untuk' => $request->kategori,
+                'harus_diisi' => true,
+            ])
+            ->get();
+        $status = [];
+        foreach ($data as $item) {
+            if (count($item->sesi) == 0) {
+                $status = [
+                    'status' => false,
+                    'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
+                    'link' => "https://isurvei.iainkendari.ac.id/",
+                ];
+                break;
+            } else if ($item->sesi[0]->sesi_status == "0") {
+                $status = [
+                    'status' => false,
+                    'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
+                    'link' => "https://isurvei.iainkendari.ac.id/",
+                ];
+                break;
+            } else {
+                $status = [
+                    'status' => true,
+                    'pesan' => "sudah selesaimi",
+                    'link' => null,
+                ];
+            }
+        };
+        return $status;
+        return array('data' => $status);
+    }
 }

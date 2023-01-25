@@ -19,6 +19,7 @@ class CreateSurveisTable extends Migration
             $table->text('survei_deskripsi');
             $table->string('survei_untuk');
             $table->boolean('is_aktif')->default(false);
+            $table->boolean('harus_diisi')->default(false);
             $table->unsignedBigInteger('survei_oleh')->unsigned()->nullable();
             $table->timestamps();
 
