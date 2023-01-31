@@ -65,6 +65,8 @@ class Kernel extends HttpKernel
         'role.admin' => \App\Http\Middleware\roleAdmin::class,
         'role.mahasiswa' => \App\Http\Middleware\roleMahasiswa::class,
         'role.pegawai' => \App\Http\Middleware\rolePegawai::class,
-
+        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
+        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
     ];
 }

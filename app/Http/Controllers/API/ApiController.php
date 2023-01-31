@@ -10,6 +10,11 @@ use App\Models\Survei;
 use App\Models\SurveiBagian;
 use App\Models\SurveiSesi;
 use App\Models\MitraSesi;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Validator;
+use JWTAuth;
+use App\Models\User;
 
 class ApiController extends Controller
 {
@@ -19,6 +24,86 @@ class ApiController extends Controller
         return array('fdas' => 'asd');
     }
 
+    public function authenticate(Request $request)
+    {
+        // return $request->all();
+
+        $user = User::where('username', $request->username)->first();
+        // return $user;
+        $token = JWTAuth::fromUser($user);
+
+        JWTAuth::setToken($token)->toUser();
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+        ]);
+        // $credentials = $request->only('username', 'password');
+        $credentials = $request->only('username');
+
+        //valid credential
+        $validator = Validator::make($credentials, [
+            'username' => 'required',
+        ]);
+        // $validator = Validator::make($credentials, [
+        //     'username' => 'required',
+        //     'password' => 'required',
+        // ]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 200);
+        }
+
+        //Request is validated
+        //Crean token
+        try {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login credentials are invalid.',
+                ], 400);
+            }
+        } catch (JWTException $e) {
+            return $credentials;
+            return response()->json([
+                'success' => false,
+                'message' => 'Could not create token.',
+            ], 500);
+        }
+
+        //Token created, return with success response and jwt token
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+        ]);
+    }
+    public function logout(Request $request)
+    {
+        //valid credential
+        $validator = Validator::make($request->only('token'), [
+            'token' => 'required'
+        ]);
+
+        //Send failed response if request is not valid
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()], 200);
+        }
+
+        //Request is validated, do logout        
+        try {
+            JWTAuth::invalidate($request->token);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User has been logged out'
+            ]);
+        } catch (JWTException $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, user cannot be logged out'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
     public function detailJawaban($surveiId, $userId)
     {
         $survei = Survei::find($surveiId);
@@ -174,10 +259,16 @@ class ApiController extends Controller
 
     public function isParticipated(Request $request)
     {
+        $token = JWTAuth::getToken();
+        $apy = JWTAuth::getPayload($token)->toArray();
 
-        $id = $request->id;
+        // return $apy['identity'];
+        $id = $apy['identity'];
+        // $kategori = $apy['kategori'];
+        $kategori = "dosen";
+
         $data = [];
-        if ($request->kategori == "dosen" || $request->kategori == "pegawai") {
+        if ($kategori == "dosen" || $kategori == "pegawai") {
 
             $data = Survei::with(['sesi' => function ($sesi) use ($id) {
                 $sesi->with(['user.userPegawai.pegawai' => function ($pegawai) use ($id) {
@@ -189,7 +280,7 @@ class ApiController extends Controller
                 // ->where('sesi_status', "0");
             }])
                 ->where([
-                    'survei_untuk' => $request->kategori,
+                    'survei_untuk' => $kategori,
                     'harus_diisi' => true,
                 ])
                 ->get();
@@ -204,25 +295,43 @@ class ApiController extends Controller
                 // ->where('sesi_status', "0");
             }])
                 ->where([
-                    'survei_untuk' => $request->kategori,
+                    'survei_untuk' => $kategori,
                     'harus_diisi' => true,
                 ])
                 ->get();
         }
         $status = [];
+
         foreach ($data as $item) {
             if (count($item->sesi) == 0) {
+                $user = User::where('username', $id)->first();
+                // $payloadable = [
+                //     'csrf_token' => csrf_token(),
+                // ];
+                $token = JWTAuth::fromUser($user);
+
+                JWTAuth::setToken($token)->toUser();
+
                 $status = [
                     'status' => false,
                     'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
-                    'link' => "https://isurvei.iainkendari.ac.id/",
+                    'csrf_token' => csrf_token(),
+                    'link' => "http://127.0.0.1:8000/" . $token,
+                    // 'link' => "https://isurvei.iainkendari.ac.id/" . $token,
                 ];
                 break;
             } else if ($item->sesi[0]->sesi_status == "0") {
+                $user = User::where('username', $id)->first();
+                $token = JWTAuth::fromUser($user);
+                JWTAuth::setToken($token)->toUser();
+
                 $status = [
                     'status' => false,
                     'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
-                    'link' => "https://isurvei.iainkendari.ac.id/",
+                    'link' => "http://127.0.0.1:8000/" . $token,
+                    'csrf_token' => csrf_token(),
+
+                    // 'link' => "https://isurvei.iainkendari.ac.id/" . $token,
                 ];
                 break;
             } else {

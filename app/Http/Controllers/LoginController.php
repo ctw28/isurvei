@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\PplPendaftar;
 use App\Models\MasterProdi;
 use App\Models\User;
+use JWTAuth;
 
 class LoginController extends Controller
 {
@@ -14,6 +15,44 @@ class LoginController extends Controller
     public function index()
     {
         return view('login');
+    }
+
+    public function index2(Request $request)
+    // public function index2(Request $request)
+    {
+        // $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+        // .eyJncm91cHMiOlsiVmVyaWZpa2F0b3IiLCJQZW5nZ3VuYSIsIlBlbmFuZ2d1bmcgSmF3YWIiLCJOb24gRG9zZW4iLCJNYWhhc2lzd2EiLCJGcm9udCBPZmZpY2UiLCJEb3NlbiIsIkJhY2sgT2ZmaWNlIiwiQWRtaW4gUGVtaWxtYSIsIkFkbWluaXN0cmFzaSIsIkFkbWluIl0sImdyb3VwX2FjdGl2ZSI6IlZlcmlmaWthdG9yIiwibG9naW5fdGltZSI6MTY3NTA2NDc5MCwibG9naW5fZXhwaXJlZCI6MzYwMCwiZW1haWwiOiJtYmFuZHJpZ29AaWFpbmtlbmRhcmkuYWMuaWQiLCJ0eXBlIjoibm9uIG1haGFzaXN3YSIsImlkZW50aXR5IjoiMTk5MjA2MjgyMDIwMTIxMDExIn0
+        // .i6ml6SRLSVW2zK_qppEto8PWS14-eOcnHAOjE4J75Xs";
+        // $token = JWTAuth::getToken();
+        // $apy = JWTAuth::getPayload($token)->toArray();
+        // return $apy;
+        // return JWTAuth::parseToken()->authenticate();
+
+        return $request->all();
+        try {
+            // attempt to verify the credentials and create a token for the user
+            $token = JWTAuth::getToken();
+            $apy = JWTAuth::getPayload($token)->toArray();
+            return $apy;
+            // if (JWTAuth::parseToken()->authenticate())
+            //     return $apy;
+            // else
+            //     return "ggwp";
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+
+            return response()->json(['token_expired'], 500);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+
+            return response()->json(['token_invalid'], 500);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+
+            return response()->json(['token_absent' => $e->getMessage()], 500);
+        }
+    }
+
+    public function index3()
+    {
+        return csrf_token();
     }
     public function konfirmasi($username, $password)
     {
@@ -35,6 +74,7 @@ class LoginController extends Controller
             ]);
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
+                return Auth::user();
                 $role  = Auth::user()->roleDefault()->role->nama_role;
                 if ($role == "administrator" || $role == "admin_fakultas")
                     return redirect()->intended(route('admin.dashboard'));

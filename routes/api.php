@@ -35,4 +35,11 @@ Route::get('filter-data', [ApiController::class, 'getfilteredData'])->name('get.
 
 Route::get('survei/{id}/partisipan', [ApiController::class, 'getParticipants'])->name('get.participant');
 
-Route::post('cek-ikut-survei', [ApiController::class, 'isParticipated'])->name('is.participated');
+
+Route::post('login', [ApiController::class, 'authenticate']);
+
+
+Route::group(['middleware' => ['jwt.verify']], function () {
+    Route::post('logout', [ApiController::class, 'logout']);
+    Route::post('cek-ikut-survei', [ApiController::class, 'isParticipated'])->name('is.participated');
+});
