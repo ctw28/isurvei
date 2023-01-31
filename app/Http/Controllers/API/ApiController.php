@@ -263,9 +263,10 @@ class ApiController extends Controller
         $apy = JWTAuth::getPayload($token)->toArray();
 
         // return $apy['identity'];
+        // $id = $apy['identity'];
         $id = $apy['id'];
-        // $kategori = $apy['kategori'];
-        $kategori = "dosen";
+        $kategori = $apy['kategori'];
+        // $kategori = "dosen";
 
         $data = [];
         if ($kategori == "dosen" || $kategori == "pegawai") {
