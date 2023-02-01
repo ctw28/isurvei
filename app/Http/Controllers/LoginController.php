@@ -20,7 +20,9 @@ class LoginController extends Controller
     public function index2($token)
     // public function index2(Request $request)
     {
-        if (Auth::user()) {
+        // return "ggwp";
+        // return Auth::user();
+        if (Auth::check()) {
             return redirect()->route('user.dashboard');
         }
         $tokenParts = explode(".", $token);
@@ -35,7 +37,7 @@ class LoginController extends Controller
         } else {
             return redirect()->back();
         }
-        return $jwtPayload;
+        // return $jwtPayload;
     }
 
     public function index3()

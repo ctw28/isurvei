@@ -33,7 +33,6 @@ Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maint
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Route::group(['middleware' => 'role.pegawai'], function () {
 
-Route::get('/{token}', [LoginController::class, 'index2'])->middleware('guest');
 // Route::post('/', [LoginController::class, 'index2'])->middleware('guest');
 Route::get('/csrf', [LoginController::class, 'index3'])->middleware('guest');
 Route::get('/', [LoginController::class, 'index'])->name('login-page')->middleware('guest');
@@ -50,6 +49,7 @@ Route::get('mitra/bagian/{bagianId}', [UserController::class, 'mitraShowPertanya
 Route::post('mitra/survei/{surveiId}/bagian/simpan-jawaban/{bagianId}', [UserController::class, 'mitraStoreJawaban'])->name('mitra.store.jawaban');
 
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('/{token}', [LoginController::class, 'index2']);
     Route::group(['prefix' => 'admin', 'middleware' => 'role.admin'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('/survei', [SurveiController::class, 'index'])->name('admin.survei.data');
