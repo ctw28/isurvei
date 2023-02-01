@@ -425,7 +425,7 @@ class ApiController extends Controller
                 ];
             }
         };
-        return $status;
+        return response()->json($status);
         return array('data' => $status);
     }
 }
