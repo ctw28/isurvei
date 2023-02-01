@@ -33,8 +33,8 @@ Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maint
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Route::group(['middleware' => 'role.pegawai'], function () {
 
-// Route::get('/{token}', [LoginController::class, 'index2'])->middleware('guest');
-Route::post('/', [LoginController::class, 'index2'])->middleware('guest');
+Route::get('/{token}', [LoginController::class, 'index2'])->middleware('guest');
+// Route::post('/', [LoginController::class, 'index2'])->middleware('guest');
 Route::get('/csrf', [LoginController::class, 'index3'])->middleware('guest');
 Route::get('/', [LoginController::class, 'index'])->name('login-page')->middleware('guest');
 

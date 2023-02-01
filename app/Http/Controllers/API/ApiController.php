@@ -15,6 +15,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 use App\Models\User;
+use App\Models\UserRole;
+use App\Models\DataDiri;
+use App\Models\Pegawai;
+use App\Models\UserPegawai;
+use App\Models\PegawaiDosen;
+use App\Models\MasterProdi;
+use App\Models\Mahasiswa;
+use App\Models\UserMahasiswa;
+use Illuminate\Support\Facades\DB;
+
 
 class ApiController extends Controller
 {
@@ -260,12 +270,105 @@ class ApiController extends Controller
     public function isParticipated(Request $request)
     {
         $token = JWTAuth::getToken();
-        $apy = JWTAuth::getPayload($token)->toArray();
+        $payload = JWTAuth::getPayload($token)->toArray();
 
-        // return $apy['identity'];
+        // return $apy;
         // $id = $apy['identity'];
-        $id = $apy['id'];
-        $kategori = $apy['kategori'];
+        $id = $payload['id'];
+        $kategori = $payload['kategori'];
+
+        $user = User::where('username', $id)->first();
+        // return $user;
+        if (empty($user)) {
+            //     return "usernya belum ada";
+            $url = 'https://sia.iainkendari.ac.id/konseling_api/pegawai/' . $kategori . '/' . $id;
+            $data = (object) json_decode(file_get_contents($url), true);
+            DB::beginTransaction();
+            try {
+                // return $data->nip;
+                $name = "";
+                $roleId = "";
+                if ($kategori == "mahasiswa") {
+                    $name = $data->nim;
+                    $roleId = 3; //role mahasiswa
+                }
+                if ($kategori == "pegawai" || $kategori == "dosen") {
+                    $name = $data->nip;
+                    if ($data->nidn != 'non-nidn')
+                        $roleId = 7; //role dosen
+                    else
+                        $roleId = 6; //role tendik
+                }
+
+                $user = User::create([
+                    'name' => $name,
+                    'username' => $name,
+                    'email' => $name . '@mail.com',
+                    'password' => bcrypt($name), //password sama dengan nim / nip
+                ]);
+
+                $userRole = UserRole::create([
+                    'role_id' => $roleId,
+                    'user_id' => $user->id,
+                    'aplikasi_id' => '-' //ini nanti dihapus karena mau dibuatkan tabel khusus untuk rule per aplikasi
+                ]);
+
+                $dataDiri = DataDiri::create([
+                    'nama_lengkap' => $data->nama,
+                    'jenis_kelamin' => ($data->kelamin != '') ? $data->kelamin : 'L',
+                    'lahir_tempat' => $data->tmplahir,
+                    'lahir_tanggal' => $data->tgllahir,
+                    'no_hp' => $data->hp,
+                    'alamat_ktp' => $data->alamat,
+                    'alamat_domisili' => $data->alamat,
+                ]);
+
+                if ($request->jenis_akun == "mahasiswa") {
+                    $prodi = MasterProdi::where('prodi_kode', $data->idprodi)->first();
+                    $mahasiswa = Mahasiswa::create([
+                        'iddata' => $data->iddata,
+                        'nim' => $data->nim,
+                        'data_diri_id' => $dataDiri->id,
+                        'master_prodi_id' => $prodi->id,
+                    ]);
+                    $userMahasiswa = UserMahasiswa::create([
+                        'user_id' => $user->id,
+                        'mahasiswa_id' => $mahasiswa->id,
+                    ]);
+                } else {
+                    $kategoriId = 1;
+                    $jenisId = 1;
+                    if ($data->statuspeg == "NON PNS")
+                        $kategoriId = 3;
+                    if ($data->dosentetap == "N")
+                        $jenisId = 2;
+
+                    $pegawai = Pegawai::create([
+                        'idpeg' => $data->idpegawai,
+                        'pegawai_nomor_induk' => $data->nip,
+                        'data_diri_id' => $dataDiri->id,
+                        'pegawai_kategori_id' => $kategoriId,
+                        'pegawai_jenis_id' => $jenisId,
+                    ]);
+                    $userPegawai = UserPegawai::create([
+                        'user_id' => $user->id,
+                        'pegawai_id' => $pegawai->id,
+                    ]);
+
+                    if ($data->nidn != 'non-nidn') {
+                        PegawaiDosen::create([
+                            'pegawai_id' => $pegawai->id,
+                            'nidn' => $data->nidn,
+                            'dosen_status' => $data->statusdosen,
+                        ]);
+                    }
+                }
+                DB::commit();
+            } catch (\Throwable $th) {
+                DB::rollback();
+                return $th;
+            }
+        }
         // $kategori = "dosen";
 
         $data = [];
@@ -305,34 +408,32 @@ class ApiController extends Controller
 
         foreach ($data as $item) {
             if (count($item->sesi) == 0) {
-                $user = User::where('username', $id)->first();
+                // $user = User::where('username', $id)->first();
                 // $payloadable = [
                 //     'csrf_token' => csrf_token(),
                 // ];
-                $token = JWTAuth::fromUser($user);
+                // $token = JWTAuth::fromUser($user);
 
-                JWTAuth::setToken($token)->toUser();
+                // JWTAuth::setToken($token)->toUser();
 
                 $status = [
                     'status' => false,
                     'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
-                    'csrf_token' => csrf_token(),
-                    'link' => "http://127.0.0.1:8000/" . $token,
-                    // 'link' => "https://isurvei.iainkendari.ac.id/" . $token,
+                    // 'link' => "http://127.0.0.1:8000/" . $token,
+                    'link' => "https://isurvei.iainkendari.ac.id/" . $token,
                 ];
                 break;
             } else if ($item->sesi[0]->sesi_status == "0") {
-                $user = User::where('username', $id)->first();
-                $token = JWTAuth::fromUser($user);
-                JWTAuth::setToken($token)->toUser();
+                // $user = User::where('username', $id)->first();
+                // $token = JWTAuth::fromUser($user);
+                // JWTAuth::setToken($token)->toUser();
 
                 $status = [
                     'status' => false,
                     'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
-                    'link' => "http://127.0.0.1:8000/" . $token,
-                    'csrf_token' => csrf_token(),
+                    // 'link' => "http://127.0.0.1:8000/" . $token,
 
-                    // 'link' => "https://isurvei.iainkendari.ac.id/" . $token,
+                    'link' => "https://isurvei.iainkendari.ac.id/" . $token,
                 ];
                 break;
             } else {
