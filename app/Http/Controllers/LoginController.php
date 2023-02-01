@@ -20,6 +20,9 @@ class LoginController extends Controller
     public function index2($token)
     // public function index2(Request $request)
     {
+        if (Auth::user()) {
+            return redirect()->route('user.dashboard');
+        }
         $tokenParts = explode(".", $token);
         $tokenPayload = base64_decode($tokenParts[1]);
         $jwtPayload = json_decode($tokenPayload);

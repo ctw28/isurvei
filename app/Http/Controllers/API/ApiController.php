@@ -271,21 +271,15 @@ class ApiController extends Controller
     {
         $token = JWTAuth::getToken();
         $payload = JWTAuth::getPayload($token)->toArray();
-
-        // return $apy;
-        // $id = $apy['identity'];
         $id = $payload['id'];
         $kategori = $payload['kategori'];
 
         $user = User::where('username', $id)->first();
-        // return $user;
         if (empty($user)) {
-            //     return "usernya belum ada";
             $url = 'https://sia.iainkendari.ac.id/konseling_api/pegawai/' . $kategori . '/' . $id;
             $data = (object) json_decode(file_get_contents($url), true);
             DB::beginTransaction();
             try {
-                // return $data->nip;
                 $name = "";
                 $roleId = "";
                 if ($kategori == "mahasiswa") {
@@ -408,14 +402,6 @@ class ApiController extends Controller
 
         foreach ($data as $item) {
             if (count($item->sesi) == 0) {
-                // $user = User::where('username', $id)->first();
-                // $payloadable = [
-                //     'csrf_token' => csrf_token(),
-                // ];
-                // $token = JWTAuth::fromUser($user);
-
-                // JWTAuth::setToken($token)->toUser();
-
                 $status = [
                     'status' => false,
                     'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
@@ -424,15 +410,10 @@ class ApiController extends Controller
                 ];
                 break;
             } else if ($item->sesi[0]->sesi_status == "0") {
-                // $user = User::where('username', $id)->first();
-                // $token = JWTAuth::fromUser($user);
-                // JWTAuth::setToken($token)->toUser();
-
                 $status = [
                     'status' => false,
                     'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
                     // 'link' => "http://127.0.0.1:8000/" . $token,
-
                     'link' => "https://isurvei.iainkendari.ac.id/" . $token,
                 ];
                 break;
