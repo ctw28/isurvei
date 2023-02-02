@@ -761,7 +761,6 @@ class UserController extends Controller
             $userRole = UserRole::create([
                 'role_id' => $roleId,
                 'user_id' => $user->id,
-                'aplikasi_id' => 'isurvei'
             ]);
 
             $dataDiri = DataDiri::create([
