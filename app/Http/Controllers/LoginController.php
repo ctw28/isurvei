@@ -34,6 +34,8 @@ class LoginController extends Controller
         // return $user;
         if ($user) {
             Auth::login($user);
+            $role = Auth::user()->userRole->role->nama_role;
+            session(['role' => $role]);
             // return Auth::user();
             return redirect()->route('user.dashboard');
         } else {
