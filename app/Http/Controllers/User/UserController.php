@@ -35,12 +35,13 @@ class UserController extends Controller
 {
     public function index()
     {
+        // return session('role');
         $data['title'] = "Dashboard";
         // $data['iddata'] = session('iddata');
         $role = 'mahasiswa';
-        if (Auth::user()->roleDefault()->role->nama_role == "tenaga_kependidikan")
+        if (session('role') == "tenaga_kependidikan")
             $role = "pegawai";
-        else if (Auth::user()->roleDefault()->role->nama_role == "dosen")
+        else if (session('role') == "dosen")
             $role = "dosen";
         $data['survei'] = Survei::with(['sesi' => function ($sesi) {
             $sesi->where('user_id', Auth::user()->id);

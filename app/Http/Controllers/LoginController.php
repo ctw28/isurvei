@@ -8,6 +8,8 @@ use App\Models\PplPendaftar;
 use App\Models\MasterProdi;
 use App\Models\User;
 use JWTAuth;
+use Illuminate\Support\Facades\Session;
+
 
 class LoginController extends Controller
 {
@@ -64,14 +66,13 @@ class LoginController extends Controller
             ]);
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
-                return Auth::user();
-                $role  = Auth::user()->roleDefault()->role->nama_role;
-                if ($role == "administrator" || $role == "admin_fakultas")
+                $role = Auth::user()->userRole->role->nama_role;
+                session(['role' => $role]);
+                if ($role == "administrator" || $role == "admin_fakultas") {
                     return redirect()->intended(route('admin.dashboard'));
-                else if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan")
+                } else if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan") {
                     return redirect()->intended(route('user.dashboard'));
-                else
-                    return $role;
+                }
             }
             return back()->withInput()->with('fail', 'Login Gagal, pastikan username dan password sesuai');
         }
@@ -85,6 +86,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+        Session::flush();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login-page');

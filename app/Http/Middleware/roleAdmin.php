@@ -18,8 +18,8 @@ class roleAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-
-        if (Auth::user()->roleDefault()->role->nama_role == "administrator" || Auth::user()->roleDefault()->role->nama_role == "admin_fakultas")
+        $role = session('role');
+        if ($role == "administrator" || $role == "admin_fakultas")
             return $next($request);
         // return redirect()->route('login-page');
         return redirect()->back();

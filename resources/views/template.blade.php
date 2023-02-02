@@ -2,7 +2,7 @@
 @if(!Auth::user())
 <html lang="en" data-color="light-purple" data-footer="true" data-override='{"attributes": {"placement": "horizontal","layout": "fluid" ,"color":"light-purple"}, "showSettings":false, "storagePrefix": "starter-project"}'>
 @else
-@if(Auth::user()->roleDefault()->role->nama_role=="administrator" || Auth::user()->roleDefault()->role->nama_role =="admin_fakultas")
+@if(session('role')=="administrator" || session('role') =="admin_fakultas")
 
 <html lang="en" data-color="light-purple" data-footer="true" data-override='{"attributes": {"placement": "vertical","layout": "fluid" ,"color":"light-purple"}, "showSettings":false, "storagePrefix": "starter-project"}'>
 @else
@@ -41,13 +41,13 @@
                             @if(!Auth::user())
                             Mitra
                             @else
-                            @if(Auth::user()->roleDefault()->role->nama_role=="administrator" || Auth::user()->roleDefault()->role->nama_role =="admin_fakultas")
+                            @if(session('role')=="administrator" || session('role') =="admin_fakultas")
                             Administrator
-                            @elseif(Auth::user()->roleDefault()->role->nama_role=="mahasiswa")
+                            @elseif(session('role')=="mahasiswa")
                             {{Auth::user()->userMahasiswa->mahasiswa->dataDiri->nama_lengkap}}
-                            @elseif(Auth::user()->roleDefault()->role->nama_role=="tenaga_kependidikan")
+                            @elseif(session('role')=="tenaga_kependidikan")
                             {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}}
-                            @elseif(Auth::user()->roleDefault()->role->nama_role=="dosen")
+                            @elseif(session('role')=="dosen")
                             {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}}
                             @endif
                             @endif
@@ -100,11 +100,11 @@
 
                         @include('parts/menu-mitra')
                         @else
-                        @if(Auth::user()->roleDefault()->role->nama_role=="administrator" || Auth::user()->roleDefault()->role->nama_role =="admin_fakultas")
+                        @if(session('role')=="administrator" || session('role') =="admin_fakultas")
                         @include('parts/menu-admin')
-                        @elseif(Auth::user()->roleDefault()->role->nama_role=="mahasiswa")
+                        @elseif(session('role') =="mahasiswa")
                         @include('parts/menu-user')
-                        @elseif(Auth::user()->roleDefault()->role->nama_role=="pembimbing")
+                        @elseif(session('role') =="pembimbing")
                         @include('parts/menu-user')
                         @endif
                         @endif

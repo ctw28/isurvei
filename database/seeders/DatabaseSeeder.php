@@ -16,21 +16,28 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        DB::table('survei_roles')->insert([
-            // ['nama_role' => 'administrator', "keterangan" => "admin utama"],
-            // ['nama_role' => 'admin_fakultas', "keterangan" => "admin untuk mengelola fakultas"],
-            // ['nama_role' => 'mahasiswa', "keterangan" => "akun mahasiswa"],
-            ['nama_role' => 'pegawai', "keterangan" => "akun Tenaga Kependidikan"],
-            ['nama_role' => 'dosen', "keterangan" => "akun Pendidik"],
-        ]);
+        DB::table('aplikasi_lists')->insert([
+            [
+                "aplikasi_nama" => "Sistem Informasi Akademik",
+                "aplikasi_singkatan" => "SIA",
+                'aplikasi_url' => "https://sia.iainkendari.ac.id"
+            ],
+            [
+                "aplikasi_nama" => "Sistem Informasi Pegawai",
+                "aplikasi_singkatan" => "SIMPEG",
+                'aplikasi_url' => "https://apple.iainkendari.ac.id"
+            ],
+            [
+                "aplikasi_nama" => "Aplikasi Pendaftaran PPL",
+                "aplikasi_singkatan" => "APPEL",
+                'aplikasi_url' => "https://apple.iainkendari.ac.id"
+            ],
+            [
+                "aplikasi_nama" => "Aplikasi Survei IAIN Kendari",
+                "aplikasi_singkatan" => "ISURVEI",
+                'aplikasi_url' => "https://isurvei.iainkendari.ac.id"
+            ],
 
-
-        DB::table('iservei_user_roles')->insert([
-            ["user_id" => 1, "role_id" => 1, 'is_default' => true],
-            ["user_id" => 4, "role_id" => 2, 'is_default' => true],
-            ["user_id" => 5, "role_id" => 2, 'is_default' => true],
-            ["user_id" => 6, "role_id" => 2, 'is_default' => true],
-            ["user_id" => 7, "role_id" => 2, 'is_default' => true],
         ]);
     }
 }

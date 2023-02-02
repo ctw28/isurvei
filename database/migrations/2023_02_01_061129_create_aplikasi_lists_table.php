@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRolesTable extends Migration
+class CreateAplikasiListsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,14 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('survei_roles', function (Blueprint $table) {
+        Schema::create('aplikasi_lists', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_role', 100);
-            $table->string('keterangan', 100)->nullable();
+            $table->string('aplikasi_nama');
+            $table->string('aplikasi_singkatan');
+            $table->string('aplikasi_url');
+            $table->string('aplikasi_keterangan')->nullable();
+            $table->boolean('is_aktif')->default(true);
+
             $table->timestamps();
         });
     }
@@ -28,6 +32,6 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('aplikasi_lists');
     }
 }

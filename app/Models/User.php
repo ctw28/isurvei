@@ -51,7 +51,11 @@ class User extends Authenticatable implements JWTSubject
 
     public function userRole()
     {
-        return $this->hasMany('App\Models\UserRole');
+        return $this->hasOne('App\Models\UserRole');
+    }
+    public function userRoleApp()
+    {
+        return $this->hasMany('App\Models\UserRoleApp');
     }
 
     public function userMahasiswa()
@@ -62,10 +66,5 @@ class User extends Authenticatable implements JWTSubject
     public function userPegawai()
     {
         return $this->hasOne('App\Models\UserPegawai');
-    }
-
-    public function roleDefault()
-    {
-        return $this->userRole()->where('is_default', '=', true)->where('aplikasi_id', '=', 'isurvei')->with('role')->first();
     }
 }

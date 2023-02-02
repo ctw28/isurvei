@@ -89,7 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     //mahasiswa.dashboard
-    Route::group(['prefix' => 'user', 'middleware' => 'role.mahasiswa'], function () {
+    Route::group(['prefix' => 'user', 'middleware' => 'role.user'], function () {
         Route::get('/dashboard', [UserController::class, 'index'])->name('user.dashboard');
         Route::get('/riwayat-survei', [UserController::class, 'riwayat'])->name('user.survei.riwayat');
         // Route::get('/dashboard', [UserController::class, 'index'])->name('mahasiswa.survei.list');

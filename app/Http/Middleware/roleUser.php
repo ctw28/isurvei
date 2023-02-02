@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
-class roleMahasiswa
+class roleUser
 {
     /**
      * Handle an incoming request.
@@ -18,10 +18,9 @@ class roleMahasiswa
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user()->roleDefault()->role->nama_role != "mahasiswa") {
-            // return redirect()->back();
-            // return redirect('login-page');
-        }
-        return $next($request);
+        $role = session('role');
+        if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan")
+            return $next($request);
+        return redirect()->back();
     }
 }
