@@ -116,7 +116,7 @@
                     if (response.survei.survei_untuk == "mitra")
                         link.dataset.id = data.id
                     else
-                        link.dataset.id = data.user_id
+                        link.dataset.id = data.id
 
                     link.setAttribute('onclick', `getDetail(event,${surveiId})`)
                     link.dataset.bsToggle = "modal"

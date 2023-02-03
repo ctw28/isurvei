@@ -52,7 +52,7 @@
                             @endif
                         </td>
                         <td>
-                            <!-- <a href="{{route('admin.set.jawaban.redirect',[$data->id,$bagian->id,$item->id])}}" class="btn btn-light btn-sm">Kelola</a> -->
+                            <a href="{{route('admin.set.jawaban.redirect',[$data->id,$bagian->id,$item->id])}}" class="btn btn-light btn-sm">Kelola</a>
                             <a href="{{route('admin.pertanyaan.edit',[$bagian->id,$item->id])}}" class="btn btn-warning btn-sm">Ubah</a>
                             <a href="{{route('admin.pertanyaan.delete',[$data->id, $bagian->id,$item->id])}}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin Hapus?')">Hapus</a>
                         </td>

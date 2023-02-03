@@ -91,7 +91,7 @@ class PertanyaanController extends Controller
         $data['title'] = "Edit Pertanyaan";
 
         $data['stepData'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) use ($pertanyaanId) {
-            $pertanyaan->with(['jawabanJenis', 'textProperties'])->where('id', $pertanyaanId);
+            $pertanyaan->with(['pilihanJawaban', 'textProperties'])->where('id', $pertanyaanId);
         }])->find($bagianId);
         // return $data;
         return view('admin.pertanyaan-edit', $data);
@@ -167,10 +167,25 @@ class PertanyaanController extends Controller
             SurveiPertanyaan::find($pertanyaanId)->delete();
             return redirect()->route('admin.pertanyaan.data', [$surveiId, $bagianId]);
         } catch (\Throwable $e) {
-            return array("status" => "gagal");
+            return array("status" => $e);
         }
     }
-    public function directJawaban($bagianId, $pertanyaanId)
+
+    public function directJawaban($surveiId, $bagianId, $pertanyaanId)
     {
+        // return $bagianId;
+        $data['title'] = "Pengaturan Pilihan Jawaban";
+        $data['bagianData'] = SurveiBagian::whereHas('pertanyaan', function ($pertanyaan) use ($pertanyaanId) {
+            $pertanyaan->where('id', $pertanyaanId);
+        })->with('pertanyaan', function ($pertanyaan) use ($pertanyaanId) {
+            $pertanyaan->with('pilihanJawaban', function ($pilihanJawaban) {
+                $pilihanJawaban->with('directJawaban', function ($jawabanRedirect) {
+                    $jawabanRedirect->with('bagian');
+                });
+            })->where('id', $pertanyaanId);
+        })->find($bagianId);
+        $data['bagianList'] = SurveiBagian::where('survei_id', $surveiId)->get();
+        return view('admin.direct-jawaban', $data);
+        return $data;
     }
 }

@@ -8,7 +8,7 @@ use App\Models\SurveiBagian;
 use App\Models\Jawaban;
 use App\Models\User;
 use App\Models\BagianDirect;
-use App\Models\JawabanJenis;
+use App\Models\pilihanJawaban;
 use Illuminate\Support\Facades\DB;
 use App\Models\BagianAwalAkhir;
 use App\Models\JawabanLainnya;
@@ -21,7 +21,6 @@ use App\Models\Pegawai;
 use App\Models\PegawaiDosen;
 use App\Models\UserRole;
 use App\Models\UserPegawai;
-use App\Models\PilihanJawaban;
 use App\Models\Survei;
 use App\Models\Mitra;
 use App\Models\MitraSesi;
@@ -120,7 +119,7 @@ class UserController extends Controller
         // $data['iddata'] = session('iddata');
 
         $data['bagianData'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) {
-            $pertanyaan->with(['jawabanJenis', 'textProperties'])->orderBy('pertanyaan_urutan', 'ASC');;
+            $pertanyaan->with(['pilihanJawaban', 'textProperties'])->orderBy('pertanyaan_urutan', 'ASC');;
         }, 'bagianDirect'])->where('id', $bagianId)->first();
 
         // return $data;
@@ -167,7 +166,7 @@ class UserController extends Controller
             } else if ($row->pertanyaan_jenis_jawaban == "Lebih Dari Satu Jawaban") {
                 $content = '<div class="mb-3 position-relative form-group">';
                 $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
-                foreach ($row->jawabanJenis as $index => $item) {
+                foreach ($row->pilihanJawaban as $index => $item) {
                     $checked = "";
                     if (count($dataJawaban) > 0) {
                         foreach ($jawaban as $jawab) {
@@ -207,7 +206,7 @@ class UserController extends Controller
                 $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
                 $content .= '<select onchange="showTextInput(event, ' . $row->id . ')"  ' . $required . '  class="form-select" name="input[' . $row->id . ']" required>';
                 $content .= '<option value="">Pilih</option>';
-                foreach ($row->jawabanJenis as $index => $item) {
+                foreach ($row->pilihanJawaban as $index => $item) {
                     $selected = "";
                     if ($item->pilihan_jawaban != 'lainnya') {
                         if (count($dataJawaban) > 0)
@@ -233,7 +232,7 @@ class UserController extends Controller
             } else if ($row->pertanyaan_jenis_jawaban == "Pilihan") {
                 $content = '<div class="mb-3 position-relative form-group">';
                 $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
-                foreach ($row->jawabanJenis as $index => $item) {
+                foreach ($row->pilihanJawaban as $index => $item) {
                     $checked = '';
                     if ($item->pilihan_jawaban != 'lainnya') {
 
@@ -363,13 +362,13 @@ class UserController extends Controller
             return redirect()->route('mitra.show.pertanyaan', $direct->bagian_id_direct);
             // } else { // jika direct
             foreach ($request->input as $key => $value) {
-                $jawabanJenis = PilihanJawaban::with('jawabanRedirect')->where([
+                $pilihanJawaban = PilihanJawaban::with('jawabanRedirect')->where([
                     'pertanyaan_id' => $key,
                     'pilihan_jawaban' => $value
                 ])->first();
             }
-            // return $jawabanJenis;
-            return redirect()->route('mitra.show.pertanyaan', $jawabanJenis->jawabanRedirect->bagian_id_redirect);
+            // return $pilihanJawaban;
+            return redirect()->route('mitra.show.pertanyaan', $pilihanJawaban->jawabanRedirect->bagian_id_redirect);
             // }
         } catch (\Throwable $th) {
             throw $th;
@@ -470,9 +469,9 @@ class UserController extends Controller
             ]);
         $data['survei_id'] = $surveiId;
         $data['sesi_id'] = $sesi->id;
-
+        // return $bagianId;
         $data['bagianData'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) {
-            $pertanyaan->with(['jawabanJenis', 'textProperties'])->orderBy('pertanyaan_urutan', 'ASC');;
+            $pertanyaan->with(['pilihanJawaban', 'textProperties'])->orderBy('pertanyaan_urutan', 'ASC');;
         }, 'bagianDirect'])->where('id', $bagianId)->first();
 
         // return $data;
@@ -519,7 +518,7 @@ class UserController extends Controller
             } else if ($row->pertanyaan_jenis_jawaban == "Lebih Dari Satu Jawaban") {
                 $content = '<div class="mb-3 position-relative form-group">';
                 $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
-                foreach ($row->jawabanJenis as $index => $item) {
+                foreach ($row->pilihanJawaban as $index => $item) {
                     $checked = "";
                     if (count($dataJawaban) > 0) {
                         foreach ($jawaban as $jawab) {
@@ -559,7 +558,7 @@ class UserController extends Controller
                 $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
                 $content .= '<select onchange="showTextInput(event, ' . $row->id . ')"  ' . $required . '  class="form-select" name="input[' . $row->id . ']" required>';
                 $content .= '<option value="">Pilih</option>';
-                foreach ($row->jawabanJenis as $index => $item) {
+                foreach ($row->pilihanJawaban as $index => $item) {
                     $selected = "";
                     if ($item->pilihan_jawaban != 'lainnya') {
                         if (count($dataJawaban) > 0)
@@ -585,7 +584,7 @@ class UserController extends Controller
             } else if ($row->pertanyaan_jenis_jawaban == "Pilihan") {
                 $content = '<div class="mb-3 position-relative form-group">';
                 $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
-                foreach ($row->jawabanJenis as $index => $item) {
+                foreach ($row->pilihanJawaban as $index => $item) {
                     $checked = '';
                     if ($item->pilihan_jawaban != 'lainnya') {
 
@@ -713,18 +712,18 @@ class UserController extends Controller
                 return view('user.selesai', $data);
             }
             // return $direct;
-            // if ($direct->is_direct_by_jawaban == 0) { //jika tidak direct berdasarkan jawaban 
-            return redirect()->route('user.show.pertanyaan', [$surveiId, $direct->bagian_id_direct]);
-            // } else { // jika direct
-            foreach ($request->input as $key => $value) {
-                $jawabanJenis = PilihanJawaban::with('jawabanRedirect')->where([
-                    'pertanyaan_id' => $key,
-                    'pilihan_jawaban' => $value
-                ])->first();
+            if ($direct->is_direct_by_jawaban == 0) { //jika tidak direct berdasarkan jawaban 
+                return redirect()->route('user.show.pertanyaan', [$surveiId, $direct->bagian_id_direct]);
+            } else { // jika direct
+                foreach ($request->input as $key => $value) {
+                    $pilihanJawaban = PilihanJawaban::with('directJawaban')->where([
+                        'pertanyaan_id' => $key,
+                        'pilihan_jawaban' => $value
+                    ])->first();
+                }
+                // return $pilihanJawaban;
+                return redirect()->route('user.show.pertanyaan', [$surveiId, $pilihanJawaban->directJawaban->bagian_id]);
             }
-            // return $jawabanJenis;
-            return redirect()->route('user.show.pertanyaan', [$surveiId, $jawabanJenis->jawabanRedirect->bagian_id_redirect]);
-            // }
         } catch (\Throwable $th) {
             throw $th;
         }

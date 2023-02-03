@@ -36,6 +36,10 @@ Route::get('filter-data', [ApiController::class, 'getfilteredData'])->name('get.
 Route::get('survei/{id}/partisipan', [ApiController::class, 'getParticipants'])->name('get.participant');
 
 
+Route::post('simpan-jawaban-redirect', [ApiController::class, 'storeJawabanRedirect'])->name('admin.store.jawaban.redirect');
+Route::post('hapus-jawaban-redirect', [ApiController::class, 'deleteJawabanRedirect'])->name('admin.delete.jawaban.redirect');
+
+
 Route::post('login', [ApiController::class, 'authenticate']);
 
 

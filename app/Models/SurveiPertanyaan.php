@@ -23,7 +23,7 @@ class SurveiPertanyaan extends Model
         return $this->belongsTo('App\Models\SurveiBagian', 'bagian_id');
     }
 
-    public function jawabanJenis()
+    public function pilihanJawaban()
     {
         return $this->hasMany('App\Models\PilihanJawaban', 'pertanyaan_id');
     }

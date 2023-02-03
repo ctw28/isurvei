@@ -22,8 +22,8 @@ class PilihanJawaban extends Model
         return $this->belongsTo('App\Models\Pertanyaan', 'pertanyaan_id');
     }
 
-    public function jawabanRedirect()
+    public function directJawaban()
     {
-        return $this->hasOne('App\Models\JawabanRedirect',);
+        return $this->hasOne('App\Models\directJawaban',);
     }
 }

@@ -23,6 +23,7 @@ use App\Models\PegawaiDosen;
 use App\Models\MasterProdi;
 use App\Models\Mahasiswa;
 use App\Models\UserMahasiswa;
+use App\Models\DirectJawaban;
 use Illuminate\Support\Facades\DB;
 
 
@@ -128,7 +129,7 @@ class ApiController extends Controller
         } else {
             $data['data'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) use ($userId) {
                 $pertanyaan->with(['jawaban' => function ($jawaban) use ($userId) {
-                    $jawaban->where(['user_id' => $userId]);
+                    $jawaban->where(['sesi_id' => $userId]);
                 }]);
             }])->where('survei_id', $survei->id)->get();
         }
@@ -192,9 +193,9 @@ class ApiController extends Controller
         // if ($usersId == null)
         //     $usersId = [];
         $data['dataPertanyaan'] = SurveiPertanyaan::with([
-            'jawabanJenis'
+            'pilihanJawaban'
         ])->where('id', $pertanyaanId)->get();
-        $data['dataPertanyaan'][0]->jawabanJenis->map(function ($data) use ($pertanyaanId, $users) {
+        $data['dataPertanyaan'][0]->pilihanJawaban->map(function ($data) use ($pertanyaanId, $users) {
             if ($users == null)
                 $total = 0;
             // $total = Jawaban::where(['pertanyaan_id' => $pertanyaanId, 'jawaban' => $data->pilihan_jawaban])->count();
@@ -449,5 +450,28 @@ class ApiController extends Controller
         };
         return response()->json($status);
         return array('data' => $status);
+    }
+
+
+    //DIRECT BERDASARKAN JAWABAN
+
+    public function storeJawabanRedirect(Request $request)
+    {
+        // return $request->all();
+        // JawabanRedirect::create($request->all());
+        DirectJawaban::updateOrCreate(
+            ['pilihan_jawaban_id' => $request->pilihan_jawaban_id],
+            ['bagian_id' => $request->bagian_id]
+        );
+        return array("status" => "sukses");
+    }
+    public function deleteJawabanRedirect(Request $request)
+    {
+        try {
+            DirectJawaban::where('pilihan_jawaban_id', $request->pilihan_jawaban_id)->delete();
+            return array("status" => "sukses");
+        } catch (\Throwable $e) {
+            return array("status" => "gagal");
+        }
     }
 }
