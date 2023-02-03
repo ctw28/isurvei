@@ -8,7 +8,6 @@ use App\Models\SurveiBagian;
 use App\Models\Jawaban;
 use App\Models\User;
 use App\Models\BagianDirect;
-use App\Models\pilihanJawaban;
 use Illuminate\Support\Facades\DB;
 use App\Models\BagianAwalAkhir;
 use App\Models\JawabanLainnya;
@@ -26,6 +25,7 @@ use App\Models\Mitra;
 use App\Models\MitraSesi;
 use App\Models\MitraJawaban;
 use App\Models\MitraJawabanLainnya;
+use App\Models\PilihanJawaban;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
