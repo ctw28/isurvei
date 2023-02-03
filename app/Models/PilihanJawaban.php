@@ -24,6 +24,6 @@ class PilihanJawaban extends Model
 
     public function directJawaban()
     {
-        return $this->hasOne('App\Models\directJawaban',);
+        return $this->hasOne('App\Models\DirectJawaban',);
     }
 }
