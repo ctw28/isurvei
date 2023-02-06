@@ -1,5 +1,12 @@
 @extends('template')
 
+@section('css')
+<style>
+    .link:hover {
+        cursor: pointer;
+    }
+</style>
+@endsection
 @section('content')
 <!-- Text Content Start -->
 <section class="scroll-section" id="textContent">
@@ -38,8 +45,14 @@
 
                 </tbody>
             </table>
-
+            <div>
+                <nav>
+                    <ul class="pagination" id="pagination">
+                    </ul>
+                </nav>
+            </div>
         </div>
+    </div>
     </div>
 </section>
 <!-- Form Row End -->
@@ -67,6 +80,7 @@
                         </table>
 
                     </div>
+
                 </div>
             </div>
         </div>
@@ -75,11 +89,13 @@
 @endsection
 @section('js')
 <script>
-    document.querySelector("#survei").addEventListener("change", async function(e) {
-        // return console.log(e.target.options[e.target.selectedIndex])
-        let surveiId = e.target.options[e.target.selectedIndex].value
+    async function showData(id, pageUrl = null) {
+        // console.log(e.target.options[e.target.selectedIndex])
+        let surveiId = id
         let url = "{{route('get.participant',':surveiId')}}"
         url = url.replace(':surveiId', surveiId)
+        if (pageUrl != null)
+            url = pageUrl
         let fetchData = await fetch(url)
         response = await fetchData.json()
         console.log(response);
@@ -87,7 +103,7 @@
             const tbody = document.querySelector('#show-data')
             tbody.innerHTML = ""
             const fragment = document.createDocumentFragment()
-            if (response.details.length == 0) {
+            if (response.details.data.length == 0) {
                 const tr = document.createElement('tr')
                 const td = document.createElement('td')
                 td.className = "text-center"
@@ -96,10 +112,11 @@
                 tr.appendChild(td)
                 fragment.appendChild(tr)
             } else {
-                response.details.forEach(function(data, i) {
+                let urut = response.details.from //ambil no urut
+                response.details.data.forEach(function(data, i) {
                     const tr = document.createElement('tr')
                     const tdNo = document.createElement('td')
-                    tdNo.textContent = i + 1
+                    tdNo.textContent = urut++
                     tdNo.className = 'text-center'
                     const tdTanggal = document.createElement('td')
                     tdTanggal.textContent = data.sesi_tanggal
@@ -131,7 +148,32 @@
                 })
             }
             tbody.appendChild(fragment)
+            var paginate = document.querySelector('#pagination')
+            paginate.innerHTML = ""
+            // console.log(response.details.total);
+            if (response.details.last_page > 1) {
+                response.details.links.forEach(function(link) {
+                    const li = document.createElement('li')
+                    li.className = `page-item ${(link.active==true) ? 'active' : ''}`
+                    const a = document.createElement('a')
+                    let text = link.label
+                    if (text.includes("Previous"))
+                        text = "&laquo;"
+                    else if (text.includes("Next"))
+                        text = "&raquo;"
+                    a.innerHTML = text
+                    // a.className = ""
+                    a.setAttribute('onclick', `showData(${id}, '${link.url}')`)
+                    a.className = `page-link link`
+                    li.appendChild(a)
+                    paginate.appendChild(li)
+                })
+            }
         }
+    }
+    document.querySelector("#survei").addEventListener("change", async function(e) {
+        // return console.log(e.target.options[e.target.selectedIndex])
+        showData(e.target.options[e.target.selectedIndex].value)
     })
 
     async function getDetail(e, surveiId) {

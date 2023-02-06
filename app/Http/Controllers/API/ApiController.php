@@ -149,9 +149,9 @@ class ApiController extends Controller
         try {
             $survei = Survei::find($surveiId);
             if ($survei->survei_untuk == "dosen" || $survei->survei_untuk == "pegawai")
-                $data = SurveiSesi::with(['user.userPegawai.pegawai.dataDiri'])->where('survei_id', $survei->id)->get();
+                $data = SurveiSesi::with(['user.userPegawai.pegawai.dataDiri'])->where('survei_id', $survei->id)->paginate(20);
             else if ($survei->survei_untuk == "mahasiswa")
-                $data = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri'])->where('survei_id', $survei->id)->get();
+                $data = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri'])->where('survei_id', $survei->id)->paginate(20);
             else
                 $data = MitraSesi::with(['mitra'])->where('survei_id', $survei->id)->get();
 
@@ -318,7 +318,7 @@ class ApiController extends Controller
                     'alamat_domisili' => $data->alamat,
                 ]);
 
-                if ($request->jenis_akun == "mahasiswa") {
+                if ($kategori == "mahasiswa") {
                     $prodi = MasterProdi::where('prodi_kode', $data->idprodi)->first();
                     $mahasiswa = Mahasiswa::create([
                         'iddata' => $data->iddata,
