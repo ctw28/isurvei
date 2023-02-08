@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BagianController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\API\ApiController;
+use App\Http\Controllers\API\BagianController as BagianAPI;
+use App\Http\Controllers\API\PertanyaanController;
+use App\Http\Controllers\API\JawabanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +44,12 @@ Route::post('hapus-jawaban-redirect', [ApiController::class, 'deleteJawabanRedir
 
 
 Route::post('login', [ApiController::class, 'authenticate']);
+
+
+Route::get('/survei/{id}/bagian', [BagianAPI::class, 'index'])->name('bagian.by.survei');
+Route::get('bagian/{id}/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan.by.bagian');
+Route::get('/survei/{id}/pertanyaan/{pertanyaanId}', [JawabanController::class, 'index'])->name('jawaban.count.by.survei.and.pertanyaan');
+
 
 
 Route::group(['middleware' => ['jwt.verify']], function () {

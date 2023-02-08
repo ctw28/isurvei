@@ -9,13 +9,13 @@
             <i data-cs-icon="plus"></i>
             <span>Tambah Bagian</span>
         </a>
-        <a href="{{route('admin.bagian.awal.akhir',$data->id)}}" class="btn btn-secondary btn-icon btn-icon-start ms-1">
+        <a href="{{route('admin.bagian.awal.akhir',$data->id)}}" class="btn btn-quaternary btn-icon btn-icon-start ms-1">
             <i data-cs-icon="gear"></i>
-            <span>Pengaturan Awal Akhir</span>
+            <span>Set Pertanyaan Awal & Akhir</span>
         </a>
-        <a href="{{route('admin.bagian.direct',$data->id)}}" class="btn btn-secondary btn-icon btn-icon-start ms-1">
+        <a href="{{route('admin.bagian.direct',$data->id)}}" class="btn btn-dark btn-icon btn-icon-start ms-1">
             <i data-cs-icon="gear"></i>
-            <span>Pengaturan Direct</span>
+            <span>Pengaturan Direct Bagian</span>
         </a>
     </div>
     <div class="card mb-5">
@@ -38,9 +38,14 @@
                         <td>{{$bagian->bagian_nama}}</td>
                         <!-- <td>{{$bagian->bagian_urutan}}</td> -->
                         <td>
-                            <a href="{{route('admin.pertanyaan.data',[$data->id,$bagian->id])}}" class="btn btn-light btn-sm">Pertanyaan</a>
-                            <a href="{{route('admin.bagian.edit',[$data->id,$bagian->id])}}" class="btn btn-warning btn-sm">Ubah</a>
-                            <a href="{{route('admin.bagian.delete',[$data->id,$bagian->id])}}" onclick="return confirm('Yakin Hapus')" class="btn btn-danger btn-sm">Hapus</a>
+                            <a href="{{route('admin.pertanyaan.data',[$data->id,$bagian->id])}}" class="btn btn-info btn-sm">Pertanyaan</a>
+                            <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+                                <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
+                                <a class="dropdown-item" href="{{route('admin.bagian.edit',[$data->id,$bagian->id])}}">Ubah</a>
+                                <a class="dropdown-item" href="{{route('admin.bagian.delete',[$data->id,$bagian->id])}}" onclick="return confirm('Yakin Hapus')">Hapus</a>
+                            </div>
                         </td>
                     </tr>
 

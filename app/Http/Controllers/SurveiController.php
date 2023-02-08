@@ -15,7 +15,7 @@ class SurveiController extends Controller
     public function index()
     {
         $title = "Survei";
-        $data = Survei::where('survei_oleh', Auth::user()->id)->get();
+        $data = Survei::where('survei_oleh', Auth::user()->id)->orderBy('created_at', "DESC")->get();
         foreach ($data as $item) {
             if ($item->survei_untuk == "mitra")
                 $item->decrypt_id = Crypt::encrypt($item);

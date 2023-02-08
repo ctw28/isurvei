@@ -109,7 +109,7 @@
                         </div>
 
                         @else
-                        @foreach($stepData->pertanyaan[0]->jawabanJenis as $item)
+                        @foreach($stepData->pertanyaan[0]->pilihanJawaban as $item)
                         @if($item->pilihan_jawaban!="lainnya")
                         <div class="col-md-12 mb-3">
                             <label for="pertanyaan_urutan" class="form-label">Pilihan</label>

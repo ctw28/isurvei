@@ -17,8 +17,8 @@
                     <tr>
                         <th scope="col">No</th>
                         <th scope="col">Nama Survei</th>
-                        <!-- <th scope="col">Deskripsi</th> -->
                         <th scope="col">Untuk</th>
+                        <th scope="col">Wajib</th>
                         <th scope="col">Aksi</th>
                     </tr>
                 </thead>
@@ -27,15 +27,22 @@
                     <tr>
                         <th scope="row">{{$index+1}}</th>
                         <td>{{$item->survei_nama}}</td>
-                        <!-- <td>{{$item->survei_deskripsi}}</td> -->
                         <td>{{$item->survei_untuk}}</td>
                         <td>
-                            <a href="{{route('admin.bagian.data',$item->id)}}" class="btn btn-light btn-sm">Bagian</a>
+                            {{($item->harus_diisi) ? 'Ya' : 'Tidak'}}
+                        </td>
+                        <td>
+                            <a href="{{route('admin.bagian.data',$item->id)}}" class="btn btn-info btn-sm">Bagian</a>
                             @if($item->survei_untuk=="mitra")
-                            <button onclick="setLInk({{$item->id}})" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary btn-sm">Link</button>
+                            <button onclick="setLInk({{$item->id}})" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-warning btn-sm">Link</button>
                             @endif
-                            <a href="{{route('admin.survei.edit',$item->id)}}" class="btn btn-warning btn-sm">Ubah</a>
-                            <a href="{{route('admin.survei.delete',$item->id)}}" onclick="return confirm('Yakin Hapus')" class="btn btn-danger btn-sm">Hapus</a>
+                            <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+                                <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
+                                <a class="dropdown-item" href="{{route('admin.survei.edit',$item->id)}}">Ubah</a>
+                                <a class="dropdown-item" href="{{route('admin.survei.delete',$item->id)}}" onclick="return confirm('Yakin Hapus')">Hapus</a>
+                            </div>
                         </td>
                     </tr>
 

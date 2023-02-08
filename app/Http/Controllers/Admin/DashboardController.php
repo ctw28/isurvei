@@ -35,7 +35,7 @@ class DashboardController extends Controller
     {
         // $data = SurveiBagian::where('survei_id', $survei_id)->get();
         // return $data;
-        $title = "Partisipan Survei";
+        $title = "Hasil Survei";
         $data = Survei::all();
         // $data['dataUser'] = User::where('user_role_id', 2)->get();
 
@@ -52,5 +52,12 @@ class DashboardController extends Controller
                 'sesi_id' => $item->id
             ]);
         });
+    }
+
+    public function surveiHasil()
+    {
+        $title = "Partisipan Survei";
+        $data = Survei::all();
+        return view('admin.survei-hasil', compact('title', 'data'));
     }
 }

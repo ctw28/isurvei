@@ -83,9 +83,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/survei/{id}/bagian/{bagianId}/pertanyaan/{pertanyaanId}/direct', [PertanyaanController::class, 'directJawaban'])->name('admin.set.jawaban.redirect');
 
         //HASIL_BAGIAN
-
         Route::get('/survei/partisipan', [DashboardController::class, 'participant'])->name('admin.survei.participants');
-        Route::get('/survei/{id}/bagian/hasil', [DashboardController::class, 'hasilBagian'])->name('admin.bagian.hasil');
+        // Route::get('/survei/hasil', [DashboardController::class, 'surveiHasil'])->name('admin.survei.hasil');
+
+        //STATISTIK SURVEI
+        // Route::get('/survei/{id}/bagian/hasil', [DashboardController::class, 'hasilBagian'])->name('admin.bagian.hasil');
     });
 
     //mahasiswa.dashboard
