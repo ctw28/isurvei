@@ -16,7 +16,10 @@ class DashboardController extends Controller
     public function index()
     {
         $title = 'Dashboard';
-        return view('admin.dashboard', compact('title'));
+        $survei = Survei::where('survei_oleh', Auth::user()->id)->count();
+        $surveiAktif = Survei::where(['survei_oleh' => Auth::user()->id, 'is_aktif' => 1])->count();
+        $surveiSelesai = Survei::where(['survei_oleh' => Auth::user()->id, 'survei_status' => 1])->count();
+        return view('admin.dashboard', compact('title', 'survei', 'surveiAktif', 'surveiSelesai'));
     }
 
     public function hasilBagian($survei_id)

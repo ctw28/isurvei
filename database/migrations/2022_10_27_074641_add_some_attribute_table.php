@@ -17,9 +17,10 @@ class AddSomeAttributeTable extends Migration
         //     $table->unsignedBigInteger('sesi_id')->default(1);
         //     $table->foreign('sesi_id')->references('id')->on('survei_sesis');
         // });
-        // Schema::table('surveis', function (Blueprint $table) {
-        //     $table->boolean('harus_diisi')->default(false);
-        // });
+        Schema::table('surveis', function (Blueprint $table) {
+            // $table->boolean('harus_diisi')->default(false);
+            $table->boolean('survei_status')->default(false);
+        });
     }
 
     /**

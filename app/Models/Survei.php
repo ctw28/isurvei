@@ -15,6 +15,8 @@ class Survei extends Model
         'survei_deskripsi',
         'survei_untuk',
         'is_aktif',
+        'is_wajib',
+        'survei_status',
     ];
 
     public function user()

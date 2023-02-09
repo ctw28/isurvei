@@ -47,7 +47,7 @@ class UserController extends Controller
         }, 'bagianAwalAkhir'])->where([
             'survei_untuk' => $role,
             'is_aktif' => 1,
-        ])->orderBy('harus_diisi', 'DESC')->get();
+        ])->orderBy('is_wajib', 'DESC')->get();
         // $data['first'] = BagianAwalAkhir::where('survei_id', 4)->first();
         // return $data;
         return view('user.dashboard', $data);

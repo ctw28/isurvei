@@ -401,7 +401,7 @@ class ApiController extends Controller
             }])
                 ->where([
                     'survei_untuk' => $kategori,
-                    'harus_diisi' => true,
+                    'is_wajib' => true,
                 ])
                 ->get();
         } else {
@@ -416,7 +416,7 @@ class ApiController extends Controller
             }])
                 ->where([
                     'survei_untuk' => $kategori,
-                    'harus_diisi' => true,
+                    'is_wajib' => true,
                 ])
                 ->get();
         }
