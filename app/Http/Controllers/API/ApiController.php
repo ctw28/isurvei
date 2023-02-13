@@ -402,6 +402,7 @@ class ApiController extends Controller
                 ->where([
                     'survei_untuk' => $kategori,
                     'is_wajib' => true,
+                    'is_aktif' => true,
                 ])
                 ->get();
         } else {
@@ -473,5 +474,21 @@ class ApiController extends Controller
         } catch (\Throwable $e) {
             return array("status" => "gagal");
         }
+    }
+
+    public function surveiUpdate(Request $request, $id)
+    {
+        // return $request->all();
+        $survei = Survei::find($id);
+        $value = false;
+        if ($request->value == "true")
+            $value = true;
+        $survei[$request->column] = $value;
+        // $survei->update($request->all());
+        $survei->save();
+        return response()->json([
+            'status' => 'sukses',
+            'message' => 'sukses update',
+        ], 200);
     }
 }

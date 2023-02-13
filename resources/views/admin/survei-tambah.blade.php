@@ -1,5 +1,8 @@
 @extends('template')
 
+@section('css')
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+@endsection
 @section('content')
 
 <!-- Form Row Start -->
@@ -14,13 +17,19 @@
                 </div>
                 <div class="col-md-9">
                     <label for="step_nama" class="form-label">Deskripsi</label>
-                    <textarea class="form-control" name="survei_deskripsi" id="survei_deskripsi" rows="3" required></textarea>
+                    <textarea class="form-control" name="survei_deskripsi" id="survei_deskripsi" rows="5"></textarea>
                 </div>
 
-
+                <div class="col-md-12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="is_wajib" name="is_wajib" value="1">
+                        <label class="form-check-label" for="is_wajib">Wajib diisi</label>
+                    </div>
+                </div>
                 <div class="col-md-4">
                     <label for="inputState" class="form-label">Untuk</label>
-                    <select id="survei_untuk" class="form-select" name="survei_untuk">
+                    <select id="survei_untuk" class="form-select" name="survei_untuk" required>
+                        <option value="">Pilih peruntukkan Survei</option>
                         <option value="mahasiswa">Mahasiswa</option>
                         <option value="dosen">Pendidik (Dosen)</option>
                         <option value="pegawai">Tenaga Kependidikan (Pegawai)</option>
@@ -35,5 +44,14 @@
     </div>
 </section>
 <!-- Form Row End -->
+
+@endsection
+
+@section('js')
+<script>
+    tinymce.init({
+        selector: '#survei_deskripsi'
+    });
+</script>
 
 @endsection

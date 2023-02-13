@@ -18,7 +18,7 @@ class SurveiController extends Controller
         $data = Survei::where('survei_oleh', Auth::user()->id)->orderBy('created_at', "DESC")->get();
         foreach ($data as $item) {
             if ($item->survei_untuk == "mitra")
-                $item->decrypt_id = Crypt::encrypt($item);
+                $item->decrypt_id = Crypt::encrypt($item->id);
         }
         // return $data;
         return view('admin.survei-data', compact('title', 'data'));
@@ -57,6 +57,10 @@ class SurveiController extends Controller
         $survei->survei_nama = $request->survei_nama;
         $survei->survei_deskripsi = $request->survei_deskripsi;
         $survei->survei_untuk = $request->survei_untuk;
+        $is_wajib = false;
+        if (!empty($request->is_wajib))
+            $is_wajib = true;
+        $survei->is_wajib = $is_wajib;
         $survei->save();
 
         return redirect()->route('admin.survei.data');

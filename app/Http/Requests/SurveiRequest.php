@@ -17,7 +17,11 @@ class SurveiRequest extends FormRequest
 
     public function __construct(\Illuminate\Http\Request $request)
     {
+        $is_wajib = false;
+        if ($request->is_wajib == 1)
+            $is_wajib = true;
         $request->merge([
+            'is_wajib' => $is_wajib,
             'survei_oleh' => Auth::user()->id,
         ]);
     }
@@ -40,6 +44,8 @@ class SurveiRequest extends FormRequest
             'survei_oleh' => 'required',
             'survei_deskripsi' => 'string',
             'survei_untuk' => 'required',
+            'survei_status' => 'boolean',
+            'is_wajib' => 'boolean',
             'is_aktif' => 'boolean',
         ];
     }

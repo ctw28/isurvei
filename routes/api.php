@@ -51,6 +51,7 @@ Route::get('bagian/{id}/pertanyaan', [PertanyaanController::class, 'index'])->na
 Route::get('/survei/{id}/pertanyaan/{pertanyaanId}', [JawabanController::class, 'index'])->name('jawaban.count.by.survei.and.pertanyaan');
 
 
+Route::post('survei/{id}/update', [ApiController::class, 'surveiUpdate'])->name('api.survei.update');
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('logout', [ApiController::class, 'logout']);

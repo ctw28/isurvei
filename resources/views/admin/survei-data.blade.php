@@ -12,43 +12,58 @@
     </div>
     <div class="card mb-5">
         <div class="card-body">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Nama Survei</th>
-                        <th scope="col">Untuk</th>
-                        <th scope="col">Wajib</th>
-                        <th scope="col">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data as $index => $item)
-                    <tr>
-                        <th scope="row">{{$index+1}}</th>
-                        <td>{{$item->survei_nama}}</td>
-                        <td>{{$item->survei_untuk}}</td>
-                        <td>
-                            {{($item->harus_diisi) ? 'Ya' : 'Tidak'}}
-                        </td>
-                        <td>
-                            <a href="{{route('admin.bagian.data',$item->id)}}" class="btn btn-info btn-sm">Bagian</a>
-                            @if($item->survei_untuk=="mitra")
-                            <button onclick="setLInk({{$item->id}})" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-warning btn-sm">Link</button>
-                            @endif
-                            <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
-                                <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
-                                <a class="dropdown-item" href="{{route('admin.survei.edit',$item->id)}}">Ubah</a>
-                                <a class="dropdown-item" href="{{route('admin.survei.delete',$item->id)}}" onclick="return confirm('Yakin Hapus')">Hapus</a>
-                            </div>
-                        </td>
-                    </tr>
+            <div style="overflow-x:auto;">
 
-                    @endforeach
-                </tbody>
-            </table>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="text-center">
+                            <th scope="col" width="3%">No</th>
+                            <th scope="col" width="30%">Nama Survei</th>
+                            <th scope="col" width="10%">Untuk</th>
+                            <th scope="col" width="10%">Wajib</th>
+                            <th scope="col" width="5%">Publish</th>
+                            <th scope="col" width="5%">Selesai</th>
+                            <th scope="col" width="15%">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($data as $index => $item)
+                        <tr>
+                            <td class="text-center">{{$index+1}}</td>
+                            <td>{{$item->survei_nama}}</td>
+                            <td class="text-center">{{$item->survei_untuk}}</td>
+                            <td class="text-center">
+                                {{($item->is_wajib) ? 'Ya' : '-'}}
+                            </td>
+                            <td class="text-center">
+                                <div class="form-check form-switch">
+                                    <input onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input onclick="update('survei_status',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="survei_status" name="survei_status" value="1" {{($item->survei_status) ? 'checked' : ''}}>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{{route('admin.bagian.data',$item->id)}}" class="btn btn-info btn-sm">Bagian</a>
+                                @if($item->survei_untuk=="mitra")
+                                <button onclick="setLInk('{{$item->decrypt_id}}')" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-warning btn-sm">Link</button>
+                                @endif
+                                <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+                                    <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
+                                    <a class="dropdown-item" href="{{route('admin.survei.edit',$item->id)}}">Ubah</a>
+                                    <a class="dropdown-item" href="{{route('admin.survei.delete',$item->id)}}" onclick="return confirm('Yakin Hapus')">Hapus</a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>
@@ -74,6 +89,30 @@
 
 @section('js')
 <script>
+    async function update(column, e) {
+        // return alert(e.target.dataset.id)
+        let konfirmasi = confirm('yakin?')
+        if (konfirmasi) {
+            let dataSend = new FormData()
+            let url = '{{route("api.survei.update",":id")}}'
+            url = url.replace(':id', e.target.dataset.id)
+            dataSend.append('column', column)
+            dataSend.append('value', e.target.checked)
+            response = await fetch(url, {
+                method: "POST",
+                body: dataSend
+            })
+            responseMessage = await response.json()
+            // return console.log(responseMessage)
+            if (responseMessage.status == "sukses") {
+                alert(responseMessage.message)
+                // element.innerText = "Tentukan"
+            } else {
+                alert('Ada Kesalahan')
+            }
+        }
+    }
+
     function setLInk(id) {
         let url = "{{route('mitra.registrasi',':id')}}"
         url = url.replace(':id', id)

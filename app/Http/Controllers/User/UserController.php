@@ -72,7 +72,7 @@ class UserController extends Controller
     {
         $data['title'] = "Dashboard";
         // $data['data'] = Survei::find(Crypt::decrypt($surveiId));
-        $data['data'] = Survei::find($surveiId);
+        $data['data'] = Survei::find(Crypt::decrypt($surveiId));
         return view('user.mitra-registrasi', $data);
     }
 
