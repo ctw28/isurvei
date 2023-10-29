@@ -36,13 +36,16 @@
                     <td>{{$item->survei_nama}}</td>
                     <td>{{$item->survei_deskripsi}}</td>
                     <td class="text-center">
-                        @if($item->harus_diisi==true)
+                        @if($item->is_wajib==true)
                         <span class="badge bg-danger text-uppercase">Wajib diisi</span>
                         @else
                         -
                         @endif
                     </td>
                     <td class="text-center">
+                        @if($item->bagianAwalAkhir->bagian_id_first ==null)
+                        <a href="#" class="btn btn-warning">Belum dapat dimulai</a>
+                        @else
                         <a href=" {{route('user.show.pertanyaan',[$item->id,$item->bagianAwalAkhir->bagian_id_first])}}" class="btn btn-info">
                             @if(count($item->sesi)==0)
                             Mulai
@@ -54,6 +57,7 @@
 
                             Survei
                         </a>
+                        @endif
 
                     </td>
                 </tr>

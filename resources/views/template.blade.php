@@ -2,7 +2,7 @@
 @if(!Auth::user())
 <html lang="en" data-color="light-purple" data-footer="true" data-override='{"attributes": {"placement": "horizontal","layout": "fluid" ,"color":"light-purple"}, "showSettings":false, "storagePrefix": "starter-project"}'>
 @else
-@if(session('role')=="administrator" || session('role') =="admin_fakultas")
+@if(session('session_role')->role_aktif->role=="administrator" || session('session_role')->role_aktif->role =="admin_fakultas" || session('session_role')->role_aktif->role =="admin")
 
 <html lang="en" data-color="light-purple" data-footer="true" data-override='{"attributes": {"placement": "vertical","layout": "fluid" ,"color":"light-purple"}, "showSettings":false, "storagePrefix": "starter-project"}'>
 @else
@@ -41,14 +41,20 @@
                             @if(!Auth::user())
                             Mitra
                             @else
-                            @if(session('role')=="administrator" || session('role') =="admin_fakultas")
+                            @if(session('session_role')->role_aktif->role=="administrator" || session('session_role')->role_aktif->role =="admin_fakultas")
                             Administrator
-                            @elseif(session('role')=="mahasiswa")
+                            @elseif(session('session_role')->role_aktif->role=="mahasiswa")
                             {{Auth::user()->userMahasiswa->mahasiswa->dataDiri->nama_lengkap}}
-                            @elseif(session('role')=="tenaga_kependidikan")
+                            @elseif(session('session_role')->role_aktif->role=="tenaga_kependidikan")
                             {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}}
-                            @elseif(session('role')=="dosen")
+                            @elseif(session('session_role')->role_aktif->role=="dosen")
                             {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}}
+                            @elseif(session('session_role')->role_aktif->role=="admin")
+                            @if(session('session_role')->default_role == "mahasiswa")
+                            {{Auth::user()->userMahasiswa->mahasiswa->dataDiri->nama_lengkap}} - {{(session('session_role')->role_aktif->detail->role_aplikasi_nama)}}
+                            @else
+                            {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}} - {{(session('session_role')->role_aktif->detail->role_aplikasi_nama)}}
+                            @endif
                             @endif
                             @endif
                         </div>
@@ -56,6 +62,23 @@
                     <div class="dropdown-menu dropdown-menu-end user-menu wide">
                         <div class="row ms-0 me-0">
                             <div class="col-12 ps-1 pe-1">
+                                <label>Login Sebagai</label> <br>
+                                <select class="form-select my-3" onchange="loginAs(event)">
+                                    <option value="default">{{Auth::user()->userRole->role->nama_role}} (Default)</option>
+                                    @php
+                                    $selected = '';
+                                    if(!empty(session('session_role')->role_aktif->detail))
+
+                                    @endphp
+                                    @foreach(Auth::user()->userAplikasiRole as $role)
+                                    @if(empty(session('session_role')->role_aktif->detail))
+                                    <option value="{{$role->aplikasiUserRole->id}}">{{$role->aplikasiUserRole->user_role_nama}}</option>
+                                    @else
+                                    <option value="{{$role->aplikasiUserRole->id}}" {{(session('session_role')->role_aktif->detail->role_aplikasi_nama == $role->aplikasiUserRole->user_role_nama)?'selected':''}}>{{$role->aplikasiUserRole->user_role_nama}}</option>
+                                    @endif
+                                    @endforeach
+                                </select>
+                                <p>Atau</p>
                                 <ul class="list-unstyled">
                                     <li>
                                         <a href="#">
@@ -100,11 +123,11 @@
 
                         @include('parts/menu-mitra')
                         @else
-                        @if(session('role')=="administrator" || session('role') =="admin_fakultas")
+                        @if(session('session_role')->role_aktif->role=="administrator" || session('session_role')->role_aktif->role =="admin_fakultas" || session('session_role')->role_aktif->role =="admin")
                         @include('parts/menu-admin')
-                        @elseif(session('role') =="mahasiswa")
+                        @elseif(session('session_role')->role_aktif->role =="mahasiswa")
                         @include('parts/menu-user')
-                        @elseif(session('role') =="pembimbing")
+                        @elseif(session('session_role')->role_aktif->role =="pembimbing")
                         @include('parts/menu-user')
                         @endif
                         @endif
@@ -476,7 +499,17 @@
         </div>
     </div>
     <!-- Search Modal End -->
+    <script>
+        async function loginAs(e) {
+            if (confirm(`Anda yakin login sebagai ${e.target.options[e.target.selectedIndex].text}`)) {
+                let url = "{{route('login.as',':id')}}"
+                url = url.replace(':id', `${e.target.value}`)
 
+                // return alert(url)
+                window.open(url, '_self')
+            }
+        }
+    </script>
 
     @include('parts.js')
 </body>

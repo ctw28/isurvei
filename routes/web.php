@@ -50,6 +50,9 @@ Route::get('mitra/bagian/{bagianId}', [UserController::class, 'mitraShowPertanya
 Route::post('mitra/survei/{surveiId}/bagian/simpan-jawaban/{bagianId}', [UserController::class, 'mitraStoreJawaban'])->name('mitra.store.jawaban');
 
 Route::group(['middleware' => 'auth'], function () {
+    //login sebagai
+
+    Route::get('user/login-as/{id}', [LoginController::class, 'loginAs'])->name('login.as');
     Route::group(['prefix' => 'admin', 'middleware' => 'role.admin'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('/survei', [SurveiController::class, 'index'])->name('admin.survei.data');
@@ -86,6 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/survei/partisipan', [DashboardController::class, 'participant'])->name('admin.survei.participants');
         // Route::get('/survei/hasil', [DashboardController::class, 'surveiHasil'])->name('admin.survei.hasil');
 
+        //LOGIN SEBAGAI
         //STATISTIK SURVEI
         // Route::get('/survei/{id}/bagian/hasil', [DashboardController::class, 'hasilBagian'])->name('admin.bagian.hasil');
     });

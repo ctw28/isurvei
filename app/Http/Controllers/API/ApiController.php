@@ -26,6 +26,7 @@ use App\Models\UserMahasiswa;
 use App\Models\DirectJawaban;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Auth;
 
 class ApiController extends Controller
 {
@@ -383,11 +384,6 @@ class ApiController extends Controller
             Dalam rangka evaluasi untuk peningkatan mutu Institut Agama Islam Negeri (IAIN) Kendari, dengan ini setiap Dosen diharapkan berpartisipasi dengan mengisi Survey Kepuasan Dosen terhadap layanan penelitian, pengabdian kepada masyarakat, pengelolaan SDM, layanan keuangan, sarana dan prasarana, layanan tata kelola, tata pamong dan kerjasama di IAIN Kendari melalui form berikut.
             Atas Kesediaan dan kerjasamanya, Kami ucapkan terima kasih.
             Tim Survey IAIN Kendari";
-        else
-            $pesan = "Assalamu’alaikum warohmatullahi wabarokatuh
-            Dalam rangka evaluasi untuk peningkatan mutu Institut Agama Islam Negeri (IAIN) Kendari, dengan ini mahasiswa diharapkan berpartisipasi dengan mengisi Survey Kepuasan Mahasiswa terhadap Tata Kelola, Keuangan dan Sapras, Layanan diluar Pembelajaran terstruktur, serta Layanan Pendidikan, melalui form berikut.
-            Atas Kesediaan dan kerjasamanya, Kami ucapkan terima kasih.            
-            Tim Survey IAIN Kendari";
 
         if ($kategori == "dosen" || $kategori == "pegawai") {
             $data = Survei::with(['sesi' => function ($sesi) use ($id) {
@@ -418,6 +414,7 @@ class ApiController extends Controller
                 ->where([
                     'survei_untuk' => $kategori,
                     'is_wajib' => true,
+                    'is_aktif' => true,
                 ])
                 ->get();
         }
@@ -478,6 +475,9 @@ class ApiController extends Controller
 
     public function surveiUpdate(Request $request, $id)
     {
+        // $data['ggwp'] = "ggwp";
+        // return $data;
+
         // return $request->all();
         $survei = Survei::find($id);
         $value = false;

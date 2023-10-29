@@ -18,6 +18,7 @@
                     <thead>
                         <tr class="text-center">
                             <th scope="col" width="3%">No</th>
+                            <th scope="col" width="20%">Dibuat Oleh</th>
                             <th scope="col" width="30%">Nama Survei</th>
                             <th scope="col" width="10%">Untuk</th>
                             <th scope="col" width="10%">Wajib</th>
@@ -30,6 +31,7 @@
                         @foreach ($data as $index => $item)
                         <tr>
                             <td class="text-center">{{$index+1}}</td>
+                            <td>{{$item->user->userPegawai->pegawai->dataDiri->nama_lengkap}} ({{(session('session_role')->role_aktif->detail->role_aplikasi_nama)}})</td>
                             <td>{{$item->survei_nama}}</td>
                             <td class="text-center">{{$item->survei_untuk}}</td>
                             <td class="text-center">

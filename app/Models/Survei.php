@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Blameable;
 
 class Survei extends Model
 {
-    use HasFactory;
+    // use HasFactory;
+    use Blameable;
 
     protected $fillable = [
         'survei_nama',
@@ -17,6 +19,8 @@ class Survei extends Model
         'is_aktif',
         'is_wajib',
         'survei_status',
+        'created_by',
+        'updated_by',
     ];
 
     public function user()

@@ -34,13 +34,14 @@ class UserController extends Controller
 {
     public function index()
     {
-        // return session('role');
+        // return session('session_role')->role_aktif->role;
+        // return session('session_role')['role_aktif']['role'];
         $data['title'] = "Dashboard";
         // $data['iddata'] = session('iddata');
         $role = 'mahasiswa';
-        if (session('role') == "tenaga_kependidikan")
+        if (session('session_role')->role_aktif->role == "tenaga_kependidikan")
             $role = "pegawai";
-        else if (session('role') == "dosen")
+        else if (session('session_role')->role_aktif->role == "dosen")
             $role = "dosen";
         $data['survei'] = Survei::with(['sesi' => function ($sesi) {
             $sesi->where('user_id', Auth::user()->id);

@@ -18,7 +18,8 @@ class roleUser
      */
     public function handle(Request $request, Closure $next)
     {
-        $role = session('role');
+        // $role = session('role');
+        $role = session('session_role')->role_aktif->role;
         if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan")
             return $next($request);
         return redirect()->back();

@@ -18,8 +18,8 @@ class roleAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        $role = session('role');
-        if ($role == "administrator" || $role == "admin_fakultas")
+        $role = session('session_role')->role_aktif->role;
+        if ($role == "administrator" || $role == "admin_fakultas" || $role == "admin")
             return $next($request);
         // return redirect()->route('login-page');
         return redirect()->back();

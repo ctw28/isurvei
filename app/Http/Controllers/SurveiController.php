@@ -15,7 +15,9 @@ class SurveiController extends Controller
     public function index()
     {
         $title = "Survei";
-        $data = Survei::where('survei_oleh', Auth::user()->id)->orderBy('created_at', "DESC")->get();
+        // $data = Survei::where('survei_oleh', Auth::user()->id)->orderBy('created_at', "DESC")->get();
+        $data = Survei::with(['user.userAplikasiRoleAdmin'])->whereHas('user.userAplikasiRoleAdmin')
+            ->orderBy('created_at', "DESC")->get();
         foreach ($data as $item) {
             if ($item->survei_untuk == "mitra")
                 $item->decrypt_id = Crypt::encrypt($item->id);
@@ -39,6 +41,7 @@ class SurveiController extends Controller
             ]);
             return redirect()->route('admin.survei.data')->with(['status' => 'success', 'pesan' => 'Data berhasil diupdate', 'label' => 'success']);
         } catch (\Throwable $th) {
+            return $th;
             return redirect()->back()->with(['status' => 'success', 'pesan' => 'Data gagal diupdate', 'label' => 'danger']);
         }
     }

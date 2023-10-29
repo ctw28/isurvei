@@ -7,12 +7,54 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\PplPendaftar;
 use App\Models\MasterProdi;
 use App\Models\User;
+use App\Models\AplikasiUserRole;
 use JWTAuth;
 use Illuminate\Support\Facades\Session;
 
 
 class LoginController extends Controller
 {
+    public function loginAs($userAplikasiRoleId)
+    {
+        // return env('APP_LIST_ID');
+        // session()
+        if ($userAplikasiRoleId == "default") {
+            $role = Auth::user()->userRole->role->nama_role;
+            $session = [
+                'default_role' => $role,
+                'role_aktif' => (object)[
+                    'role' => $role,
+                    'detail' => []
+                ],
+            ];
+            session(['session_role' => (object) $session]);
+            if ($role == "administrator" || $role == "admin_fakultas" || $role == "admin") {
+                return redirect()->intended(route('admin.dashboard'));
+            } else if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan") {
+                return redirect()->intended(route('user.dashboard'));
+            }
+        }
+        $data = AplikasiUserRole::with('userLevel')->find($userAplikasiRoleId);
+        $role = $data->userLevel->level_nama;
+        // return $role;
+        $session = [
+            'default_role' => $role,
+            'role_aktif' => (object)[
+                'role' => $data->userLevel->level_nama,
+                'detail' => (object) [
+                    'id' => $data->id,
+                    'role_aplikasi_nama' => $data->user_role_nama,
+                ]
+            ],
+        ];
+        session(['session_role' => (object)$session]);
+        if ($role == "administrator" || $role == "admin_fakultas" || $role == "admin") {
+            return redirect()->intended(route('admin.dashboard'));
+        } else if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan") {
+            return redirect()->intended(route('user.dashboard'));
+        }
+        // return env('APP_LIST_ID');
+    }
 
     public function index()
     {
@@ -69,8 +111,16 @@ class LoginController extends Controller
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
                 $role = Auth::user()->userRole->role->nama_role;
-                session(['role' => $role]);
-                if ($role == "administrator" || $role == "admin_fakultas") {
+                $session = [
+                    'default_role' => $role,
+                    'role_aktif' => (object)[
+                        'role' => $role,
+                        'detail' => []
+                    ],
+                ];
+                session(['session_role' => (object) $session]);
+                // return $session('session_role')[0];
+                if ($role == "administrator" || $role == "admin_fakultas" || $role == "admin") {
                     return redirect()->intended(route('admin.dashboard'));
                 } else if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan") {
                     return redirect()->intended(route('user.dashboard'));
@@ -93,6 +143,8 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login-page');
     }
+
+
     // public function indexApi()
     // {
     //     return view('login-api');

@@ -16,7 +16,9 @@ class DashboardController extends Controller
     public function index()
     {
         $title = 'Dashboard';
-        $survei = Survei::where('survei_oleh', Auth::user()->id)->count();
+        // $survei = Survei::where('survei_oleh', Auth::user()->id)->count();
+        $survei = Survei::with(['user.userAplikasiRoleAdmin'])->whereHas('user.userAplikasiRoleAdmin')
+            ->orderBy('created_at', "DESC")->count();
         $surveiAktif = Survei::where(['survei_oleh' => Auth::user()->id, 'is_aktif' => 1])->count();
         $surveiSelesai = Survei::where(['survei_oleh' => Auth::user()->id, 'survei_status' => 1])->count();
         return view('admin.dashboard', compact('title', 'survei', 'surveiAktif', 'surveiSelesai'));
@@ -39,7 +41,8 @@ class DashboardController extends Controller
         // $data = SurveiBagian::where('survei_id', $survei_id)->get();
         // return $data;
         $title = "Hasil Survei";
-        $data = Survei::all();
+        $data = Survei::with(['user.userAplikasiRoleAdmin'])->whereHas('user.userAplikasiRoleAdmin')
+            ->orderBy('created_at', "DESC")->get();
         // $data['dataUser'] = User::where('user_role_id', 2)->get();
 
         // $data['stepData'] = Step::with('stepChild')->whereNull('step_parent')->orderBy('step_urutan', 'ASC')->get();

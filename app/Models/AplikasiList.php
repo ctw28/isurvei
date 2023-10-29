@@ -17,7 +17,7 @@ class AplikasiList extends Model
         'is_aktif',
     ];
 
-    public function role()
+    public function userRole()
     {
         return $this->hasMany('App\Models\UserRoleApp');
     }
