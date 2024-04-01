@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserLevelsTable extends Migration
+class CreateOrganisasiGrupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreateUserLevelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_levels', function (Blueprint $table) {
+        Schema::create('organisasi_grups', function (Blueprint $table) {
             $table->id();
-            $table->string('level_nama');
-            $table->text('level_keterangan');
+            $table->string('grup_nama', 200);
+            $table->string('grup_singkatan', 200);
+            $table->string('grup_flag', 50);
+            $table->string('pimpinan_sebutan', 200);
+            $table->text('grup_keterangan');
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ class CreateUserLevelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_levels');
+        Schema::dropIfExists('organisasi_grups');
     }
 }

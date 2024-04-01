@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrganisasiGrupsTable extends Migration
+class CreateRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateOrganisasiGrupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('organisasi_grups', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('grup_nama', 200);
-            $table->string('grup_singkatan', 200);
-            $table->string('pimpinan_sebutan', 200);
-            $table->text('grup_keterangan');
+            $table->string('role_nama', 100);
+            $table->string('keterangan', 100)->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateOrganisasiGrupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('organisasi_grups');
+        Schema::dropIfExists('roles');
     }
 }

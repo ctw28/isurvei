@@ -17,7 +17,8 @@
                 </div>
                 <div class="col-md-9">
                     <label for="step_nama" class="form-label">Deskripsi</label>
-                    <textarea class="form-control" name="survei_deskripsi" id="survei_deskripsi" rows="3" required>{{$data->survei_deskripsi}}</textarea>
+                    <textarea class="form-control" name="survei_deskripsi" id="survei_deskripsi" rows="5">{{$data->survei_deskripsi}}</textarea>
+
                 </div>
 
                 <div class="col-md-12">
@@ -51,9 +52,7 @@
 
 @section('js')
 <script>
-    tinymce.init({
-        selector: '#survei_deskripsi'
-    });
+
 </script>
 
 @endsection

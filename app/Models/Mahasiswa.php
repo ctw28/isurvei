@@ -12,7 +12,7 @@ class Mahasiswa extends Model
         'iddata',
         'nim',
         'data_diri_id',
-        'master_prodi_id',
+        'organisasi_id',
     ];
 
     public function userMahasiswa()
@@ -25,6 +25,6 @@ class Mahasiswa extends Model
     }
     public function prodi()
     {
-        return $this->belongsTo('App\Models\MasterProdi', 'master_prodi_id');
+        return $this->belongsTo('App\Models\Organisasi', 'organisasi_id');
     }
 }

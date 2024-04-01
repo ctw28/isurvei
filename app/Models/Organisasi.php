@@ -8,4 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 class Organisasi extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'organisasi_grup_id',
+        'organisasi_parent_id',
+        'organisasi_nama',
+        'organisasi_singkatan',
+        'organisasi_keterangan',
+        'is_current',
+        'is_aktif',
+    ];
+
+    public function grup()
+    {
+        return $this->belongsTo('App\Models\OrganisasiGrup');
+    }
+    public function parent()
+    {
+        return $this->belongsTo('App\Models\Organisasi', 'organisasi_parent_id');
+    }
+
+    public function mahasiswa()
+    {
+        return $this->hasMany('App\Models\Mahasiswa');
+    }
 }

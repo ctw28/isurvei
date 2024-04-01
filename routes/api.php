@@ -8,6 +8,7 @@ use App\Http\Controllers\API\ApiController;
 use App\Http\Controllers\API\BagianController as BagianAPI;
 use App\Http\Controllers\API\PertanyaanController;
 use App\Http\Controllers\API\JawabanController;
+use App\Http\Controllers\API\GeneralController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,16 @@ use App\Http\Controllers\API\JawabanController;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+
+//GENERAL API
+Route::get('organisasi/{flag}', [GeneralController::class, 'getOrganisasi'])->name('get.organisasi');
+Route::get('organisasi/{fakultasId}/prodi', [GeneralController::class, 'getProdi'])->name('get.prodi');
+
+
+
+
+
 Route::get('survei/{id}/partisipan/{userId}/detail-jawaban', [ApiController::class, 'detailJawaban'])->name('get.detail.jawaban');
 Route::get('bagian/{id}/get-pertanyaan', [ApiController::class, 'getPertanyaan'])->name('get.pertanyaan.bagian');
 
@@ -49,6 +60,7 @@ Route::post('login', [ApiController::class, 'authenticate']);
 Route::get('/survei/{id}/bagian', [BagianAPI::class, 'index'])->name('bagian.by.survei');
 Route::get('bagian/{id}/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan.by.bagian');
 Route::get('/survei/{id}/pertanyaan/{pertanyaanId}', [JawabanController::class, 'index'])->name('jawaban.count.by.survei.and.pertanyaan');
+Route::post('/statistik/pertanyaan/{pertanyaanId}', [JawabanController::class, 'filter'])->name('jawaban.count.by.survei.and.pertanyaan.filter');
 
 
 Route::post('survei/{id}/update', [ApiController::class, 'surveiUpdate'])->name('api.survei.update');

@@ -10,6 +10,7 @@ class UserRole extends Model
     protected $fillable = [
         'role_id',
         'user_id',
+        'is_default',
     ];
 
     public function role()
@@ -23,5 +24,9 @@ class UserRole extends Model
     public function user()
     {
         return $this->belongsTo('App\Models\User');
+    }
+    public function adminOrganisasi()
+    {
+        return $this->hasOne('App\Models\AdminOrganisasi');
     }
 }

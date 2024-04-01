@@ -29,6 +29,7 @@ use App\Http\Controllers\MaintenanceController;
 
 // Route::get('/sesi', [DashboardController::class, 'setsesi'])->middleware('guest');
 
+Route::get('/mitra/{id}/excel', [DashboardController::class, 'excel_mitra'])->name('mitra.excel');
 Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance')->middleware('guest');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Route::group(['middleware' => 'role.pegawai'], function () {

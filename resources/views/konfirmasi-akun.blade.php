@@ -75,7 +75,7 @@
 
             } else {
                 alert("username dan password tidak sesuai / tidak ditemukan. Mohon Coba Lagi")
-                window.location.href = '/'
+                // window.location.href = '/'
 
             }
         }

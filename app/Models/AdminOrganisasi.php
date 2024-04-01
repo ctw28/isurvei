@@ -5,23 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AplikasiUser extends Model
+class AdminOrganisasi extends Model
 {
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'aplikasi_user_role',
-        'is_default',
-        'is_aktif',
+        'organisasi_id',
+        'sebutan',
     ];
 
     public function user()
     {
         return $this->belongsTo('App\Models\User');
     }
-
-    public function aplikasiUserRole()
+    public function organisasi()
     {
-        return $this->belongsTo('App\Models\AplikasiUserRole', 'aplikasi_user_role');
+        return $this->belongsTo('App\Models\Organisasi');
+    }
+    public function survei()
+    {
+        return $this->hasMany('App\Models\Survei');
     }
 }

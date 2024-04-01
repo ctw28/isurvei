@@ -110,7 +110,7 @@ class LoginController extends Controller
             ]);
             if (Auth::attempt($credentials)) {
                 $request->session()->regenerate();
-                $role = Auth::user()->userRole->role->nama_role;
+                $role = Auth::user()->userRole->role->role_nama;
                 $session = [
                     'default_role' => $role,
                     'role_aktif' => (object)[
@@ -120,9 +120,9 @@ class LoginController extends Controller
                 ];
                 session(['session_role' => (object) $session]);
                 // return $session('session_role')[0];
-                if ($role == "administrator" || $role == "admin_fakultas" || $role == "admin") {
+                if ($role == "admin_organisasi") {
                     return redirect()->intended(route('admin.dashboard'));
-                } else if ($role == "mahasiswa" || $role == "dosen" || $role == "tenaga_kependidikan") {
+                } else if ($role == "mahasiswa" || $role == "pegawai") {
                     return redirect()->intended(route('user.dashboard'));
                 }
             }

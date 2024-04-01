@@ -16,6 +16,7 @@ class DataDiri extends Model
         'no_hp',
         'alamat_ktp',
         'alamat_domisili',
+        'nik',
     ];
 
     public function mahasiswa()

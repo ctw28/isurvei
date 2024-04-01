@@ -22,7 +22,7 @@ class SurveiRequest extends FormRequest
             $is_wajib = true;
         $request->merge([
             'is_wajib' => $is_wajib,
-            'survei_oleh' => Auth::user()->id,
+            'organisasi_id' => Auth::user()->adminOrganisasi->organisasi_id,
         ]);
     }
 
@@ -41,7 +41,7 @@ class SurveiRequest extends FormRequest
         return [
             //
             'survei_nama' => 'required',
-            'survei_oleh' => 'required',
+            'organisasi_id' => 'required',
             'survei_deskripsi' => 'string',
             'survei_untuk' => 'required',
             'survei_status' => 'boolean',

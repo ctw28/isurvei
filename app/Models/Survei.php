@@ -18,14 +18,18 @@ class Survei extends Model
         'survei_untuk',
         'is_aktif',
         'is_wajib',
-        'survei_status',
+        'organisasi_id',
         'created_by',
         'updated_by',
     ];
 
-    public function user()
+    public function organisasi()
     {
-        return $this->belongsTo('App\Models\User', 'survei_oleh');
+        return $this->belongsTo('App\Models\Organisasi');
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo('App\Models\User', 'created_by');
     }
     public function bagian()
     {

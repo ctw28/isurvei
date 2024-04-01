@@ -16,7 +16,9 @@ class SurveiController extends Controller
     {
         $title = "Survei";
         // $data = Survei::where('survei_oleh', Auth::user()->id)->orderBy('created_at', "DESC")->get();
-        $data = Survei::with(['user.userAplikasiRoleAdmin'])->whereHas('user.userAplikasiRoleAdmin')
+        $organisasiId = Auth::user()->adminOrganisasi->organisasi_id;
+        $data = Survei::with(['organisasi'])
+            ->where('organisasi_id', $organisasiId)
             ->orderBy('created_at', "DESC")->get();
         foreach ($data as $item) {
             if ($item->survei_untuk == "mitra")

@@ -2,7 +2,7 @@
 @if(!Auth::user())
 <html lang="en" data-color="light-purple" data-footer="true" data-override='{"attributes": {"placement": "horizontal","layout": "fluid" ,"color":"light-purple"}, "showSettings":false, "storagePrefix": "starter-project"}'>
 @else
-@if(session('session_role')->role_aktif->role=="administrator" || session('session_role')->role_aktif->role =="admin_fakultas" || session('session_role')->role_aktif->role =="admin")
+@if(session('session_role')->role_aktif->role=="admin_organisasi")
 
 <html lang="en" data-color="light-purple" data-footer="true" data-override='{"attributes": {"placement": "vertical","layout": "fluid" ,"color":"light-purple"}, "showSettings":false, "storagePrefix": "starter-project"}'>
 @else
@@ -41,20 +41,12 @@
                             @if(!Auth::user())
                             Mitra
                             @else
-                            @if(session('session_role')->role_aktif->role=="administrator" || session('session_role')->role_aktif->role =="admin_fakultas")
+                            @if(session('session_role')->role_aktif->role=="admin_organsasi")
                             Administrator
                             @elseif(session('session_role')->role_aktif->role=="mahasiswa")
                             {{Auth::user()->userMahasiswa->mahasiswa->dataDiri->nama_lengkap}}
-                            @elseif(session('session_role')->role_aktif->role=="tenaga_kependidikan")
+                            @elseif(session('session_role')->role_aktif->role=="pegawai")
                             {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}}
-                            @elseif(session('session_role')->role_aktif->role=="dosen")
-                            {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}}
-                            @elseif(session('session_role')->role_aktif->role=="admin")
-                            @if(session('session_role')->default_role == "mahasiswa")
-                            {{Auth::user()->userMahasiswa->mahasiswa->dataDiri->nama_lengkap}} - {{(session('session_role')->role_aktif->detail->role_aplikasi_nama)}}
-                            @else
-                            {{Auth::user()->userPegawai->pegawai->dataDiri->nama_lengkap}} - {{(session('session_role')->role_aktif->detail->role_aplikasi_nama)}}
-                            @endif
                             @endif
                             @endif
                         </div>
@@ -70,13 +62,7 @@
                                     if(!empty(session('session_role')->role_aktif->detail))
 
                                     @endphp
-                                    @foreach(Auth::user()->userAplikasiRole as $role)
-                                    @if(empty(session('session_role')->role_aktif->detail))
-                                    <option value="{{$role->aplikasiUserRole->id}}">{{$role->aplikasiUserRole->user_role_nama}}</option>
-                                    @else
-                                    <option value="{{$role->aplikasiUserRole->id}}" {{(session('session_role')->role_aktif->detail->role_aplikasi_nama == $role->aplikasiUserRole->user_role_nama)?'selected':''}}>{{$role->aplikasiUserRole->user_role_nama}}</option>
-                                    @endif
-                                    @endforeach
+
                                 </select>
                                 <p>Atau</p>
                                 <ul class="list-unstyled">
@@ -123,7 +109,7 @@
 
                         @include('parts/menu-mitra')
                         @else
-                        @if(session('session_role')->role_aktif->role=="administrator" || session('session_role')->role_aktif->role =="admin_fakultas" || session('session_role')->role_aktif->role =="admin")
+                        @if(session('session_role')->role_aktif->role=="admin_organisasi")
                         @include('parts/menu-admin')
                         @elseif(session('session_role')->role_aktif->role =="mahasiswa")
                         @include('parts/menu-user')

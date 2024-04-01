@@ -21,10 +21,14 @@ class CreateSurveisTable extends Migration
             $table->boolean('is_aktif')->default(false); //ini untuk publish/draft
             $table->boolean('is_wajib')->default(false); //ini untuk wajib diisi/tidak
             $table->boolean('survei_status')->default(false); //ini untuk selesai / belum
-            $table->unsignedBigInteger('survei_oleh')->unsigned()->nullable();
+            $table->unsignedBigInteger('organisasi_id');
+            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('updated_by');
             $table->timestamps();
 
-            $table->foreign('survei_oleh')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('organisasi_id')->references('id')->on('organisasis');
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->foreign('updated_by')->references('id')->on('users');
         });
     }
 

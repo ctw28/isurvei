@@ -118,6 +118,26 @@
     <div id="show-pertanyaan">
 
     </div>
+
+    <div id="show-filter" style="display:none">
+        <h4 class="mt-5">Filter</h4>
+        <div class="row mb-5">
+
+            <div class="col-md-3">
+                <select class="form-select" id="fakultas">
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="prodi">
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-warning" id="filter">Filter</button>
+            </div>
+
+        </div>
+    </div>
+
     <div id="show-statistik" style="display:none" class="mt-4">
 
         <table class="table table-striped table-hover">
@@ -132,22 +152,24 @@
 
             </tbody>
         </table>
-        <h2 class="mt-5">Diagram</h2>
-        <div>
-            <label class="form-label d-block">Pilih Diagram</label>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="diagram" id="pie" value="pie" />
-                <label class="form-check-label" for="pie">Pie</label>
+        <div id="show-diagram">
+            <h2 class="mt-5">Diagram</h2>
+            <div>
+                <label class="form-label d-block">Pilih Diagram</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="diagram" id="pie" value="pie" />
+                    <label class="form-check-label" for="pie">Pie</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="diagram" id="bar" value="bar" />
+                    <label class="form-check-label" for="bar">Bar</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <button class="btn btn-primary" id="terapkan">Terapkan</button>
+                </div>
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="diagram" id="bar" value="bar" />
-                <label class="form-check-label" for="bar">Bar</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <button class="btn btn-primary" id="terapkan">Terapkan</button>
-            </div>
+            <div id="showDiagram" class="col-sm-12" style="height: 500px;"></div>
         </div>
-        <div id="showDiagram" class="col-sm-12" style="height: 500px;"></div>
     </div>
 </template>
 
@@ -220,6 +242,8 @@
         showBagian.appendChild(select)
         let bagianSelect = document.querySelector('#bagian')
         bagianSelect.addEventListener('change', async function() {
+            document.querySelector('#show-filter').style.display = "none";
+
             let showPertanyaan = document.querySelector("#show-pertanyaan")
             showPertanyaan.innerHTML = ""
             let showDataTable = document.querySelector("#show-data-table")
@@ -250,6 +274,9 @@
             showPertanyaan.appendChild(select)
             let pertanyaanSelect = document.querySelector('#pertanyaan')
             pertanyaanSelect.addEventListener('change', async function() {
+                document.querySelector('#show-filter').style.display = "none";
+                show.style.display = "none";
+
                 url = "{{route('jawaban.count.by.survei.and.pertanyaan',[':surveiId',':pertanyaanId'])}}"
                 url = url.replace(':surveiId', `${id}`)
                 url = url.replace(':pertanyaanId', `${pertanyaanSelect.value}`)
@@ -259,65 +286,282 @@
                 // response.data.forEach(function(data, i) {
 
                 // });
+                let fakultasSelect = document.querySelector('#fakultas')
 
+                let prodiSelect = document.querySelector('#prodi')
+                if (content.dataset.surveiUntuk == "mahasiswa") {
+                    document.querySelector('#show-filter').style.display = "block";
+                    fakultasSelect.innerHTML = "";
+                    prodiSelect.innerHTML = "";
+                    let url = "{{route('get.organisasi','fakultas')}}"
+                    let fetchData = await fetch(url)
+                    let response = await fetchData.json()
+                    console.log(response);
+                    let contents = `<option value="semua-fakultas">Semua Fakultas</option>`
+                    response.data[0].organisasi.forEach(fakultas => {
+                        contents += `<option value="${fakultas.id}">${fakultas.organisasi_singkatan}</option>`
+                    })
+                    fakultasSelect.innerHTML = contents
 
-                show.style.display = 'block'
-                showDataTable.innerHTML = ""
+                    fakultasSelect.addEventListener('change', async function(e) {
+                        // alert(e.target.value);
+                        prodiSelect.innerHTML = ""
+                        if (e.target.value == "semua-fakultas")
+                            return prodiSelect.setAttribute('disabled', 'disabled')
+                        prodiSelect.removeAttribute('disabled')
+                        let url = "{{route('get.prodi',':id')}}"
+                        url = url.replace(':id', e.target.value)
+                        let fetchData = await fetch(url)
+                        let response = await fetchData.json()
+                        console.log(response);
+                        let contents = `<option value="semua-prodi">Semua Prodi</option>`
+                        response.data.forEach(prodi => {
+                            contents += `<option value="${prodi.id}">${prodi.organisasi_singkatan}</option>`
+                        })
+                        prodiSelect.innerHTML = contents
+                    })
+                    document.querySelector("#filter").addEventListener('click', async function(event) {
+                        // alert(fakultasSelect.value)
+                        show.style.display = 'none'
+                        let url = "{{route('jawaban.count.by.survei.and.pertanyaan.filter',[':pertanyaanId'])}}"
+                        url = url.replace(':pertanyaanId', `${pertanyaanSelect.value}`)
+                        let dataSend = new FormData()
+                        if (fakultasSelect.value === "semua-fakultas") {
+                            dataSend.append('filter', "semua")
+                            dataSend.append('id', fakultasSelect.value)
+                        } else if (prodiSelect.value == "semua-prodi") {
+                            dataSend.append('filter', "fakultas")
+                            dataSend.append('id', fakultasSelect.value)
+                        } else {
+                            dataSend.append('filter', "prodi")
+                            dataSend.append('id', prodiSelect.value)
+                        }
+                        let fetchData = await fetch(url, {
+                            method: "POST",
+                            body: dataSend
+                        })
+                        let response = await fetchData.json()
+                        // return;
+                        show.style.display = 'block'
+                        showDataTable.innerHTML = ""
 
-                let fragment = document.createDocumentFragment();
-                response.data.pilihan_jawaban.forEach(function(data, i) {
-                    let tr = document.createElement('tr');
-                    let nomor = document.createElement('td');
-                    nomor.innerText = i + 1
-                    let pilihanJawaban = document.createElement('td');
-                    pilihanJawaban.innerText = data.pilihan_jawaban
-                    let total = document.createElement('td');
-                    total.innerText = data.total
-                    tr.appendChild(nomor)
-                    tr.appendChild(pilihanJawaban)
-                    tr.appendChild(total)
-                    fragment.appendChild(tr);
-                });
-                showDataTable.appendChild(fragment)
-                let daftarJawaban = response.data.pilihan_jawaban
-                google.charts.load('current', {
-                    'packages': ['corechart', 'bar']
-                });
-                google.charts.setOnLoadCallback(drawChart);
+                        let fragment = document.createDocumentFragment();
+                        let jenisJawaban = response.data.pertanyaan_jenis_jawaban
+                        fragment.innerHTML = '';
+                        if (jenisJawaban == "Text" || jenisJawaban == "Text Panjang") {
+                            show.querySelector('#show-diagram').style.display = 'none';
+                            if (response.data.jawaban.length == 0) {
+                                let tr = document.createElement('tr');
+                                let pilihanJawaban = document.createElement('td');
+                                pilihanJawaban.setAttribute('colspan', '3')
+                                pilihanJawaban.className = "text-center"
+                                pilihanJawaban.innerText = "Data tidak ada"
+                                tr.appendChild(pilihanJawaban)
+                                fragment.appendChild(tr);
+                            } else {
+                                response.data.jawaban.forEach(function(data, i) {
+                                    let tr = document.createElement('tr');
+                                    let nomor = document.createElement('td');
+                                    nomor.innerText = i + 1
+                                    let pilihanJawaban = document.createElement('td');
+                                    pilihanJawaban.innerText = data.jawaban
+                                    let total = document.createElement('td');
+                                    total.innerText = ''
+                                    tr.appendChild(nomor)
+                                    tr.appendChild(pilihanJawaban)
+                                    tr.appendChild(total)
+                                    fragment.appendChild(tr);
+                                });
 
-                function drawChart() {
-                    let jawaban = [
-                        ['Task', pertanyaan.options[pertanyaan.selectedIndex].innerText]
-                    ]
-                    daftarJawaban.map(function(data) {
-                        jawaban.push([data.pilihan_jawaban, data.total])
+                            }
+                        } else {
+                            show.querySelector('#show-diagram').style.display = 'block';
+                            if (response.data.jawaban.length == 0) {
+                                let tr = document.createElement('tr');
+                                let pilihanJawaban = document.createElement('td');
+                                pilihanJawaban.setAttribute('colspan', '3')
+                                pilihanJawaban.className = "text-center"
+                                pilihanJawaban.innerText = "Data tidak ada"
+                                tr.appendChild(pilihanJawaban)
+                                fragment.appendChild(tr);
+                            } else {
+                                response.data.pilihan_jawaban.forEach(function(data, i) {
+                                    let tr = document.createElement('tr');
+                                    let nomor = document.createElement('td');
+                                    nomor.innerText = i + 1
+                                    let pilihanJawaban = document.createElement('td');
+                                    pilihanJawaban.innerText = data.pilihan_jawaban
+                                    let total = document.createElement('td');
+                                    total.innerText = data.total
+                                    tr.appendChild(nomor)
+                                    tr.appendChild(pilihanJawaban)
+                                    tr.appendChild(total)
+                                    fragment.appendChild(tr);
+                                });
+                            }
+                        }
+
+                        showDataTable.appendChild(fragment)
+
+                        let daftarJawaban = response.data.pilihan_jawaban
+                        google.charts.load('current', {
+                            'packages': ['corechart', 'bar']
+                        });
+                        google.charts.setOnLoadCallback(drawChart);
+
+                        function drawChart() {
+                            let jawaban = [
+                                ['Task', pertanyaan.options[pertanyaan.selectedIndex].innerText]
+                            ]
+                            daftarJawaban.map(function(data) {
+                                jawaban.push([data.pilihan_jawaban, data.total])
+                            });
+                            console.log(jawaban);
+                            var data = google.visualization.arrayToDataTable(
+                                jawaban
+                            );
+                            var options = {
+                                title: pertanyaan.options[pertanyaan.selectedIndex].innerText,
+                                sliceVisibilityThreshold: 0,
+                                pieHole: 0.4,
+                            };
+                            var chart
+                            document.querySelector("#formRow").style.display = 'block'
+                            document.getElementById('showDiagram').innerHTML = ""
+                            document.querySelector("#pie").checked = true;
+                            chart = new google.visualization.PieChart(document.getElementById('showDiagram')); //default tampilkan pie chart
+                            chart.innerHTML = ""
+                            chart.draw(data, options);
+                            document.querySelector("#terapkan").addEventListener("click", function() {
+                                let diagram = document.querySelector('input[name="diagram"]:checked').value;
+                                if (diagram == "pie")
+                                    chart = new google.visualization.PieChart(document.getElementById('showDiagram'));
+                                if (diagram == "bar")
+                                    chart = new google.visualization.BarChart(document.getElementById('showDiagram'));
+                                chart.innerHTML = ""
+                                chart.draw(data, options);
+                            });
+                        }
+
+                    })
+                } else {
+                    show.style.display = 'none'
+                    let url = "{{route('jawaban.count.by.survei.and.pertanyaan.filter',[':pertanyaanId'])}}"
+                    url = url.replace(':pertanyaanId', `${pertanyaanSelect.value}`)
+                    let dataSend = new FormData()
+                    dataSend.append('filter', "semua")
+                    dataSend.append('id', fakultasSelect.value)
+                    let fetchData = await fetch(url, {
+                        method: "POST",
+                        body: dataSend
+                    })
+                    let response = await fetchData.json()
+                    // return;
+                    show.style.display = 'block'
+                    showDataTable.innerHTML = ""
+
+                    let fragment = document.createDocumentFragment();
+                    let jenisJawaban = response.data.pertanyaan_jenis_jawaban
+                    fragment.innerHTML = '';
+                    if (jenisJawaban == "Text" || jenisJawaban == "Text Panjang") {
+                        show.querySelector('#show-diagram').style.display = 'none';
+                        if (response.data.jawaban.length == 0) {
+                            let tr = document.createElement('tr');
+                            let pilihanJawaban = document.createElement('td');
+                            pilihanJawaban.setAttribute('colspan', '3')
+                            pilihanJawaban.className = "text-center"
+                            pilihanJawaban.innerText = "Data tidak ada"
+                            tr.appendChild(pilihanJawaban)
+                            fragment.appendChild(tr);
+                        } else {
+                            response.data.jawaban.forEach(function(data, i) {
+                                let tr = document.createElement('tr');
+                                let nomor = document.createElement('td');
+                                nomor.innerText = i + 1
+                                let pilihanJawaban = document.createElement('td');
+                                pilihanJawaban.innerText = data.jawaban
+                                let total = document.createElement('td');
+                                total.innerText = ''
+                                tr.appendChild(nomor)
+                                tr.appendChild(pilihanJawaban)
+                                tr.appendChild(total)
+                                fragment.appendChild(tr);
+                            });
+
+                        }
+                    } else {
+                        show.querySelector('#show-diagram').style.display = 'block';
+                        if (response.data.jawaban.length == 0) {
+                            let tr = document.createElement('tr');
+                            let pilihanJawaban = document.createElement('td');
+                            pilihanJawaban.setAttribute('colspan', '3')
+                            pilihanJawaban.className = "text-center"
+                            pilihanJawaban.innerText = "Data tidak ada"
+                            tr.appendChild(pilihanJawaban)
+                            fragment.appendChild(tr);
+                        } else {
+                            response.data.pilihan_jawaban.forEach(function(data, i) {
+                                let tr = document.createElement('tr');
+                                let nomor = document.createElement('td');
+                                nomor.innerText = i + 1
+                                let pilihanJawaban = document.createElement('td');
+                                pilihanJawaban.innerText = data.pilihan_jawaban
+                                let total = document.createElement('td');
+                                total.innerText = data.total
+                                tr.appendChild(nomor)
+                                tr.appendChild(pilihanJawaban)
+                                tr.appendChild(total)
+                                fragment.appendChild(tr);
+                            });
+                        }
+                    }
+
+                    showDataTable.appendChild(fragment)
+
+                    let daftarJawaban = response.data.pilihan_jawaban
+                    google.charts.load('current', {
+                        'packages': ['corechart', 'bar']
                     });
-                    console.log(jawaban);
-                    var data = google.visualization.arrayToDataTable(
-                        jawaban
-                    );
-                    var options = {
-                        title: pertanyaan.options[pertanyaan.selectedIndex].innerText,
-                        sliceVisibilityThreshold: 0,
-                        pieHole: 0.4,
-                    };
-                    var chart
-                    document.querySelector("#formRow").style.display = 'block'
-                    document.getElementById('showDiagram').innerHTML = ""
-                    document.querySelector("#pie").checked = true;
-                    chart = new google.visualization.PieChart(document.getElementById('showDiagram')); //default tampilkan pie chart
-                    chart.innerHTML = ""
-                    chart.draw(data, options);
-                    document.querySelector("#terapkan").addEventListener("click", function() {
-                        let diagram = document.querySelector('input[name="diagram"]:checked').value;
-                        if (diagram == "pie")
-                            chart = new google.visualization.PieChart(document.getElementById('showDiagram'));
-                        if (diagram == "bar")
-                            chart = new google.visualization.BarChart(document.getElementById('showDiagram'));
+                    google.charts.setOnLoadCallback(drawChart);
+
+                    function drawChart() {
+                        let jawaban = [
+                            ['Task', pertanyaan.options[pertanyaan.selectedIndex].innerText]
+                        ]
+                        daftarJawaban.map(function(data) {
+                            jawaban.push([data.pilihan_jawaban, data.total])
+                        });
+                        console.log(jawaban);
+                        var data = google.visualization.arrayToDataTable(
+                            jawaban
+                        );
+                        var options = {
+                            title: pertanyaan.options[pertanyaan.selectedIndex].innerText,
+                            sliceVisibilityThreshold: 0,
+                            pieHole: 0.4,
+                        };
+                        var chart
+                        document.querySelector("#formRow").style.display = 'block'
+                        document.getElementById('showDiagram').innerHTML = ""
+                        document.querySelector("#pie").checked = true;
+                        chart = new google.visualization.PieChart(document.getElementById('showDiagram')); //default tampilkan pie chart
                         chart.innerHTML = ""
                         chart.draw(data, options);
-                    });
+                        document.querySelector("#terapkan").addEventListener("click", function() {
+                            let diagram = document.querySelector('input[name="diagram"]:checked').value;
+                            if (diagram == "pie")
+                                chart = new google.visualization.PieChart(document.getElementById('showDiagram'));
+                            if (diagram == "bar")
+                                chart = new google.visualization.BarChart(document.getElementById('showDiagram'));
+                            chart.innerHTML = ""
+                            chart.draw(data, options);
+                        });
+                    }
                 }
+
+
+
+
                 // alert(`${pertanyaanSelect.value} - ${id}`)
             })
 
@@ -340,53 +584,102 @@
         let fetchData = await fetch(url)
         response = await fetchData.json()
         console.log(response);
+        content.dataset.surveiUntuk = response.survei.survei_untuk
+
         if (response.status === true) {
             const tbody = document.querySelector('#show-data')
             tbody.innerHTML = ""
             const fragment = document.createDocumentFragment()
-            if (response.details.data.length == 0) { //ini kalau datanya kosong
-                const tr = document.createElement('tr')
-                const td = document.createElement('td')
-                td.className = "text-center"
-                td.setAttribute('colspan', 4)
-                td.textContent = 'Tidak ada data'
-                tr.appendChild(td)
-                fragment.appendChild(tr)
-            } else { //ini kalau ada datanya
-                let urut = response.details.from //ambil no urut
-                response.details.data.forEach(function(data, i) {
+            if (response.survei.survei_untuk != "mitra") {
+                if (response.details.data.length == 0) { //ini kalau datanya kosong
                     const tr = document.createElement('tr')
-                    const tdNo = document.createElement('td')
-                    tdNo.textContent = urut++
-                    tdNo.className = 'text-center'
-                    const tdTanggal = document.createElement('td')
-                    tdTanggal.textContent = data.sesi_tanggal
-                    const tdPengisian = document.createElement('td')
-                    if (data.sesi_status == 1)
-                        tdPengisian.innerHTML = '<span class="badge bg-success text-uppercase">Selesai</span>'
-                    else
-                        tdPengisian.innerHTML = '<span class="badge bg-warning text-uppercase">Progres</span>'
-                    // tdPengisian.textContent = 'progress'
-                    const tdAksi = document.createElement('td')
-                    const link = document.createElement('a')
-                    link.textContent = "Lihat Jawaban"
-                    link.href = "#"
-                    if (response.survei.survei_untuk == "mitra")
-                        link.dataset.id = data.id
-                    else
-                        link.dataset.id = data.id
-
-                    link.setAttribute('onclick', `detailJawaban(event,${surveiId})`)
-                    link.dataset.bsToggle = "modal"
-                    link.dataset.bsTarget = "#exampleModal"
-                    // data-bs-toggle="modal" data-bs-target="#exampleModal"
-                    tdAksi.appendChild(link)
-                    tr.appendChild(tdNo)
-                    tr.appendChild(tdTanggal)
-                    tr.appendChild(tdPengisian)
-                    tr.appendChild(tdAksi)
+                    const td = document.createElement('td')
+                    td.className = "text-center"
+                    td.setAttribute('colspan', 4)
+                    td.textContent = 'Tidak ada data'
+                    tr.appendChild(td)
                     fragment.appendChild(tr)
-                })
+                } else { //ini kalau ada datanya
+                    let urut = response.details.from //ambil no urut
+                    response.details.data.forEach(function(data, i) {
+                        const tr = document.createElement('tr')
+                        const tdNo = document.createElement('td')
+                        tdNo.textContent = urut++
+                        tdNo.className = 'text-center'
+                        const tdTanggal = document.createElement('td')
+                        tdTanggal.textContent = data.sesi_tanggal
+                        const tdPengisian = document.createElement('td')
+                        if (data.sesi_status == 1)
+                            tdPengisian.innerHTML = '<span class="badge bg-success text-uppercase">Selesai</span>'
+                        else
+                            tdPengisian.innerHTML = '<span class="badge bg-warning text-uppercase">Progres</span>'
+                        // tdPengisian.textContent = 'progress'
+                        const tdAksi = document.createElement('td')
+                        const link = document.createElement('a')
+                        link.textContent = "Lihat Jawaban"
+                        link.href = "#"
+                        if (response.survei.survei_untuk == "mitra")
+                            link.dataset.id = data.id
+                        else
+                            link.dataset.id = data.id
+
+                        link.setAttribute('onclick', `detailJawaban(event,${surveiId})`)
+                        link.dataset.bsToggle = "modal"
+                        link.dataset.bsTarget = "#exampleModal"
+                        // data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        tdAksi.appendChild(link)
+                        tr.appendChild(tdNo)
+                        tr.appendChild(tdTanggal)
+                        tr.appendChild(tdPengisian)
+                        tr.appendChild(tdAksi)
+                        fragment.appendChild(tr)
+                    })
+                }
+            } else {
+                if (response.details.length == 0) { //ini kalau datanya kosong
+                    const tr = document.createElement('tr')
+                    const td = document.createElement('td')
+                    td.className = "text-center"
+                    td.setAttribute('colspan', 4)
+                    td.textContent = 'Tidak ada data'
+                    tr.appendChild(td)
+                    fragment.appendChild(tr)
+                } else { //ini kalau ada datanya
+                    let urut = response.details.from //ambil no urut
+                    response.details.data.forEach(function(data, i) {
+                        const tr = document.createElement('tr')
+                        const tdNo = document.createElement('td')
+                        tdNo.textContent = urut++
+                        tdNo.className = 'text-center'
+                        const tdTanggal = document.createElement('td')
+                        tdTanggal.textContent = data.sesi_tanggal
+                        const tdPengisian = document.createElement('td')
+                        if (data.sesi_status == 1)
+                            tdPengisian.innerHTML = '<span class="badge bg-success text-uppercase">Selesai</span>'
+                        else
+                            tdPengisian.innerHTML = '<span class="badge bg-warning text-uppercase">Progres</span>'
+                        // tdPengisian.textContent = 'progress'
+                        const tdAksi = document.createElement('td')
+                        const link = document.createElement('a')
+                        link.textContent = "Lihat Jawaban"
+                        link.href = "#"
+                        if (response.survei.survei_untuk == "mitra")
+                            link.dataset.id = data.id
+                        else
+                            link.dataset.id = data.id
+
+                        link.setAttribute('onclick', `detailJawaban(event,${surveiId})`)
+                        link.dataset.bsToggle = "modal"
+                        link.dataset.bsTarget = "#exampleModal"
+                        // data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        tdAksi.appendChild(link)
+                        tr.appendChild(tdNo)
+                        tr.appendChild(tdTanggal)
+                        tr.appendChild(tdPengisian)
+                        tr.appendChild(tdAksi)
+                        fragment.appendChild(tr)
+                    })
+                }
             }
             tbody.appendChild(fragment)
             //ini untuk paginate
@@ -436,6 +729,7 @@
             tr.appendChild(tdBagian)
             fragment.appendChild(tr)
             data.pertanyaan.forEach(function(tanya) {
+                console.log(tanya);
                 const trPertanyaan = document.createElement('tr')
                 const tdPertanyaan = document.createElement('td')
                 tdPertanyaan.setAttribute('colspan', 1)
@@ -447,10 +741,24 @@
                     else
                         tdjawaban.textContent = '-'
                 } else {
-                    if (tanya.jawaban.length > 0)
-                        tdjawaban.textContent = tanya.jawaban[0].jawaban
-                    else
+                    if (tanya.jawaban.length > 0) {
+                        console.log(tanya.jawaban.length);
+                        if (tanya.pertanyaan_jenis_jawaban == "Lebih Dari Satu Jawaban") {
+                            let jawabans = ''
+                            tanya.jawaban.forEach((jawab, index) => {
+                                if (index == tanya.jawaban.length - 1)
+                                    jawabans += `${jawab.jawaban}`
+                                else
+                                    jawabans += `${jawab.jawaban}, `
+                            })
+                            tdjawaban.textContent = jawabans
+                        } else {
+                            tdjawaban.textContent = tanya.jawaban[0].jawaban
+                        }
+                    } else {
+
                         tdjawaban.textContent = '-'
+                    }
 
                 }
                 trPertanyaan.appendChild(tdPertanyaan)

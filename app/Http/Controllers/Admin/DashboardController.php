@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Survei;
 use App\Models\SurveiBagian;
+use App\Models\MitraJawaban;
 use App\Models\SurveiSesi;
 use App\Models\Jawaban;
 use Illuminate\Support\Facades\Auth;
@@ -16,11 +17,14 @@ class DashboardController extends Controller
     public function index()
     {
         $title = 'Dashboard';
+        // return $title;
         // $survei = Survei::where('survei_oleh', Auth::user()->id)->count();
-        $survei = Survei::with(['user.userAplikasiRoleAdmin'])->whereHas('user.userAplikasiRoleAdmin')
+        $organisasiId = Auth::user()->adminOrganisasi->organisasi_id;
+        $survei = Survei::with(['organisasi'])
+            ->where('organisasi_id', $organisasiId)
             ->orderBy('created_at', "DESC")->count();
-        $surveiAktif = Survei::where(['survei_oleh' => Auth::user()->id, 'is_aktif' => 1])->count();
-        $surveiSelesai = Survei::where(['survei_oleh' => Auth::user()->id, 'survei_status' => 1])->count();
+        $surveiAktif = Survei::where(['organisasi_id' => Auth::user()->adminOrganisasi->organisasi_id, 'is_aktif' => 1])->count();
+        $surveiSelesai = Survei::where(['organisasi_id' => Auth::user()->adminOrganisasi->organisasi_id, 'survei_status' => 1])->count();
         return view('admin.dashboard', compact('title', 'survei', 'surveiAktif', 'surveiSelesai'));
     }
 
@@ -40,8 +44,11 @@ class DashboardController extends Controller
     {
         // $data = SurveiBagian::where('survei_id', $survei_id)->get();
         // return $data;
+        $organisasiId = Auth::user()->adminOrganisasi->organisasi_id;
+
         $title = "Hasil Survei";
-        $data = Survei::with(['user.userAplikasiRoleAdmin'])->whereHas('user.userAplikasiRoleAdmin')
+        $data = Survei::with(['organisasi'])
+            ->where('organisasi_id', $organisasiId)
             ->orderBy('created_at', "DESC")->get();
         // $data['dataUser'] = User::where('user_role_id', 2)->get();
 
@@ -65,5 +72,11 @@ class DashboardController extends Controller
         $title = "Partisipan Survei";
         $data = Survei::all();
         return view('admin.survei-hasil', compact('title', 'data'));
+    }
+
+    public function excel()
+    {
+        $data = MitraJawaban::with('pertanyaan')->get();
+        return $data;
     }
 }

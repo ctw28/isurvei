@@ -9,8 +9,8 @@ class BlameableObserver
 {
     public function creating(Model $model)
     {
-        $model->created_by = Auth::user()->userAplikasiRole[0]->id;
-        $model->updated_by = Auth::user()->userAplikasiRole[0]->id;
+        $model->created_by = Auth::user()->adminOrganisasi->id;
+        $model->updated_by = Auth::user()->adminOrganisasi->id;
     }
 
     // public function updating(Model $model)

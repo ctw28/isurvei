@@ -70,7 +70,7 @@
                     @endforeach
                 </select>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="save">Tentukan Direct</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="save">Set</button>
             </div>
         </div>
     </div>
@@ -84,6 +84,9 @@
 
     function choose(event) {
         element = event.target
+        document.querySelector("#save").innerText = "Set Pertanyaan Awal"
+        if (event.target.dataset.jenis == "last")
+            document.querySelector("#save").innerText = "Set Pertanyaan Akhir"
     }
     save.addEventListener('click', async function() {
         let dataSend = new FormData()

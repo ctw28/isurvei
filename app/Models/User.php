@@ -18,7 +18,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password',
+        'username', 'email', 'password',
     ];
 
     /**
@@ -67,27 +67,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne('App\Models\UserPegawai');
     }
-
-    public function userAplikasi()
+    public function adminOrganisasi()
     {
-        return $this->hasMany('App\Models\AplikasiUser');
-    }
-    public function userAplikasiRole()
-    {
-        // return $this->userAplikasi()->aplikasiUserRole()->where('aplikasi_id', env('APP_LIST_ID'));
-        return $this->userAplikasi()->with('aplikasiUserRole', function ($aplikasiUserRole) {
-            $aplikasiUserRole->where('aplikasi_id', env('APP_LIST_ID'));
-        })->whereHas('aplikasiUserRole', function ($aplikasiUserRole) {
-            $aplikasiUserRole->where('aplikasi_id', env('APP_LIST_ID'));
-        });
-    }
-    public function userAplikasiRoleAdmin()
-    {
-        // return $this->userAplikasi()->aplikasiUserRole()->where('aplikasi_id', env('APP_LIST_ID'));
-        return $this->userAplikasi()->with('aplikasiUserRole', function ($aplikasiUserRole) {
-            $aplikasiUserRole->where(['id' => session('session_role')->role_aktif->detail->id, 'aplikasi_id' => env('APP_LIST_ID')]);
-        })->whereHas('aplikasiUserRole', function ($aplikasiUserRole) {
-            $aplikasiUserRole->where(['id' => session('session_role')->role_aktif->detail->id, 'aplikasi_id' => env('APP_LIST_ID')]);
-        });
+        return $this->hasOne('App\Models\AdminOrganisasi');
     }
 }

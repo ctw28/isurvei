@@ -25,6 +25,7 @@ use App\Models\Mitra;
 use App\Models\MitraSesi;
 use App\Models\MitraJawaban;
 use App\Models\MitraJawabanLainnya;
+use App\Models\Organisasi;
 use App\Models\PilihanJawaban;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -34,15 +35,19 @@ class UserController extends Controller
 {
     public function index()
     {
+        // return "ggwp";
         // return session('session_role')->role_aktif->role;
         // return session('session_role')['role_aktif']['role'];
         $data['title'] = "Dashboard";
         // $data['iddata'] = session('iddata');
         $role = 'mahasiswa';
-        if (session('session_role')->role_aktif->role == "tenaga_kependidikan")
+        if (session('session_role')->role_aktif->role == "pegawai") {
+            $pegawaiId = Auth::user()->userPegawai->pegawai_id;
             $role = "pegawai";
-        else if (session('session_role')->role_aktif->role == "dosen")
-            $role = "dosen";
+            $dosen = PegawaiDosen::where('pegawai_id', $pegawaiId)->first();
+            if ($dosen !== null)
+                $role = "dosen";
+        }
         $data['survei'] = Survei::with(['sesi' => function ($sesi) {
             $sesi->where('user_id', Auth::user()->id);
         }, 'bagianAwalAkhir'])->where([
@@ -483,6 +488,7 @@ class UserController extends Controller
             if ($row->required == 1)
                 $required = "required";
             $dataJawaban = Jawaban::where(['sesi_id' => $sesi->id, 'pertanyaan_id' => $row->id])->get();
+            // return $dataJawaban;
             $gg[] = $dataJawaban;
             if (count($dataJawaban) > 0) {
                 $jawaban = $dataJawaban;
@@ -529,7 +535,8 @@ class UserController extends Controller
                             }
                         }
                     }
-                    $content .= '<div class="form-check">
+                    if ($item->pilihan_jawaban != "lainnya")
+                        $content .= '<div class="form-check">
                     <input class="form-check-input" type="checkbox" name="input[' . $row->id . '][]" id="input' . $index . '" value="' . $item->pilihan_jawaban . '" ' . $checked . '/>
                     <label class="form-check-label" for="input' . $index . '">' . $item->pilihan_jawaban . '</label>
                   </div>';
@@ -538,12 +545,13 @@ class UserController extends Controller
                     if (count($dataJawaban) > 0) {
                         foreach ($dataJawaban as $jawab) {
                             $checked = ($jawab->jawaban == "lainnya") ? "checked" : '';
+                            break;
                         }
                     }
                     $content .= '<div class="form-check">
-                    <input onclick="showTextInput(event, ' . $row->id . ')" class="form-check-input" type="checkbox" name="input[' . $row->id . '][]" id="input' . $row->id . '" value="lainnya" ' . $checked . '/>
-                    <label class="form-check-label" for="input' . $row->id . '">Lainnya</label>
-                  </div>';
+                        <input onclick="showTextInput(event, ' . $row->id . ')" class="form-check-input" type="checkbox" name="input[' . $row->id . '][]" id="input' . $row->id . '" value="lainnya" ' . $checked . '/>
+                        <label class="form-check-label" for="input' . $row->id . '">Lainnya</label>
+                      </div>';
                     $check = Jawaban::with(['jawabanLainnya'])->where([
                         'sesi_id' => $sesi->id,
                         'pertanyaan_id' => $row->id,
@@ -568,6 +576,7 @@ class UserController extends Controller
                     }
                 }
                 if ($row->lainnya == "1") {
+                    $checked = '';
                     if (count($dataJawaban) > 0)
                         $checked = ($jawaban[0]->jawaban == "lainnya") ? "selected" : '';
                     $content .= '<option value="lainnya" ' . $checked . '>Lainnya</option>';
@@ -741,18 +750,17 @@ class UserController extends Controller
             $roleId = "";
             if ($request->jenis_akun == "mahasiswa") {
                 $name = $data->nim;
-                $roleId = 3;
+                $roleId = 4;
             }
             if ($request->jenis_akun == "pegawai") {
                 $name = $data->nip;
                 if ($data->nidn != 'non-nidn')
-                    $roleId = 7;
+                    $roleId = 3;
                 else
-                    $roleId = 6;
+                    $roleId = 3;
             }
 
             $user = User::create([
-                'name' => $name,
                 'username' => $request->username,
                 'email' => $name . '@mail.com',
                 'password' => bcrypt($request->password),
@@ -765,21 +773,21 @@ class UserController extends Controller
 
             $dataDiri = DataDiri::create([
                 'nama_lengkap' => $data->nama,
-                'jenis_kelamin' => $data->kelamin,
+                'jenis_kelamin' => ($data->kelamin != '') ? $data->kelamin : "L",
                 'lahir_tempat' => $data->tmplahir,
                 'lahir_tanggal' => $data->tgllahir,
                 'no_hp' => $data->hp,
                 'alamat_ktp' => $data->alamat,
                 'alamat_domisili' => $data->alamat,
+                'nik' => (isset($data->nik) ? $data->nik : '0000000000000000'),
             ]);
 
             if ($request->jenis_akun == "mahasiswa") {
-                $prodi = MasterProdi::where('prodi_kode', $data->idprodi)->first();
+                $prodi = Organisasi::where('organisasi_singkatan', $data->idprodi)->first();
                 $mahasiswa = Mahasiswa::create([
-                    'iddata' => $data->iddata,
                     'nim' => $data->nim,
                     'data_diri_id' => $dataDiri->id,
-                    'master_prodi_id' => $prodi->id,
+                    'organisasi_id' => $prodi->id,
                 ]);
                 $userMahasiswa = UserMahasiswa::create([
                     'user_id' => $user->id,
@@ -822,7 +830,7 @@ class UserController extends Controller
             ], 200);
         } catch (\Throwable $th) {
             DB::rollback();
-            // throw $th;
+            throw $th;
             // return;
 
             return response()->json([

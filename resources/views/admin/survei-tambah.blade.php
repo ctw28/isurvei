@@ -48,10 +48,10 @@
 @endsection
 
 @section('js')
-<script>
+<!-- <script>
     tinymce.init({
         selector: '#survei_deskripsi'
     });
-</script>
+</script> -->
 
 @endsection
