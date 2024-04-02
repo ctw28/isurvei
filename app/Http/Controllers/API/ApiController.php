@@ -24,6 +24,8 @@ use App\Models\MasterProdi;
 use App\Models\Mahasiswa;
 use App\Models\UserMahasiswa;
 use App\Models\DirectJawaban;
+use App\Models\PilihanJawaban;
+use App\Models\SurveiAPI;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\Auth;
@@ -154,7 +156,7 @@ class ApiController extends Controller
             else if ($survei->survei_untuk == "mahasiswa")
                 $data = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri'])->where('survei_id', $survei->id)->paginate(20);
             else
-                $data = MitraSesi::with(['mitra'])->where('survei_id', $survei->id)->get();
+                $data = MitraSesi::with(['mitra'])->where('survei_id', $survei->id)->paginate(20);
 
             return response()->json([
                 'status' => true,
@@ -490,5 +492,117 @@ class ApiController extends Controller
             'status' => 'sukses',
             'message' => 'sukses update',
         ], 200);
+    }
+
+    public function copySurvei($surveiIdCopy)
+    {
+        DB::beginTransaction();
+
+        try {
+            //code...
+            $data = Survei::with(['bagian.pertanyaan.pilihanJawaban'])->find($surveiIdCopy);
+            $survei = SurveiAPI::create([
+                'survei_nama' => "copy of " . $data->survei_nama,
+                'survei_deskripsi' => $data->survei_deskripsi,
+                'survei_untuk' => $data->survei_untuk,
+                'is_aktif' => 0,
+                'is_wajib' => 0,
+                'organisasi_id' => $data->organisasi_id,
+                'created_by' => $data->created_by,
+                'updated_by' => $data->updated_by,
+            ]);
+            // return $data;
+            foreach ($data->bagian as $bagian) {
+                $bagianCopy = SurveiBagian::create([
+                    'survei_id' => $survei->id,
+                    'bagian_nama' => $bagian->bagian_nama,
+                    'bagian_kode' => $bagian->bagian_kode,
+                    'bagian_urutan' => $bagian->bagian_urutan,
+                    'bagian_parent' => $bagian->bagian_parent,
+                ]);
+                foreach ($bagian->pertanyaan as $pertanyaan) {
+                    $pertanyaanCopy = SurveiPertanyaan::create([
+                        'bagian_id' => $bagianCopy->id,
+                        'pertanyaan' => $pertanyaan->pertanyaan,
+                        'pertanyaan_urutan' => $pertanyaan->pertanyaan_urutan,
+                        'pertanyaan_jenis_jawaban' => $pertanyaan->pertanyaan_jenis_jawaban,
+                        'required' => $pertanyaan->required,
+                        'lainnya' => $pertanyaan->lainnya
+                    ]);
+                    $pilihanJawaban = [];
+                    if ($pertanyaan->pertanyaan_jenis_jawaban != "Text" || $pertanyaan->pertanyaan_jenis_jawaban != "Text Panjang") {
+                        foreach ($pertanyaan->pilihanJawaban as $pilihan) {
+                            $pilihanJawaban[] = [
+                                'pertanyaan_id' => $pertanyaanCopy->id,
+                                'pilihan_jawaban' => $pilihan->pilihan_jawaban,
+                                'urutan' => $pilihan->urutan
+                            ];
+                        }
+                        PilihanJawaban::insert($pilihanJawaban);
+                    }
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data dicopy',
+                'details' => $pilihanJawaban,
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+            return;
+            return response()->json([
+                'status' => true,
+                'message' => 'Data gagal dicopy',
+                'details' => $th,
+            ], 500);
+        }
+    }
+    public function copyPertanyaan($bagianId, $bagianIdCopy)
+    {
+        DB::beginTransaction();
+
+        try {
+            //code...
+            $data = SurveiBagian::with(['pertanyaan.pilihanJawaban'])->find($bagianId);
+            // return $data;
+            foreach ($data->pertanyaan as $pertanyaan) {
+                $pertanyaanCopy = SurveiPertanyaan::create([
+                    'bagian_id' => $bagianIdCopy,
+                    'pertanyaan' => $pertanyaan->pertanyaan,
+                    'pertanyaan_urutan' => $pertanyaan->pertanyaan_urutan,
+                    'pertanyaan_jenis_jawaban' => $pertanyaan->pertanyaan_jenis_jawaban,
+                    'required' => $pertanyaan->required,
+                    'lainnya' => $pertanyaan->lainnya
+                ]);
+                $pilihanJawaban = [];
+                if ($pertanyaan->pertanyaan_jenis_jawaban != "Text" || $pertanyaan->pertanyaan_jenis_jawaban != "Text Panjang") {
+                    foreach ($pertanyaan->pilihanJawaban as $pilihan) {
+                        $pilihanJawaban[] = [
+                            'pertanyaan_id' => $pertanyaanCopy->id,
+                            'pilihan_jawaban' => $pilihan->pilihan_jawaban,
+                            'urutan' => $pilihan->urutan
+                        ];
+                    }
+                    PilihanJawaban::insert($pilihanJawaban);
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data dicopy',
+                'details' => $pilihanJawaban,
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+            return;
+            return response()->json([
+                'status' => true,
+                'message' => 'Data gagal dicopy',
+                'details' => $th,
+            ], 500);
+        }
     }
 }

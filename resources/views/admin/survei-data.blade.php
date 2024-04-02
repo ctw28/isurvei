@@ -58,6 +58,7 @@
                                 <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
                                     <a class="dropdown-item" href="{{route('admin.survei.edit',$item->id)}}">Ubah</a>
                                     <a class="dropdown-item" href="{{route('admin.survei.delete',$item->id)}}" onclick="return confirm('Yakin Hapus')">Hapus</a>
+                                    <a class="dropdown-item" onclick="duplikat('{{$item->id}}')">Duplikat</a>
                                 </div>
                             </td>
                         </tr>
@@ -91,6 +92,23 @@
 
 @section('js')
 <script>
+    async function duplikat(id) {
+        let konfirm = confirm("Yakin Copy? semua bagian dan pertanyaan akan ikut tercopy. anda bisa edit setelahnya")
+        if (!konfirm)
+            return
+        let url = "{{route('survei.copy',':id')}}"
+        url = url.replace(":id", id)
+        let response = await fetch(url)
+        responseMessage = await response.json()
+        // log re
+        // return console.log(responseMessage)
+        if (responseMessage.status) {
+            alert("Survei Berhasil dicopy")
+            window.location.reload();
+
+        }
+    }
+
     async function update(column, e) {
         // return alert(e.target.dataset.id)
         let konfirmasi = confirm('yakin?')

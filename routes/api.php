@@ -30,6 +30,8 @@ use App\Http\Controllers\API\GeneralController;
 Route::get('organisasi/{flag}', [GeneralController::class, 'getOrganisasi'])->name('get.organisasi');
 Route::get('organisasi/{fakultasId}/prodi', [GeneralController::class, 'getProdi'])->name('get.prodi');
 
+Route::get('/bagian/{id}/copy-pertanyaan/{idCopy}', [ApiController::class, 'copyPertanyaan'])->name('copy.pertanyaan');
+Route::get('/survei/{id}/copy', [ApiController::class, 'copySurvei'])->name('survei.copy');
 
 
 

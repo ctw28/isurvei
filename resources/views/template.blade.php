@@ -55,15 +55,22 @@
                         <div class="row ms-0 me-0">
                             <div class="col-12 ps-1 pe-1">
                                 <label>Login Sebagai</label> <br>
+                                @php
+                                if(Auth::user()) {
+                                @endphp
+
                                 <select class="form-select my-3" onchange="loginAs(event)">
                                     <option value="default">{{Auth::user()->userRole->role->nama_role}} (Default)</option>
                                     @php
                                     $selected = '';
                                     if(!empty(session('session_role')->role_aktif->detail))
-
                                     @endphp
-
                                 </select>
+
+                                @php
+                                }
+                                @endphp
+
                                 <p>Atau</p>
                                 <ul class="list-unstyled">
                                     <li>

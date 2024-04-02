@@ -17,10 +17,11 @@ class PertanyaanController extends Controller
     public function index($surveiId, $bagianId)
     {
         $title = "Pertanyaan";
-        $data = Survei::find($surveiId);
+        $data = Survei::with('bagian.bagianParent')->find($surveiId);
         $bagian = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) {
             $pertanyaan->orderBy('pertanyaan_urutan', 'ASC');
-        }])->find($bagianId);
+        }, 'bagianParent'])->find($bagianId);
+        // return $data;
         return view('admin.survei-bagian-pertanyaan', compact('title', 'data', 'bagian'));
     }
 
