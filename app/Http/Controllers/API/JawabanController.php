@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Jawaban;
 use App\Models\Mahasiswa;
+use App\Models\MitraJawaban;
 use App\Models\Organisasi;
 use App\Models\SurveiPertanyaan;
 
@@ -37,6 +38,23 @@ class JawabanController extends Controller
             // return $pertanyaan->pilihanJawaban;
             $pertanyaan->pilihanJawaban->map(function ($data) use ($pertanyaanId) {
                 $total = Jawaban::where(['pertanyaan_id' => $pertanyaanId, 'jawaban' => $data->pilihan_jawaban])
+                    ->count();
+                $data->total = $total;
+            });
+            return response()->json([
+                'status' => true,
+                'data' => $pertanyaan,
+                'pesan' => 'data ditemukan',
+            ]);
+        } else if ($request->filter == "mitra") {
+            // return response()->json([
+            //     'status' => true,
+            //     'data' => [],
+            //     'pesan' => 'kwkwkwlklwk',
+            // ]);
+            $pertanyaan = SurveiPertanyaan::with(['pilihanJawaban', 'jawabanMitra'])->find(($pertanyaanId));
+            $pertanyaan->pilihanJawaban->map(function ($data) use ($pertanyaanId) {
+                $total = MitraJawaban::where(['pertanyaan_id' => $pertanyaanId, 'jawaban' => $data->pilihan_jawaban])
                     ->count();
                 $data->total = $total;
             });

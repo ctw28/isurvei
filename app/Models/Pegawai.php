@@ -19,6 +19,10 @@ class Pegawai extends Model
     {
         return $this->hasOne('App\Models\UserPegawai');
     }
+    public function pegawaiDosen()
+    {
+        return $this->hasOne('App\Models\PegawaiDosen');
+    }
     public function dataDiri()
     {
         return $this->belongsTo('App\Models\DataDiri');

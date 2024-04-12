@@ -19,9 +19,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <select class="form-select" id="survei">
-                        <option>-- Pilih Survei --</option>
+                        <option value="">-- Pilih Survei --</option>
                         @foreach($data as $item)
-                        <option value="{{$item->id}}">{{$item->survei_nama}}</option>
+                        <option value="{{$item->id}}">{{$item->survei_nama}} ({{$item->survei_untuk}})</option>
                         @endforeach
                     </select>
                 </div>
@@ -34,9 +34,9 @@
                         <i data-cs-icon="chart-4"></i>
                         <span>Statistik</span>
                     </button>
-                    <button class="btn btn-success btn-icon btn-icon-start ms-1" id="eksport-button">
-                        <i data-cs-icon="download"></i>
-                        <span>Eksport (.xls)</span>
+                    <button class="btn btn-success btn-icon btn-icon-start ms-1" onclick="cetakPertanyaan(this)">
+                        <i data-cs-icon="print"></i>
+                        <span>Lihat Semua Data</span>
                     </button>
                 </div>
 
@@ -88,6 +88,7 @@
 <!-- Template -->
 <template id="partisipan-template">
     <h2>Daftar Partisipan Survei</h2>
+
     <table class="table table-striped table-hover mt-4">
         <thead>
             <tr>
@@ -138,8 +139,7 @@
         </div>
     </div>
 
-    <div id="show-statistik" style="display:none" class="mt-4">
-
+    <div id="show-statistik" style="display:none">
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
@@ -188,9 +188,18 @@
         showPartisipan(surveiId)
         partisipanButton.setAttribute('onclick', `showPartisipan(${surveiId})`)
         statistikButton.setAttribute('onclick', `showStatistik(${surveiId})`)
-        eksportButton.setAttribute('onclick', `showEksport(${surveiId})`)
+        // eksportButton.setAttribute('onclick', `showEksport(${surveiId})`)
 
     })
+
+
+    function cetakPertanyaan(button) {
+        if (document.querySelector("#survei").value == "")
+            return alert('pilih survei dulu')
+        let url = "{{ route('admin.survei.cetak', ':id') }}";
+        url = url.replace(":id", document.querySelector("#survei").value);
+        window.open(url, "_blank");
+    }
 
     function showTemplatePartisipan() {
         content.innerHTML = ""
@@ -444,13 +453,13 @@
                         }
 
                     })
-                } else {
+                } else if (content.dataset.surveiUntuk == "pegawai" || content.dataset.surveiUntuk == "dosen") { //dosen
                     show.style.display = 'none'
                     let url = "{{route('jawaban.count.by.survei.and.pertanyaan.filter',[':pertanyaanId'])}}"
                     url = url.replace(':pertanyaanId', `${pertanyaanSelect.value}`)
                     let dataSend = new FormData()
                     dataSend.append('filter', "semua")
-                    dataSend.append('id', fakultasSelect.value)
+                    // dataSend.append('id', fakultasSelect.value)
                     let fetchData = await fetch(url, {
                         method: "POST",
                         body: dataSend
@@ -492,6 +501,118 @@
                     } else {
                         show.querySelector('#show-diagram').style.display = 'block';
                         if (response.data.jawaban.length == 0) {
+                            let tr = document.createElement('tr');
+                            let pilihanJawaban = document.createElement('td');
+                            pilihanJawaban.setAttribute('colspan', '3')
+                            pilihanJawaban.className = "text-center"
+                            pilihanJawaban.innerText = "Data tidak ada"
+                            tr.appendChild(pilihanJawaban)
+                            fragment.appendChild(tr);
+                        } else {
+                            response.data.pilihan_jawaban.forEach(function(data, i) {
+                                let tr = document.createElement('tr');
+                                let nomor = document.createElement('td');
+                                nomor.innerText = i + 1
+                                let pilihanJawaban = document.createElement('td');
+                                pilihanJawaban.innerText = data.pilihan_jawaban
+                                let total = document.createElement('td');
+                                total.innerText = data.total
+                                tr.appendChild(nomor)
+                                tr.appendChild(pilihanJawaban)
+                                tr.appendChild(total)
+                                fragment.appendChild(tr);
+                            });
+                        }
+                    }
+
+                    showDataTable.appendChild(fragment)
+
+                    let daftarJawaban = response.data.pilihan_jawaban
+                    google.charts.load('current', {
+                        'packages': ['corechart', 'bar']
+                    });
+                    google.charts.setOnLoadCallback(drawChart);
+
+                    function drawChart() {
+                        let jawaban = [
+                            ['Task', pertanyaan.options[pertanyaan.selectedIndex].innerText]
+                        ]
+                        daftarJawaban.map(function(data) {
+                            jawaban.push([data.pilihan_jawaban, data.total])
+                        });
+                        console.log(jawaban);
+                        var data = google.visualization.arrayToDataTable(
+                            jawaban
+                        );
+                        var options = {
+                            title: pertanyaan.options[pertanyaan.selectedIndex].innerText,
+                            sliceVisibilityThreshold: 0,
+                            pieHole: 0.4,
+                        };
+                        var chart
+                        document.querySelector("#formRow").style.display = 'block'
+                        document.getElementById('showDiagram').innerHTML = ""
+                        document.querySelector("#pie").checked = true;
+                        chart = new google.visualization.PieChart(document.getElementById('showDiagram')); //default tampilkan pie chart
+                        chart.innerHTML = ""
+                        chart.draw(data, options);
+                        document.querySelector("#terapkan").addEventListener("click", function() {
+                            let diagram = document.querySelector('input[name="diagram"]:checked').value;
+                            if (diagram == "pie")
+                                chart = new google.visualization.PieChart(document.getElementById('showDiagram'));
+                            if (diagram == "bar")
+                                chart = new google.visualization.BarChart(document.getElementById('showDiagram'));
+                            chart.innerHTML = ""
+                            chart.draw(data, options);
+                        });
+                    }
+                } else { //mitra
+                    show.style.display = 'none'
+                    let url = "{{route('jawaban.count.by.survei.and.pertanyaan.filter',[':pertanyaanId'])}}"
+                    url = url.replace(':pertanyaanId', `${pertanyaanSelect.value}`)
+                    let dataSend = new FormData()
+                    dataSend.append('filter', "mitra")
+                    let fetchData = await fetch(url, {
+                        method: "POST",
+                        body: dataSend
+                    })
+                    let response = await fetchData.json()
+                    console.log(response);;
+                    show.style.display = 'block'
+                    showDataTable.innerHTML = ""
+
+                    let fragment = document.createDocumentFragment();
+                    let jenisJawaban = response.data.pertanyaan_jenis_jawaban
+                    fragment.innerHTML = '';
+                    if (jenisJawaban == "Text" || jenisJawaban == "Text Panjang") {
+                        show.querySelector('#show-diagram').style.display = 'none';
+                        if (response.data.jawaban_mitra.length == 0) {
+                            let tr = document.createElement('tr');
+                            let pilihanJawaban = document.createElement('td');
+                            pilihanJawaban.setAttribute('colspan', '3')
+                            pilihanJawaban.className = "text-center"
+                            pilihanJawaban.innerText = "Data tidak ada"
+                            tr.appendChild(pilihanJawaban)
+                            fragment.appendChild(tr);
+                        } else {
+                            response.data.jawaban_mitra.forEach(function(data, i) {
+                                let tr = document.createElement('tr');
+                                let nomor = document.createElement('td');
+                                nomor.innerText = i + 1
+                                let pilihanJawaban = document.createElement('td');
+                                pilihanJawaban.innerText = data.jawaban
+                                let total = document.createElement('td');
+                                total.innerText = ''
+                                tr.appendChild(nomor)
+                                tr.appendChild(pilihanJawaban)
+                                tr.appendChild(total)
+                                fragment.appendChild(tr);
+                            });
+
+                        }
+                    } else {
+                        show.querySelector('#show-diagram').style.display = 'block';
+                        if (response.data.jawaban_mitra.length == 0) {
                             let tr = document.createElement('tr');
                             let pilihanJawaban = document.createElement('td');
                             pilihanJawaban.setAttribute('colspan', '3')
@@ -619,7 +740,7 @@
                         link.textContent = "Lihat Jawaban"
                         link.href = "#"
                         if (response.survei.survei_untuk == "mitra")
-                            link.dataset.id = data.id
+                            link.dataset.id = data.mitra_id
                         else
                             link.dataset.id = data.id
 
@@ -736,10 +857,24 @@
                 tdPertanyaan.textContent = tanya.pertanyaan
                 const tdjawaban = document.createElement('td')
                 if (response.survei.survei_untuk == "mitra") {
-                    if (tanya.jawaban_mitra.length > 0)
-                        tdjawaban.textContent = tanya.jawaban_mitra[0].jawaban
-                    else
+                    if (tanya.jawaban_mitra.length > 0) {
+                        // tdjawaban.textContent = tanya.jawaban_mitra[0].jawaban
+                        if (tanya.pertanyaan_jenis_jawaban == "Lebih Dari Satu Jawaban") {
+                            let jawabans = ''
+                            tanya.jawaban_mitra.forEach((jawab, index) => {
+                                if (index == tanya.jawaban_mitra.length - 1)
+                                    jawabans += `${jawab.jawaban}`
+                                else
+                                    jawabans += `${jawab.jawaban}, `
+                            })
+                            tdjawaban.textContent = jawabans
+                        } else {
+                            tdjawaban.textContent = tanya.jawaban_mitra[0].jawaban
+                        }
+                    } else {
+
                         tdjawaban.textContent = '-'
+                    }
                 } else {
                     if (tanya.jawaban.length > 0) {
                         console.log(tanya.jawaban.length);

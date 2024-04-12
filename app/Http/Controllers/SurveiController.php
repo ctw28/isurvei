@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\SurveiRequest;
 use App\Models\Survei;
 use App\Models\BagianAwalAkhir;
+use App\Models\Jawaban;
+use App\Models\MitraJawaban;
+use App\Models\MitraSesi;
 use App\Models\SurveiBagian;
+use App\Models\SurveiSesi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
@@ -76,5 +80,69 @@ class SurveiController extends Controller
         $bagian = Survei::find($id);
         $bagian->delete();
         return redirect()->route('admin.survei.data');
+    }
+
+    public function cetak($surveiId)
+    {
+        $limit = 100;
+        $survei = Survei::find($surveiId);
+        // return $survei;
+        if ($survei->survei_untuk == "mahasiswa")
+            $jawaban = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri', 'user.userMahasiswa.mahasiswa.prodi'])->where('survei_id', $surveiId)->paginate($limit);
+        else if ($survei->survei_untuk == "dosen" || $survei->survei_untuk == "pegawai")
+            $jawaban = SurveiSesi::with(['user.userPegawai.pegawai.dataDiri'])->where('survei_id', $surveiId)->paginate($limit);
+        else
+            $jawaban = MitraSesi::with(['mitra'])->where('survei_id', $surveiId)->paginate($limit);
+        $bagian = SurveiBagian::with(['pertanyaan', 'survei'])->where('survei_id', $surveiId)->get();
+        $data = [];
+        foreach ($jawaban as $sesinya) {
+            foreach ($bagian as $part) {
+                foreach ($part->pertanyaan as $tanya) {
+                    // $jawab = Jawaban::with('sesi.user.userMahasiswa.mahasiswa.dataDiri')
+                    if ($survei->survei_untuk == "mitra") {
+                        $jawab = MitraJawaban::where(['pertanyaan_id' => $tanya->id, 'mitra_sesi_id' => $sesinya->id])
+                            ->get();
+                        if (count($jawab) == 0) {
+                            $data[] = "-";
+                        } else {
+                            $word = "";
+                            if (count($jawab) == 1) {
+                                $data[] = $jawab[0]->jawaban;
+                            } else {
+                                foreach ($jawab as $index => $item) {
+                                    $word .= $item->jawaban;
+                                    if (count($jawab) != $index + 1)
+                                        $word .= ", ";
+                                }
+                                $data[] = $word;
+                            }
+                        }
+                    } else {
+
+                        $jawab = Jawaban::where(['pertanyaan_id' => $tanya->id, 'sesi_id' => $sesinya->id])
+                            ->get();
+                        if (count($jawab) == 0) {
+                            $data[] = "-";
+                        } else {
+                            $word = "";
+                            if (count($jawab) == 1) {
+                                $data[] = $jawab[0]->jawaban;
+                            } else {
+                                foreach ($jawab as $index => $item) {
+                                    $word .= $item->jawaban;
+                                    if (count($jawab) != $index + 1)
+                                        $word .= ", ";
+                                }
+                                $data[] = $word;
+                            }
+                        }
+                    }
+                }
+            }
+            $sesinya->jawaban = $data;
+            $data = [];
+        }
+        // return $jawaban;
+        return view('admin.cetak', compact(['survei', 'bagian', 'jawaban']));
     }
 }
