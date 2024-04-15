@@ -17,7 +17,7 @@ class CreateMitraJawabansTable extends Migration
             $table->id();
             $table->unsignedBigInteger('mitra_sesi_id');
             $table->unsignedBigInteger('pertanyaan_id');
-            $table->string('jawaban');
+            $table->text('jawaban');
 
             $table->timestamps();
             $table->foreign('mitra_sesi_id')->references('id')->on('survei_mitra_sesis');

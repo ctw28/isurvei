@@ -48,7 +48,7 @@ class DashboardController extends Controller
 
         $title = "Hasil Survei";
         $data = Survei::with(['organisasi'])
-            ->where('organisasi_id', $organisasiId)
+            // ->where('organisasi_id', $organisasiId)
             ->orderBy('created_at', "DESC")->get();
         // $data['dataUser'] = User::where('user_role_id', 2)->get();
 

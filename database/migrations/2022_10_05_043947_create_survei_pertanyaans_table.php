@@ -16,7 +16,7 @@ class CreateSurveiPertanyaansTable extends Migration
         Schema::create('survei_pertanyaans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('bagian_id');
-            $table->string('pertanyaan');
+            $table->text('pertanyaan');
             $table->integer('pertanyaan_urutan');
             $table->enum('pertanyaan_jenis_jawaban', ["Text", "Text Panjang", "Pilihan", "Lebih Dari Satu Jawaban", "Select"]);
             $table->boolean('required')->default(true);

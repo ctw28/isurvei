@@ -182,7 +182,9 @@ class UserController extends Controller
                             }
                         }
                     }
-                    $content .= '<div class="form-check">
+                    if ($item->pilihan_jawaban != "lainnya")
+
+                        $content .= '<div class="form-check">
                     <input class="form-check-input" type="checkbox" name="input[' . $row->id . '][]" id="input' . $index . '" value="' . $item->pilihan_jawaban . '" ' . $checked . '/>
                     <label class="form-check-label" for="input' . $index . '">' . $item->pilihan_jawaban . '</label>
                   </div>';
@@ -221,16 +223,19 @@ class UserController extends Controller
                     }
                 }
                 if ($row->lainnya == "1") {
+                    $checked = '';
                     if (count($dataJawaban) > 0)
+
                         $checked = ($jawaban[0]->jawaban == "lainnya") ? "selected" : '';
                     $content .= '<option value="lainnya" ' . $checked . '>Lainnya</option>';
+
                     $check = MitraJawaban::with(['mitraJawabanLainnya'])->where([
                         'mitra_sesi_id' => session('mitra_sesi'),
                         'pertanyaan_id' => $row->id,
                         'jawaban' => 'lainnya',
                     ])->get();
-                    if (!empty($check[0]->jawabanLainnya))
-                        $content .= "<input required name='lainnya[" . $row->id . "]' id='lainnya_" . $row->id . "' type='text' class='form-control' value='" . $check[0]->jawabanLainnya->jawaban . "'>";
+                    if (!empty($check[0]->mitraJawabanLainnya))
+                        $content .= "<input required name='lainnya[" . $row->id . "]' id='lainnya_" . $row->id . "' type='text' class='form-control mt-2' value='" . $check[0]->mitraJawabanLainnya->jawaban . "'>";
                 }
                 $content .= '</select>';
                 $content .= '</div>';

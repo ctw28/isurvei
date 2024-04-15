@@ -3,6 +3,25 @@
 @section('content')
 
 <!-- Form Row Start -->
+
+<section class="scroll-section" id="textContent">
+    <div class="card mb-5">
+        <div class="card-body d-flex flex-column">
+            <h3 class="card-title mb-4">Informasi Survei</h3>
+            <ul>
+                <li>Nama Survei : {{$data->survei_nama}}</li>
+                <li>Deksiprsi : {{$data->survei_deskripsi}}</li>
+                <li>Untuk : {{$data->survei_untuk}}</li>
+            </ul>
+            <div class="col-2">
+                <a href="{{route('admin.survei.data')}}" class="btn btn-dark btn-sm mb-2">
+                    <i data-cs-icon="arrow-left" class="icon" data-cs-size="10"></i>
+                    <span class="label">Kembali</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 <section class="scroll-section" id="formRow">
     <div class="col-auto d-flex mb-2">
         <a href="{{route('admin.bagian.add',$data->id)}}" class="btn btn-primary btn-icon btn-icon-start ms-1">
@@ -20,6 +39,7 @@
     </div>
     <div class="card mb-5">
         <div class="card-body">
+
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>

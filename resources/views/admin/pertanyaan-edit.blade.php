@@ -12,13 +12,21 @@
                 <li>Kode Step : {{$stepData->bagian_kode}}</li>
                 <li>Nama Step : {{$stepData->bagian_nama}}</li>
             </ul>
+            <div class="col-2">
+                <a href="{{route('admin.pertanyaan.data',[$stepData->survei_id,$stepData->id])}}" class="btn btn-dark btn-sm mb-2">
+                    <i data-cs-icon="arrow-left" class="icon" data-cs-size="10"></i>
+                    <span class="label">Kembali / batal</span>
+                </a>
+            </div>
         </div>
+
     </div>
 </section>
 <!-- Text Content End -->
 <section class="scroll-section" id="formRow">
     <div class="card mb-5">
         <div class="card-body">
+
             <form action="{{route('admin.pertanyaan.update',[$stepData->survei_id,$stepData->id,$stepData->pertanyaan[0]->id])}}" method="post" enctype="multipart/form" class="row g-3">
                 @csrf
                 <input type="hidden" name="step_id" value="{{$stepData->id}}" required />
@@ -109,11 +117,17 @@
                         </div>
 
                         @else
-                        @foreach($stepData->pertanyaan[0]->pilihanJawaban as $item)
+                        @foreach($stepData->pertanyaan[0]->pilihanJawaban as $index => $item)
                         @if($item->pilihan_jawaban!="lainnya")
-                        <div class="col-md-12 mb-3">
-                            <label for="pertanyaan_urutan" class="form-label">Pilihan</label>
-                            <input type="text" class="form-control" name="jawaban[]" value="{{$item->pilihan_jawaban}}" required />
+                        <div class="col-md-12 mb-3" id="pil_{{$index+1}}">
+                            <div class="row">
+                                <div class="col-10">
+                                    <input type="text" class="form-control" name="jawaban[]" value="{{$item->pilihan_jawaban}}" placeholder="Tuliskan Pilihan Jawaban" required />
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-danger btn-sm" type="button" id="{{$index+1}}" onclick="removeElement(this)">-</button>
+                                </div>
+                            </div>
                         </div>
                         @endif
                         @endforeach
@@ -137,7 +151,7 @@
                 </div>
 
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary" style="float: right">Edit Pertanyaan</button>
+                    <button type="submit" class="btn btn-primary">Edit Pertanyaan</button>
                 </div>
             </form>
         </div>
@@ -147,8 +161,15 @@
 
 <template id="selectTemplate">
     <div class="col-md-12 mb-3">
-        <label for="pertanyaan_urutan" class="form-label">Pilihan</label>
-        <input type="text" class="form-control" name="jawaban[]" placeholder="Tuliskan Jawaban" required />
+        <div class="row">
+
+            <div class="col-10">
+                <input type="text" class="form-control" name="jawaban[]" placeholder="Tuliskan Pilihan Jawaban" required />
+            </div>
+            <div class="col-2">
+                <button class="btn btn-danger btn-sm" type="button" onclick="removeElement(this)">-</button>
+            </div>
+        </div>
     </div>
 </template>
 <template id="lainnyaTemplate">
@@ -192,12 +213,18 @@
 
 @section('js')
 <script>
+    function removeElement(button) {
+        document.querySelector(`#pil_${button.id}`).remove()
+    }
+
     function addElement() {
         const template = document.querySelector("#selectTemplate")
         const element = template.content.cloneNode(true);
         const length = pilihanJawaban.getElementsByTagName('input').length;
-        element.querySelector('label').innerText = `Jawaban ${length+1}`
+        // element.querySelector('label').innerText = `Jawaban ${length+1}`
         element.querySelector('div').id = `pil_${length+1}`
+        element.querySelector('button').id = `${length+1}`
+
         pilihanJawaban.appendChild(element)
     }
     async function hapusJenisJawaban() {
@@ -227,11 +254,11 @@
             pilihanJawabanButton.appendChild(button)
             const add = document.querySelector("#addPilihan")
             // if (jawabanValue != "Select") {
-            if (jawabanValue != "Select" && jawabanValue != "Lebih Dari Satu Jawaban") {
-                const lainnyaTemplate = document.querySelector("#lainnyaTemplate")
-                const lainnya = lainnyaTemplate.content.cloneNode(true);
-                lainnyaContainer.appendChild(lainnya)
-            }
+            // if (jawabanValue != "Select" && jawabanValue != "Lebih Dari Satu Jawaban") {
+            const lainnyaTemplate = document.querySelector("#lainnyaTemplate")
+            const lainnya = lainnyaTemplate.content.cloneNode(true);
+            lainnyaContainer.appendChild(lainnya)
+            // }
             add.addEventListener('click', function() {
                 addElement()
             })

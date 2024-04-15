@@ -17,7 +17,7 @@ class CreateJawabansTable extends Migration
             $table->id();
             $table->unsignedBigInteger('sesi_id');
             $table->unsignedBigInteger('pertanyaan_id');
-            $table->string('jawaban');
+            $table->text('jawaban');
 
             $table->timestamps();
             $table->foreign('sesi_id')->references('id')->on('survei_sesis')->onDelete('cascade');

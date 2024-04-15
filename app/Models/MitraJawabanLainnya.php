@@ -17,6 +17,6 @@ class MitraJawabanLainnya extends Model
 
     public function mitraJawaban()
     {
-        return $this->hasOne('App\Models\MitraJawaban', 'mitra_jawaban_id');
+        return $this->belongsTo('App\Models\MitraJawaban', 'mitra_jawaban_id');
     }
 }

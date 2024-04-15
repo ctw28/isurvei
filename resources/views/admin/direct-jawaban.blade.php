@@ -13,6 +13,12 @@
                 <li>Nama Step : {{$bagianData->bagian_nama}}</li>
                 <li>Pertanyaan : {{$bagianData->pertanyaan[0]->pertanyaan}}</li>
             </ul>
+            <div class="col-2">
+                <a href="{{route('admin.pertanyaan.data',[$bagianData->survei_id,$bagianData->id])}}" class="btn btn-dark btn-sm mb-2">
+                    <i data-cs-icon="arrow-left" class="icon" data-cs-size="10"></i>
+                    <span class="label">Kembali</span>
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -20,6 +26,7 @@
 <section class="scroll-section" id="formRow">
     <div class="card mb-5">
         <div class="card-body">
+
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>

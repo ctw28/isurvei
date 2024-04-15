@@ -12,6 +12,12 @@
                 <li>Kode bagian : {{$bagian->bagian_kode}}</li>
                 <li>Nama bagian : {{$bagian->bagian_nama}}</li>
             </ul>
+            <div class="col-2">
+                <a href="{{route('admin.bagian.data',$bagian->survei_id)}}" class="btn btn-dark btn-sm">
+                    <i data-cs-icon="arrow-left" class="icon" data-cs-size="10"></i>
+                    <span class="label">Kembali</span>
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -19,6 +25,7 @@
 <section class="scroll-section" id="formRow">
     <!-- <h2 class="small-title">Daftar Pertanyaan</h2> -->
     <div class="col-auto d-flex mb-2">
+
         <a href="{{route('admin.pertanyaan.add',[$data->id,$bagian->id])}}" class="btn btn-primary btn-icon btn-icon-start ms-1">
             <i data-cs-icon="plus"></i>
             <span>Tambah Pertanyaan</span>

@@ -12,6 +12,12 @@
                 <li>Kode bagian : {{$bagian->bagian_kode}}</li>
                 <li>Nama bagian : {{$bagian->bagian_nama}}</li>
             </ul>
+            <div class="col-2">
+                <a href="{{route('admin.pertanyaan.data',[$bagian->survei_id,$bagian->id])}}" class="btn btn-dark btn-sm mb-2">
+                    <i data-cs-icon="arrow-left" class="icon" data-cs-size="10"></i>
+                    <span class="label">Kembali/Batal</span>
+                </a>
+            </div>
         </div>
     </div>
 </section>
@@ -19,6 +25,7 @@
 <section class="scroll-section" id="formRow">
     <div class="card mb-5">
         <div class="card-body">
+
             <form action="{{route('admin.pertanyaan.store',[$data->id,$bagian->id])}}" method="post" enctype="multipart/form" class="row g-3">
                 @csrf
                 <input type="hidden" name="bagian_id" value="{{$bagian->id}}" required />
@@ -40,7 +47,7 @@
                 </div>
                 <div class="col-md-12">
                     <label for="inputState" class="form-label">Jenis Jawaban</label>
-                    <select class="form-select" name="pertanyaan_jenis_jawaban" id="jenis_jawaban">
+                    <select class="form-select" name="pertanyaan_jenis_jawaban" id="jenis_jawaban" required>
                         <option value="">Pilih Jenis Jawaban</option>
                         <option value="Text">Text</option>
                         <option value="Text Panjang">Text Panjang</option>
@@ -60,7 +67,7 @@
 
                 </div>
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary" style="float: right">Tambah Pertanyaan</button>
+                    <button type="submit" class="btn btn-primary">Tambah Pertanyaan</button>
                 </div>
             </form>
         </div>
@@ -78,8 +85,16 @@
 </template>
 <template id="selectTemplate">
     <div class="col-md-12 mb-3">
-        <label for="pertanyaan_urutan" class="form-label">Pilihan</label>
-        <input type="text" class="form-control" name="jawaban[]" placeholder="Tuliskan Jawaban" required />
+        <!-- <label for="pertanyaan_urutan" class="form-label">Pilihan</label> -->
+        <div class="row">
+
+            <div class="col-10">
+                <input type="text" class="form-control" name="jawaban[]" placeholder="Tuliskan Pilihan Jawaban" required />
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeElement(this)">-</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -115,12 +130,17 @@
 
 @section('js')
 <script>
+    function removeElement(button) {
+        document.querySelector(`#pil_${button.id}`).remove()
+    }
+
     function addElement() {
         const template = document.querySelector("#selectTemplate")
         const element = template.content.cloneNode(true);
         const length = pilihanJawaban.getElementsByTagName('input').length;
-        element.querySelector('label').innerText = `Jawaban ${length+1}`
+        // element.querySelector('label').innerText = `Jawaban ${length+1}`
         element.querySelector('div').id = `pil_${length+1}`
+        element.querySelector('button').id = `${length+1}`
         pilihanJawaban.appendChild(element)
     }
 
