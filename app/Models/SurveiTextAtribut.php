@@ -15,6 +15,6 @@ class SurveiTextAtribut extends Model
 
     public function pertanyaan()
     {
-        return $this->belongsTo('App\Models\Pertanyaan');
+        return $this->belongsTo('App\Models\SurveiPertanyaan');
     }
 }

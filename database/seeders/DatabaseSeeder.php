@@ -38,8 +38,8 @@ class DatabaseSeeder extends Seeder
             ], [
                 "grup_nama" => "Fakultas",
                 "grup_singkatan" => "Fakultas",
-                'pimpinan_sebutan' => "fakultas",
-                'grup_flag' => "dekan",
+                'pimpinan_sebutan' => "dekan",
+                'grup_flag' => "fakultas",
                 'grup_keterangan' => "Grup Fakultas"
             ], [
                 "grup_nama" => "Program Studi",

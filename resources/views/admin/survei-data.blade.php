@@ -39,7 +39,11 @@
                             </td>
                             <td class="text-center">
                                 <div class="form-check form-switch">
+                                    @if($item->is_aktif==1)
+                                    <input disabled onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}>
+                                    @else
                                     <input onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}>
+                                    @endif
                                 </div>
                             </td>
                             <td>
@@ -111,7 +115,13 @@
 
     async function update(column, e) {
         // return alert(e.target.dataset.id)
-        let konfirmasi = confirm('yakin?')
+        e.preventDefault();
+
+        let konfirmasi
+        if (column == "is_aktif")
+            konfirmasi = confirm('yakin publish? anda tidak dapat mengubah survei lagi jika sudah dipublish')
+        else
+            konfirmasi = confirm('yakin selesai? survei tidak akan ditampilkan lagi')
         if (konfirmasi) {
             let dataSend = new FormData()
             let url = '{{route("api.survei.update",":id")}}'
@@ -126,7 +136,11 @@
             // return console.log(responseMessage)
             if (responseMessage.status == "sukses") {
                 alert(responseMessage.message)
-                // element.innerText = "Tentukan"
+                if (!e.checked) {
+                    e.target.checked = true;
+                    if (column == "is_aktif")
+                        e.target.setAttribute('disabled', 'disabled')
+                }
             } else {
                 alert('Ada Kesalahan')
             }

@@ -62,10 +62,12 @@
                             <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
                                 <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>
                             </button>
+                            @if($data->is_aktif==0)
                             <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
                                 <a class="dropdown-item" href="{{route('admin.bagian.edit',[$data->id,$bagian->id])}}">Ubah</a>
                                 <a class="dropdown-item" href="{{route('admin.bagian.delete',[$data->id,$bagian->id])}}" onclick="return confirm('Yakin Hapus')">Hapus</a>
                             </div>
+                            @endif
                         </td>
                     </tr>
 
