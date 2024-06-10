@@ -46,7 +46,7 @@
     <!-- Template Base Styles End -->
 
     <link rel="stylesheet" href="{{asset('/')}}css/main.css" />
-    <!-- <script src="{{asset('/')}}js/base/loader.js"></script> -->
+    <script src="{{asset('/')}}js/base/loader.js"></script>
 
     <style>
         .fixed-background {
@@ -164,7 +164,7 @@
     <script src="{{asset('/')}}js/base/init.js"></script>
     <!-- Template Base Scripts End -->
     <!-- Page Specific Scripts Start -->
-    <script src="{{asset('/')}}js/pages/auth.login.js"></script>
+    <!-- <script src="{{asset('/')}}js/pages/auth.login.js"></script> -->
     <script src="{{asset('/')}}js/common.js"></script>
     <script src="{{asset('/')}}js/scripts.js"></script>
     <!-- Page Specific Scripts End -->
