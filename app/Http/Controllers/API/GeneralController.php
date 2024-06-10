@@ -5,11 +5,21 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Organisasi;
 use App\Models\OrganisasiGrup;
+use App\Models\SurveiSesi;
 use Illuminate\Http\Request;
 
 class GeneralController extends Controller
 {
     //
+    public function getSesi($surveiId, $userId)
+    {
+        $data = SurveiSesi::where(['user_id' => $userId, 'survei_id' => $surveiId])->orderBy('created_at', 'DESC')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+            'pesan' => 'data ditemukan',
+        ]);
+    }
 
     public function getOrganisasi($flag)
     {

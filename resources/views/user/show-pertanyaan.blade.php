@@ -37,9 +37,10 @@
 @section('js')
 <script>
     async function kembali(surveId, bagianId) {
-        let urlBack = "{{route('user.show.pertanyaan',[':surveiId',':bagianId'])}}"
+        let urlBack = "{{route('user.show.pertanyaan',[':surveiId',':bagianId',':sesiId'])}}"
         urlBack = urlBack.replace(':bagianId', bagianId)
         urlBack = urlBack.replace(':surveiId', surveId)
+        urlBack = urlBack.replace(':sesiId', "{{$sesi_id}}")
         window.location.replace(urlBack);
 
         // alert(bagianId)

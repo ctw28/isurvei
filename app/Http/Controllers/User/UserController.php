@@ -56,6 +56,7 @@ class UserController extends Controller
         ])->orderBy('is_wajib', 'DESC')->get();
         // $data['first'] = BagianAwalAkhir::where('survei_id', 4)->first();
         // return $data;
+        $data['user_id'] = Auth::user()->id;
         return view('user.dashboard', $data);
     }
     //
@@ -457,34 +458,36 @@ class UserController extends Controller
 
         return redirect()->route('user.login');
     }
-    public function showPertanyaan($surveiId, $bagianId)
+    public function showPertanyaan($surveiId, $bagianId, $sesiId)
     {
-        // $check = Jawaban::with(['jawabanLainnya'])->where([
-        //     'user_id' => Auth::user()->id,
-        //     'pertanyaan_id' => '1',
-        // ])->get();
-        // return $check[0]->jawabanLainnya->jawaban;
         $data['title'] = "Survei";
-        // $data['iddata'] = session('iddata');
-
-        // return session()->get('userData')->id;
-
-        $sesi = SurveiSesi::where(['user_id' => Auth::user()->id, 'survei_id' => $surveiId])->first();
-        // return $sesi->id;
-        if (empty($sesi))
+        if ($sesiId == "baru") {
             $sesi = SurveiSesi::create([
                 'user_id' => Auth::user()->id,
                 'survei_id' => $surveiId,
                 'sesi_tanggal' => \Carbon\Carbon::now(),
                 'sesi_status' => "0"
             ]);
+            return redirect()->route('user.show.pertanyaan', [$surveiId, $bagianId, $sesi->id]);
+        } else {
+            // $sesi = SurveiSesi::where(['user_id' => Auth::user()->id, 'survei_id' => $surveiId])->first();
+            $sesi = SurveiSesi::find($sesiId);
+
+            // return $sesi->id;
+            if (empty($sesi))
+                $sesi = SurveiSesi::create([
+                    'user_id' => Auth::user()->id,
+                    'survei_id' => $surveiId,
+                    'sesi_tanggal' => \Carbon\Carbon::now(),
+                    'sesi_status' => "0"
+                ]);
+        }
         $data['survei_id'] = $surveiId;
         $data['sesi_id'] = $sesi->id;
         // return $bagianId;
         $data['bagianData'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) {
             $pertanyaan->with(['pilihanJawaban', 'textProperties'])->orderBy('pertanyaan_urutan', 'ASC');;
         }, 'bagianDirect'])->where('id', $bagianId)->first();
-
         // return $data;
         $type = "text";
         foreach ($data['bagianData']->pertanyaan as $row) {
@@ -618,7 +621,7 @@ class UserController extends Controller
                         <input onclick="showTextInput(event, ' . $row->id . ')" class="form-check-input" type="radio" name="input[' . $row->id . ']" id="inputlainnya' . $row->id . '" value="lainnya" ' . $checked . '/>
                         <label class="form-check-label" for="inputlainnya' . $row->id . '">Lainnya</label>
                     </div>';
-                    // $check = JawabanLainnya::where('pertanyaan_id', $row->id)->get();
+                    $check = JawabanLainnya::where('pertanyaan_id', $row->id)->get();
                     $check = Jawaban::with(['jawabanLainnya'])->where([
                         'sesi_id' => $sesi->id,
                         'pertanyaan_id' => $row->id,
@@ -651,27 +654,27 @@ class UserController extends Controller
         // return $request->all();
         // return Auth::user()->id;
         try {
-            if ($request->awal == 1) {
-                $userSesi = SurveiSesi::where([
-                    'id' => $request->sesi_id,
-                    'sesi_status' => "1"
-                ])->count();
-                if ($userSesi == 0) {
-                    SurveiSesi::updateOrCreate(
-                        [
-                            'id' => $request->sesi_id
-                        ],
-                        [
-                            'sesi_tanggal' => \Carbon\Carbon::now(),
-                            'sesi_status' => "0"
-                        ]
-                    );
-                }
-            } else if ($request->akhir == 1) {
-                $surveiSesi = SurveiSesi::find($request->sesi_id);
-                $surveiSesi->sesi_status = "1";
-                $surveiSesi->save();
-            }
+            // if ($request->awal == 1) {
+            //     $userSesi = SurveiSesi::where([
+            //         'id' => $request->sesi_id,
+            //         'sesi_status' => "1"
+            //     ])->count();
+            //     if ($userSesi == 0) {
+            //         SurveiSesi::updateOrCreate(
+            //             [
+            //                 'id' => $request->sesi_id
+            //             ],
+            //             [
+            //                 'sesi_tanggal' => \Carbon\Carbon::now(),
+            //                 'sesi_status' => "0"
+            //             ]
+            //         );
+            //     }
+            // } else if ($request->akhir == 1) {
+            //     $surveiSesi = SurveiSesi::find($request->sesi_id);
+            //     $surveiSesi->sesi_status = "1";
+            //     $surveiSesi->save();
+            // }
             // return $surveiSesi;
             foreach ($request->input as $key => $value) {
                 if (gettype($value) == "array") {  //ini untuk jawaban yang pilihan lebih dari satu
@@ -728,7 +731,7 @@ class UserController extends Controller
             }
             // return $direct;
             if ($direct->is_direct_by_jawaban == 0) { //jika tidak direct berdasarkan jawaban 
-                return redirect()->route('user.show.pertanyaan', [$surveiId, $direct->bagian_id_direct]);
+                return redirect()->route('user.show.pertanyaan', [$surveiId, $direct->bagian_id_direct, $request->sesi_id]);
             } else { // jika direct
                 foreach ($request->input as $key => $value) {
                     $pilihanJawaban = PilihanJawaban::with('directJawaban')->where([
@@ -737,7 +740,7 @@ class UserController extends Controller
                     ])->first();
                 }
                 // return $pilihanJawaban;
-                return redirect()->route('user.show.pertanyaan', [$surveiId, $pilihanJawaban->directJawaban->bagian_id]);
+                return redirect()->route('user.show.pertanyaan', [$surveiId, $pilihanJawaban->directJawaban->bagian_id, $request->sesi_id]);
             }
         } catch (\Throwable $th) {
             throw $th;

@@ -27,6 +27,9 @@ use App\Http\Controllers\API\GeneralController;
 
 
 //GENERAL API
+Route::get('survei/{surveiId}/{userId}', [GeneralController::class, 'getSesi'])->name('get.sesi');
+
+
 Route::get('organisasi/{flag}', [GeneralController::class, 'getOrganisasi'])->name('get.organisasi');
 Route::get('organisasi/{fakultasId}/prodi', [GeneralController::class, 'getProdi'])->name('get.prodi');
 
