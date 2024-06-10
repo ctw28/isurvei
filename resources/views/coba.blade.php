@@ -22,6 +22,7 @@
     <link rel="icon" type="image/png" href="img/favicon/favicon-128.png" sizes="128x128" /> -->
     <meta name="application-name" content="&nbsp;" />
     <!-- <link rel="shortcut icon" href="https://sia.iainkendari.ac.id/assets/images/favicon.ico" type="image/x-icon"> -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://isurvei.iainkendari.ac.id https://cdnjs.cloudflare.com;">
 
     <meta name="msapplication-TileColor" content="#FFFFFF" />
     <meta name="msapplication-TileImage" content="img/favicon/mstile-144x144.png" />
