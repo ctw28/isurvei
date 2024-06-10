@@ -21,9 +21,9 @@ use App\Http\Controllers\MaintenanceController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/test', function () {
+    return view('coba');
+});
 
 // Route::group(['middleware' => 'auth'], function () {
 
