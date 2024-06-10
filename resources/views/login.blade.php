@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <title>iSURVEI IAIN KENDARI</title>
     <meta name="description" content="Login Page" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://isurvei.iainkendari.ac.id https://cdnjs.cloudflare.com;">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://isurvei.iainkendari.ac.id https://cdnjs.cloudflare.com;"> -->
 
     <!-- Favicon Tags Start -->
     <!-- <link rel="apple-touch-icon-precomposed" sizes="57x57" href="img/favicon/apple-touch-icon-57x57.png" />
