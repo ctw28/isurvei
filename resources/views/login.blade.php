@@ -65,7 +65,8 @@
 </head>
 
 <body class="h-100">
-    <div id="root" class="h-100">
+    <!-- <div id="root" class="h-100"> -->
+    <div class="h-100">
         <!-- Background Start -->
         <!-- <div class="fixed-background"></div> -->
         <!-- Background End -->
@@ -143,7 +144,7 @@
             </div>
         </div>
     </div>
-    <script src="{{asset('/')}}js/base/loader.js"></script>
+    <!-- <script src="{{asset('/')}}js/base/loader.js"></script> -->
 
 
     <!-- Vendor Scripts Start -->
