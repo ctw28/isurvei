@@ -65,7 +65,7 @@
 <body class="h-100">
     <div id="root" class="h-100">
         <!-- Background Start -->
-        <div class="fixed-background"></div>
+        <!-- <div class="fixed-background"></div> -->
         <!-- Background End -->
 
         <div class="container-fluid p-0 h-100 position-relative">
