@@ -185,6 +185,7 @@
 
     document.querySelector("#survei").addEventListener("change", async function(e) {
         let surveiId = e.target.options[e.target.selectedIndex].value
+        // alert(surveiId)
         showPartisipan(surveiId)
         partisipanButton.setAttribute('onclick', `showPartisipan(${surveiId})`)
         statistikButton.setAttribute('onclick', `showStatistik(${surveiId})`)
@@ -705,6 +706,7 @@
         let fetchData = await fetch(url)
         response = await fetchData.json()
         console.log(response);
+        // return
         content.dataset.surveiUntuk = response.survei.survei_untuk
 
         if (response.status === true) {

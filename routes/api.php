@@ -27,7 +27,6 @@ use App\Http\Controllers\API\GeneralController;
 
 
 //GENERAL API
-Route::get('survei/{surveiId}/{userId}', [GeneralController::class, 'getSesi'])->name('get.sesi');
 
 
 Route::get('organisasi/{flag}', [GeneralController::class, 'getOrganisasi'])->name('get.organisasi');
@@ -53,6 +52,7 @@ Route::get('filter-data', [ApiController::class, 'getfilteredData'])->name('get.
 
 
 Route::get('survei/{id}/partisipan', [ApiController::class, 'getParticipants'])->name('get.participant');
+Route::get('survei/sesi/{surveiId}/{userId}', [GeneralController::class, 'getSesi'])->name('get.sesi');
 
 
 Route::post('simpan-jawaban-redirect', [ApiController::class, 'storeJawabanRedirect'])->name('admin.store.jawaban.redirect');
