@@ -39,11 +39,12 @@
                             </td>
                             <td class="text-center">
                                 <div class="form-check form-switch">
-                                    @if($item->is_aktif==1)
-                                    <input disabled onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}>
-                                    @else
                                     <input onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}>
-                                    @endif
+                                    <!-- @if($item->is_aktif==1) -->
+                                    <!-- <input disabled onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}> -->
+                                    <!-- @else -->
+                                    <!-- <input onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}> -->
+                                    <!-- @endif -->
                                 </div>
                             </td>
                             <td>
