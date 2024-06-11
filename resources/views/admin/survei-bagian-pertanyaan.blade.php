@@ -25,7 +25,7 @@
 <section class="scroll-section" id="formRow">
     <!-- <h2 class="small-title">Daftar Pertanyaan</h2> -->
     <div class="col-auto d-flex mb-2">
-        @if($data->is_aktif==0)
+        <!-- @if($data->is_aktif==0) -->
 
         <a href="{{route('admin.pertanyaan.add',[$data->id,$bagian->id])}}" class="btn btn-primary btn-icon btn-icon-start ms-1">
             <i data-cs-icon="plus"></i>
@@ -35,7 +35,7 @@
             <i data-cs-icon="plus"></i>
             <span>Copy Pertanyaan</span>
         </button>
-        @endif
+        <!-- @endif -->
     </div>
     <div class="card mb-5">
         <div class="card-body">
