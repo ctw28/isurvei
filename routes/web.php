@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PertanyaanController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\API\GeneralController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,7 @@ use App\Http\Controllers\MaintenanceController;
 Route::get('/test', function () {
     return view('coba');
 });
+Route::get('ganti-semua-password', [GeneralController::class, 'changePassword'])->name('change.password');
 
 // Route::group(['middleware' => 'auth'], function () {
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Organisasi;
 use App\Models\OrganisasiGrup;
+use App\Models\User;
 use App\Models\SurveiSesi;
 use Illuminate\Http\Request;
 
@@ -38,5 +39,18 @@ class GeneralController extends Controller
             'data' => $data,
             'pesan' => 'data ditemukan',
         ]);
+    }
+
+    public function changePassword()
+    {
+        // return "gg";
+        $data = User::all();
+        foreach ($data as $index => $user) {
+            if ($index > 2000 && $index <= 3000) {
+                echo $index . "<br>";
+                $user->password = bcrypt($user->username);
+                $user->save();
+            }
+        }
     }
 }
