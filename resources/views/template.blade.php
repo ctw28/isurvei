@@ -37,7 +37,7 @@
                 <!-- User Menu Start -->
                 <div class="user-container d-flex">
                     <a href="#" class="d-flex user position-relative" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <!-- <img class="profile" alt="profile" src="{{asset('/')}}icon.jpeg" /> -->
+                        <img class="profile" alt="profile" src="{{asset('/')}}icon.jpeg" width="50px" />
                         <div class="name">
                             @if(!Auth::user())
                             Mitra
