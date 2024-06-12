@@ -791,10 +791,10 @@ class UserController extends Controller
             ]);
 
             if ($request->jenis_akun == "mahasiswa") {
-                $prodiSia = $data->idprodi;
-                if ($prodiSia == "FSK")
-                    $prodiSia = "TFSK";
-                $prodi = Organisasi::where('organisasi_singkatan', $prodiSia)->first();
+                // $prodiSia = $data->idprodi;
+                // if ($prodiSia == "FSK")
+                // $prodiSia = "TFSK";
+                $prodi = Organisasi::where('organisasi_singkatan_sia', $data->idprodi)->first();
                 $mahasiswa = Mahasiswa::create([
                     'nim' => $data->nim,
                     'data_diri_id' => $dataDiri->id,

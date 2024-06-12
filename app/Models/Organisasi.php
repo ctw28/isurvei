@@ -14,6 +14,7 @@ class Organisasi extends Model
         'organisasi_parent_id',
         'organisasi_nama',
         'organisasi_singkatan',
+        'organisasi_singkatan_sia',
         'organisasi_keterangan',
         'is_current',
         'is_aktif',

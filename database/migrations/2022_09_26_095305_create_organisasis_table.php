@@ -23,6 +23,7 @@ class CreateOrganisasisTable extends Migration
 
             $table->string('organisasi_nama', 200);
             $table->string('organisasi_singkatan', 200);
+            $table->string('organisasi_singkatan_sia', 200);
             $table->text('organisasi_keterangan')->nullable();
             $table->boolean('is_current')->nullable()->default(true);
             $table->boolean('is_aktif')->nullable()->default(true);
