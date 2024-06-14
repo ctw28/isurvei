@@ -41,6 +41,7 @@ class UserController extends Controller
         $data['title'] = "Dashboard";
         // $data['iddata'] = session('iddata');
         $role = 'mahasiswa';
+        $pegawaiId = "";
         if (session('session_role')->role_aktif->role == "pegawai") {
             $pegawaiId = Auth::user()->userPegawai->pegawai_id;
             $role = "pegawai";
@@ -55,9 +56,26 @@ class UserController extends Controller
             'is_aktif' => 1,
         ])->orderBy('is_wajib', 'DESC')->get();
         // $data['first'] = BagianAwalAkhir::where('survei_id', 4)->first();
-        // return $data;
         $data['user_id'] = Auth::user()->id;
+        $data['role'] = $role;
+        $data['pegawai_id'] = $pegawaiId;
+        // return $data;
         return view('user.dashboard', $data);
+    }
+
+    public function changePegawai($pegawaiId)
+    {
+        $dosen = PegawaiDosen::create([
+            'pegawai_id' => $pegawaiId,
+            'nidn' => '-',
+            'dosen_status' => 'tetap',
+        ]);
+        // return redirect()->route('user.dashboard');
+        return response()->json([
+            'status' => true,
+            'message' => 'Data berhasil diubah',
+            'details' => $dosen,
+        ], 200);
     }
     //
 
@@ -771,12 +789,12 @@ class UserController extends Controller
             $user = User::create([
                 'username' => $request->username,
                 'email' => $name . '@mail.com',
-                'password' => bcrypt($request->username),
+                'password' => bcrypt($request->username)
             ]);
 
             $userRole = UserRole::create([
-                'role_id' => $roleId,
                 'user_id' => $user->id,
+                'role_id' => $roleId
             ]);
 
             $dataDiri = DataDiri::create([
@@ -829,6 +847,7 @@ class UserController extends Controller
                         'pegawai_id' => $pegawai->id,
                         'nidn' => $data->nidn,
                         'dosen_status' => $data->statusdosen,
+
                     ]);
                 }
             }

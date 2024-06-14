@@ -100,6 +100,7 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
+        // return redirect()->intended(route('confirm.user', [$request->username, $request->password]));
         $user = User::where('username', $request->username)->first();
         if (empty($user)) {
             return redirect()->intended(route('confirm.user', [$request->username, $request->password]));

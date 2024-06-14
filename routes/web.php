@@ -106,6 +106,7 @@ Route::group(['middleware' => 'auth'], function () {
         // Route::get('/dashboard', [UserController::class, 'index'])->name('mahasiswa.survei.list');
         Route::get('survei/{id}/bagian/{bagianId}/sesi/{sesiId}', [UserController::class, 'showPertanyaan'])->name('user.show.pertanyaan');
         Route::post('/survei/{surveiId}/bagian/simpan-jawaban/{bagianId}', [UserController::class, 'storeJawaban'])->name('user.store.jawaban');
+        Route::get('/ganti-ke-dosen/{pegawaiId}', [UserController::class, 'changePegawai'])->name('change.pegawai');
     });
 });
 // });
