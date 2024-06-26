@@ -37,7 +37,7 @@
 </head>
 
 <body>
-    <h4 class="text-center">Jawaban {{$survei->survei_nama}}</h4>
+    <h4 class="text-center">Jawaban {{$survei->survei_nama}} ({{$survei->survei_untuk}})</h4>
     <button class="btn btn-success btn-sm" onclick="copyTable()">Copy Tabel</button>
     <table style="margin: 10px 0;" id="data">
         <thead>
