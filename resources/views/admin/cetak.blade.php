@@ -84,11 +84,10 @@
                 @elseif($survei->survei_untuk=="dosen")
                 <td>{{$jawab->user->userPegawai->pegawai->pegawai_nomor_induk}}</td>
                 <td>{{$jawab->user->userPegawai->pegawai->dataDiri->nama_lengkap}}</td>
-                @elseif($survei->survey_untuk=="pegawai")
+                @elseif($survei->survei_untuk=="pegawai")
                 <td>{{$jawab->user->userPegawai->pegawai->pegawai_nomor_induk}}</td>
                 <td>{{$jawab->user->userPegawai->pegawai->dataDiri->nama_lengkap}}</td>
                 @else
-                <td>{{$jawab->mitra->mitra_nama}} / {{$jawab->mitra->mitra_instansi}}</td>
                 @endif
                 @foreach ($jawab->jawaban as $row)
                 <td>{{$row}}</td>
