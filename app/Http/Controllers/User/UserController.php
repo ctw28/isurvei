@@ -80,7 +80,7 @@ class UserController extends Controller
     public function changeDosen($pegawaiId)
     {
         $dosen = PegawaiDosen::where('pegawai_id', $pegawaiId)->first();
-        // $dosen->delete();
+        $dosen->delete();
         // return redirect()->route('user.dashboard');
         return response()->json([
             'status' => true,
