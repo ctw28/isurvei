@@ -81,7 +81,10 @@
                 <td>{{$jawab->user->userMahasiswa->mahasiswa->nim}}</td>
                 <td>{{$jawab->user->userMahasiswa->mahasiswa->dataDiri->nama_lengkap}}</td>
                 <td>{{$jawab->user->userMahasiswa->mahasiswa->prodi->organisasi_singkatan}}</td>
-                @elseif($survei->survei_untuk=="dosen" || $survei->survey_untuk=="pegawai")
+                @elseif($survei->survei_untuk=="dosen")
+                <td>{{$jawab->user->userPegawai->pegawai->pegawai_nomor_induk}}</td>
+                <td>{{$jawab->user->userPegawai->pegawai->dataDiri->nama_lengkap}}</td>
+                @elseif($survei->survey_untuk=="pegawai")
                 <td>{{$jawab->user->userPegawai->pegawai->pegawai_nomor_induk}}</td>
                 <td>{{$jawab->user->userPegawai->pegawai->dataDiri->nama_lengkap}}</td>
                 @else
