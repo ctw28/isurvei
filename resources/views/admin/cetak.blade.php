@@ -49,7 +49,10 @@
                 <th rowspan="3">NIM</th>
                 <th rowspan="3">Nama</th>
                 <th rowspan="3">Prodi</th>
-                @elseif($survei->survei_untuk=="dosen" || $survei->survey_untuk=="pegawai")
+                @elseif($survei->survei_untuk=="dosen")
+                <th rowspan="3">NIP</th>
+                <th rowspan="3">Nama</th>
+                @elseif($survei->survey_untuk=="pegawai")
                 <th rowspan="3">NIP</th>
                 <th rowspan="3">Nama</th>
                 @else
