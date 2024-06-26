@@ -77,6 +77,17 @@ class UserController extends Controller
             'details' => $dosen,
         ], 200);
     }
+    public function changeDosen($pegawaiId)
+    {
+        $dosen = PegawaiDosen::where('pegawai_id', $pegawaiId);
+        // $dosen->delete();
+        // return redirect()->route('user.dashboard');
+        return response()->json([
+            'status' => true,
+            'message' => 'Data berhasil diubah',
+            'details' => $dosen,
+        ], 200);
+    }
     //
 
     public function mitra()

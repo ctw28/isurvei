@@ -8,6 +8,9 @@
         @if($role=="pegawai")
         <button onclick="gantiKeDosen()" class="btn btn-warning btn-sm">Ubah ke Dosen</button>
         @endif
+        @if($role=="dosen")
+        <button onclick="gantiKePegawai()" class="btn btn-warning btn-sm">Ubah jadi Tendik</button>
+        @endif
         <!-- <p><b>SI-LANNI atau Sistem Informasi Pelacakan Alumni</b> merupakan metode yang digunakan oleh IAIN Kendari untuk menerima umpan balik dari para alumninya. Umpan balik yang diperoleh dari alumni tersebut digunakan oleh program studi di IAIN Kendari sebagai evaluasi untuk pengembangan kualitas dan sistem Pendidikan yang dilaksanakan di perguruan tinggi. Umpan balik ini dapat bermanfaat pula bagi program studi di IAIN Kendari untuk memetakan lapangan kerja dan usaha agar sesuai dengan tuntutan dunia kerja.</p> -->
     </div>
 </div>
@@ -119,6 +122,18 @@
         console.log(response);
         if (response.status == true)
             window.location.reload('{{route("user.dashboard")}}')
+    }
+    async function gantiKePegawai() {
+        let konfirm = confirm('Anda akan berganti ke pegawai, yakin ubah status dari dosen ke tendik?')
+        if (!konfirm)
+            return
+        let url = "{{route('change.dosen',':id')}}"
+        url = url.replace(':id', "{{$pegawai_id}}")
+        let send = await fetch(url);
+        let response = await send.json()
+        console.log(response);
+        // if (response.status == true)
+        // window.location.reload('{{route("user.dashboard")}}')
     }
     async function showSesi(id, bagian) {
         // alert(id)
