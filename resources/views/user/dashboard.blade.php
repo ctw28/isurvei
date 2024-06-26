@@ -132,8 +132,8 @@
         let send = await fetch(url);
         let response = await send.json()
         console.log(response);
-        // if (response.status == true)
-        // window.location.reload('{{route("user.dashboard")}}')
+        if (response.status == true)
+            window.location.reload('{{route("user.dashboard")}}')
     }
     async function showSesi(id, bagian) {
         // alert(id)
