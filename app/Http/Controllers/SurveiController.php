@@ -86,7 +86,7 @@ class SurveiController extends Controller
     {
         $limit = 100;
         $survei = Survei::find($surveiId);
-        // return $survei;
+        return $survei;
         if ($survei->survei_untuk == "mahasiswa")
             $jawaban = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri', 'user.userMahasiswa.mahasiswa.prodi'])->where('survei_id', $surveiId)->paginate($limit);
         else if ($survei->survei_untuk == "dosen" || $survei->survei_untuk == "pegawai")
