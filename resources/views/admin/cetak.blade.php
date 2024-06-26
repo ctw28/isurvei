@@ -88,6 +88,7 @@
                 <td>{{$jawab->user->userPegawai->pegawai->pegawai_nomor_induk}}</td>
                 <td>{{$jawab->user->userPegawai->pegawai->dataDiri->nama_lengkap}}</td>
                 @else
+                <td>ggwp</td>
                 @endif
                 @foreach ($jawab->jawaban as $row)
                 <td>{{$row}}</td>
