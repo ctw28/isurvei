@@ -37,7 +37,7 @@
 </head>
 
 <body>
-    <h4 class="text-center">Jawaban {{$survei->survei_nama}} ({{$survei->survei_untuk}})</h4>
+    <h4 class="text-center">Jawaban {{$survei->survei_nama}}</h4>
     <button class="btn btn-success btn-sm" onclick="copyTable()">Copy Tabel</button>
     <table style="margin: 10px 0;" id="data">
         <thead>
@@ -49,10 +49,7 @@
                 <th rowspan="3">NIM</th>
                 <th rowspan="3">Nama</th>
                 <th rowspan="3">Prodi</th>
-                @elseif($survei->survei_untuk=="dosen")
-                <th rowspan="3">NIP</th>
-                <th rowspan="3">Nama</th>
-                @elseif($survei->survey_untuk=="pegawai")
+                @elseif($survei->survei_untuk=="dosen" || $survei->survei_untuk=="pegawai")
                 <th rowspan="3">NIP</th>
                 <th rowspan="3">Nama</th>
                 @else
@@ -84,10 +81,7 @@
                 <td>{{$jawab->user->userMahasiswa->mahasiswa->nim}}</td>
                 <td>{{$jawab->user->userMahasiswa->mahasiswa->dataDiri->nama_lengkap}}</td>
                 <td>{{$jawab->user->userMahasiswa->mahasiswa->prodi->organisasi_singkatan}}</td>
-                @elseif($survei->survei_untuk=="dosen")
-                <td>{{$jawab->user->userPegawai->pegawai->pegawai_nomor_induk}}</td>
-                <td>{{$jawab->user->userPegawai->pegawai->dataDiri->nama_lengkap}}</td>
-                @elseif($survei->survei_untuk=="pegawai")
+                @elseif($survei->survei_untuk=="dosen" || $survei->survei_untuk=="pegawai")
                 <td>{{$jawab->user->userPegawai->pegawai->pegawai_nomor_induk}}</td>
                 <td>{{$jawab->user->userPegawai->pegawai->dataDiri->nama_lengkap}}</td>
                 @else
