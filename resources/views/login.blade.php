@@ -96,7 +96,7 @@
                 <!-- Left Side End -->
 
                 <!-- Right Side Start -->
-                <div class="col-12 col-lg-auto h-100 pb-4 px-4 pt-0 p-lg-0">
+                <div class="col-12 col-lg-auto h-100 pb-4 px-4 pt-0 p-lg-0" style="background:white">
                     <!-- <div class="col-12 col-lg-auto h-100 pb-4 px-4 pt-0 p-lg-0" style="background-color:white"> -->
                     <div class="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
                         <div class="sw-lg-50 px-5">
