@@ -142,7 +142,7 @@ class SurveiController extends Controller
             $sesinya->jawaban = $data;
             $data = [];
         }
-        // return $jawaban;
+        return $jawaban;
         return view('admin.cetak', compact(['survei', 'bagian', 'jawaban']));
     }
 }
