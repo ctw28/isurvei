@@ -74,9 +74,48 @@
 
 
             } else {
-                alert("username dan password tidak sesuai / tidak ditemukan. Mohon Coba Lagi")
-                // window.location.href = '/'
+                let dataSend = new FormData()
+                let username = document.querySelector('#username').value
+                let password = document.querySelector('#password').value
 
+                dataSend.append('username', username)
+                dataSend.append('password', password)
+
+                let send = await fetch("https://simpeg.iainkendari.ac.id/api/get-login-info", {
+                    method: "POST",
+                    body: dataSend
+                });
+                let response = await send.json()
+                console.log('ini simpeg');
+                console.log(response);
+                // return
+                if (response.status === true) {
+                    const jenis = document.querySelector('#nomor-jenis')
+                    const nomor = document.querySelector('#nomor')
+                    const nama = document.querySelector('#nama')
+                    nama.textContent = response.data.nama
+                    if (response.jenis_akun == "pegawai") {
+                        jenis.textContent = "NIP"
+                        nomor.textContent = response.data.nip
+                    } else {
+                        jenis.textContent = "NIM"
+                        nomor.textContent = response.data.nim
+                    }
+                    let dataSend = new FormData()
+                    dataSend.append('jenis_akun', response.jenis_akun)
+                    dataSend.append('username', username)
+                    dataSend.append('password', password)
+                    dataSend.append('data', JSON.stringify(response.data))
+                    let sendUser = await fetch("{{route('user.store')}}", {
+                        method: "POST",
+                        body: dataSend
+                    });
+                    let responseUser = await sendUser.json()
+                    // if ()
+                    console.log(responseUser);
+                } else {
+                    alert("username dan password tidak sesuai / tidak ditemukan. Mohon Coba Lagi")
+                }
             }
         }
     </script>
