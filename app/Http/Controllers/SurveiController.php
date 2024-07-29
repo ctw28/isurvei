@@ -21,13 +21,16 @@ class SurveiController extends Controller
         $title = "Survei";
         // $data = Survei::where('survei_oleh', Auth::user()->id)->orderBy('created_at', "DESC")->get();
         $organisasiId = Auth::user()->adminOrganisasi->organisasi_id;
-        $data = Survei::with(['organisasi'])
+        $data = Survei::with(['organisasi', 'bagianAwalAkhir'])
             ->where('organisasi_id', $organisasiId)
             ->orderBy('created_at', "DESC")->get();
         foreach ($data as $item) {
             if ($item->survei_untuk == "mitra")
                 $item->decrypt_id = Crypt::encrypt($item->id);
+            $item->id_encrypt = Crypt::encrypt($item->id);
+            $item->bagianAwalAkhir->bagian_id_first_encrypt = Crypt::encrypt($item->bagianAwalAkhir->bagian_id_first);
         }
+
         // return $data;
         return view('admin.survei-data', compact('title', 'data'));
     }

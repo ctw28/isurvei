@@ -110,4 +110,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/ganti-ke-tendik/{pegawaiId}', [UserController::class, 'changeDosen'])->name('change.dosen');
     });
 });
+Route::get('survei-coba/{id}/bagian/{bagianId}', [UserController::class, 'showPertanyaanCoba'])->name('user.show.pertanyaan-coba');
+Route::post('survei-coba/{id}/bagian/{bagianId}/next', [UserController::class, 'nextPertayaanCoba'])->name('show.next-pertanyaan-coba');
 // });

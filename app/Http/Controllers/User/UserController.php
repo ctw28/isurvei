@@ -776,6 +776,155 @@ class UserController extends Controller
         }
     }
 
+    public function showPertanyaanCoba($surveiIdEncrypt, $bagianIdEncrypt)
+    {
+        $data['title'] = "Survei";
+        $data['survei_id'] = Crypt::decrypt($surveiIdEncrypt);
+        $bagianId = Crypt::decrypt($bagianIdEncrypt);
+        $data['bagianData'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) {
+            $pertanyaan->with(['pilihanJawaban', 'textProperties'])->orderBy('pertanyaan_urutan', 'ASC');;
+        }, 'bagianDirect'])->where('id', $bagianId)->first();
+        // return $data;
+        $type = "text";
+        foreach ($data['bagianData']->pertanyaan as $row) {
+            $jawaban = "";
+            $required = "";
+            // if ($row->required == 1)
+            // $required = "required";
+
+            if ($row->pertanyaan_jenis_jawaban == "Text") {
+                if ($row->textProperties->jenis == "text-email")
+                    $type = "email";
+                else if ($row->textProperties->jenis == "text-angka")
+                    $type = "number";
+                else if ($row->textProperties->jenis == "text-desimal")
+                    $type = "number";
+                else if ($row->textProperties->jenis == "text-tanggal")
+                    $type = "date";
+                else
+                    $type = "text";
+                $content = '<div class="mb-3 position-relative form-group">';
+                $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
+
+                $content .= "<input step='any' " . $required . "  type='" . $type . "' name='input[" . $row->id . "]' class='form-control' value=''>";
+                $content .= '</div>';
+                $row->form = $content;
+            } else if ($row->pertanyaan_jenis_jawaban == "Text Panjang") {
+                $content = '<div class="mb-3 position-relative form-group">';
+                $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
+                $content .= "<textarea " . $required . "  name='input[" . $row->id . "]' class='form-control'></textarea>";
+
+                $content .= '</div>';
+                $row->form = $content;
+            } else if ($row->pertanyaan_jenis_jawaban == "Lebih Dari Satu Jawaban") {
+                $content = '<div class="mb-3 position-relative form-group">';
+                $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
+                foreach ($row->pilihanJawaban as $index => $item) {
+                    $checked = "";
+                    if ($item->pilihan_jawaban != "lainnya")
+                        $content .= '<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="input[' . $row->id . '][]" id="input' . $index . '" value="' . $item->pilihan_jawaban . '" ' . $checked . '/>
+                    <label class="form-check-label" for="input' . $index . '">' . $item->pilihan_jawaban . '</label>
+                  </div>';
+                }
+                if ($row->lainnya == "1") {
+                    $content .= '<div class="form-check">
+                        <input onclick="showTextInput(event, ' . $row->id . ')" class="form-check-input" type="checkbox" name="input[' . $row->id . '][]" id="input' . $row->id . '" value="lainnya" ' . $checked . '/>
+                        <label class="form-check-label" for="input' . $row->id . '">Lainnya</label>
+                      </div>';
+                }
+                $content .= '</div>';
+                $row->form = $content;
+            } else if ($row->pertanyaan_jenis_jawaban == "Select") {
+                $content = '<div class="mb-3 position-relative form-group">';
+                $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
+                $content .= '<select onchange="showTextInput(event, ' . $row->id . ')"  ' . $required . '  class="form-select" name="input[' . $row->id . ']" required>';
+                // $content .= '<option value="">Pilih</option>';
+                foreach ($row->pilihanJawaban as $index => $item) {
+                    $selected = "";
+                    if ($item->pilihan_jawaban != 'lainnya') {
+                        $content .= '<option value="' . $item->pilihan_jawaban . '" ' . $selected . '>' . $item->pilihan_jawaban . '</option>';
+                    }
+                }
+                if ($row->lainnya == "1") {
+                    $checked = '';
+                    $content .= '<option value="lainnya" ' . $checked . '>Lainnya</option>';
+                }
+                $content .= '</select>';
+                $content .= '</div>';
+                $row->form = $content;
+            } else if ($row->pertanyaan_jenis_jawaban == "Pilihan") {
+                $content = '<div class="mb-3 position-relative form-group">';
+                $content .= '<label class="form-label">' . $row->pertanyaan_urutan . '. ' . $row->pertanyaan . '</label>';
+                foreach ($row->pilihanJawaban as $index => $item) {
+                    $checked = '';
+                    if ($item->pilihan_jawaban != 'lainnya') {
+
+                        $content .= '<div class="form-check">
+                        <input onclick="removeTextInput(event, ' . $row->id . ')" ' . $required . ' class="form-check-input" type="radio" name="input[' . $row->id . ']" id="input' . $row->id . '' . $index . '" value="' . $item->pilihan_jawaban . '" ' . $checked . '/>
+                        <label class="form-check-label" for="input' . $row->id . '' . $index . '">' . $item->pilihan_jawaban . '</label>
+                      </div>';
+                    }
+                }
+                if ($row->lainnya == "1") {
+                    $content .= '<div class="form-check">
+                        <input onclick="showTextInput(event, ' . $row->id . ')" class="form-check-input" type="radio" name="input[' . $row->id . ']" id="inputlainnya' . $row->id . '" value="lainnya" ' . $checked . '/>
+                        <label class="form-check-label" for="inputlainnya' . $row->id . '">Lainnya</label>
+                    </div>';
+                }
+                $content .= '</div>';
+
+                $row->form = $content;
+            }
+        }
+        // return $gg;
+        $data['akhir'] = false;
+        $data['awal'] = false;
+        $data['suveiIdEncrypt'] = $surveiIdEncrypt;
+        $data['bagianIdEncrypt'] = $bagianIdEncrypt;
+        $data['bagianIdbackEncrypt'] = Crypt::encrypt($data['bagianData']->bagianDirect->bagian_id_direct_back);
+        $awal = BagianAwalAkhir::where('bagian_id_first', $bagianId)->count();
+        if ($awal > 0)
+            $data['awal'] = true;
+        $akhir = BagianAwalAkhir::where('bagian_id_last', $bagianId)->count();
+        if ($akhir > 0)
+            $data['akhir'] = true;
+
+        return view('user.show-pertanyaan-coba', $data);
+        return $data;
+    }
+    public function nextPertayaanCoba(Request $request, $surveiIdEncrypt, $bagianIdEncrypt)
+    // public function nextPertayaanCoba(Request $request, $surveiId, $bagianId)
+    {
+        // $surveiId = Crypt::decrypt($surveiIdEncrypt);
+        $bagianId = Crypt::decrypt($bagianIdEncrypt);
+        $direct = BagianDirect::where('bagian_id', $bagianId)->first();
+        // return $direct;
+        $akhir = BagianAwalAkhir::where('bagian_id_last', $bagianId)->count();
+        if ($akhir > 0) {
+            $data['title'] = "Selesai";
+
+            return view('user.selesai', $data);
+        }
+        // return $direct;
+        // $surveiIdEncrypt = Crypt::decrypt($surveiIdEncrypt);
+        if ($direct->is_direct_by_jawaban == 0) { //jika tidak direct berdasarkan jawaban 
+            $bagianId = Crypt::encrypt($direct->bagian_id_direct);
+
+            return redirect()->route('user.show.pertanyaan-coba', [$surveiIdEncrypt, $bagianId]);
+        } else { // jika direct
+            foreach ($request->input as $key => $value) {
+                $pilihanJawaban = PilihanJawaban::with('directJawaban')->where([
+                    'pertanyaan_id' => $key,
+                    'pilihan_jawaban' => $value
+                ])->first();
+            }
+            $bagianId = Crypt::encrypt($pilihanJawaban->directJawaban->bagian_id);
+            // return $pilihanJawaban;
+            return redirect()->route('user.show.pertanyaan-coba', [$surveiIdEncrypt, $bagianId]);
+        }
+    }
+
     public function store(Request $request)
     {
         DB::beginTransaction();

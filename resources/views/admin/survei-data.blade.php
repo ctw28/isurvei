@@ -57,6 +57,7 @@
                                 @if($item->survei_untuk=="mitra")
                                 <button onclick="setLInk('{{$item->decrypt_id}}')" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-warning btn-sm">Link</button>
                                 @endif
+                                <button onclick="linkCoba('{{$item->id_encrypt}}','{{$item->bagianAwalAkhir->bagian_id_first_encrypt}}')" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-success btn-sm">Link Coba</button>
                                 <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
                                     <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>
                                 </button>
@@ -151,6 +152,13 @@
     function setLInk(id) {
         let url = "{{route('mitra.registrasi',':id')}}"
         url = url.replace(':id', id)
+        document.getElementById("link").value = url
+    }
+
+    function linkCoba(surveiId, bagianId) {
+        let url = "{{route('user.show.pertanyaan-coba',[':surveiId',':bagianId'])}}"
+        url = url.replace(':surveiId', surveiId)
+        url = url.replace(':bagianId', bagianId)
         document.getElementById("link").value = url
     }
 
