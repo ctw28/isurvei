@@ -72,5 +72,5 @@ Route::post('survei/{id}/update', [ApiController::class, 'surveiUpdate'])->name(
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('logout', [ApiController::class, 'logout']);
-    Route::post('cek-ikut-survei', [ApiController::class, 'isParticipated'])->name('is.participated');
 });
+Route::post('cek-ikut-survei', [ApiController::class, 'isParticipated'])->name('is.participated');

@@ -273,10 +273,12 @@ class ApiController extends Controller
 
     public function isParticipated(Request $request)
     {
-        $token = JWTAuth::getToken();
-        $payload = JWTAuth::getPayload($token)->toArray();
-        $id = $payload['id'];
-        $kategori = $payload['kategori'];
+        // $token = JWTAuth::getToken();
+        // $payload = JWTAuth::getPayload($token)->toArray();
+        // $id = $payload['id'];
+        // $kategori = $payload['kategori'];
+        $id = $request->user;
+        $kategori = $request->kategori;
 
         $user = User::where('username', $id)->first();
         if (empty($user)) {
@@ -286,48 +288,49 @@ class ApiController extends Controller
             try {
                 $name = "";
                 $roleId = "";
-                if ($kategori == "mahasiswa") {
+                if ($request->jenis_akun == "mahasiswa") {
                     $name = $data->nim;
-                    $roleId = 3; //role mahasiswa
+                    $roleId = 4;
                 }
-                if ($kategori == "pegawai" || $kategori == "dosen") {
+                if ($request->jenis_akun == "pegawai") {
                     $name = $data->nip;
                     if ($data->nidn != 'non-nidn')
-                        $roleId = 7; //role dosen
+                        $roleId = 3;
                     else
-                        $roleId = 6; //role tendik
+                        $roleId = 3;
                 }
 
                 $user = User::create([
-                    'name' => $name,
-                    'username' => $name,
+                    'username' => $request->username,
                     'email' => $name . '@mail.com',
-                    'password' => bcrypt($name), //password sama dengan nim / nip
+                    'password' => bcrypt($request->username)
                 ]);
 
                 $userRole = UserRole::create([
-                    'role_id' => $roleId,
                     'user_id' => $user->id,
-                    'aplikasi_id' => '-' //ini nanti dihapus karena mau dibuatkan tabel khusus untuk rule per aplikasi
+                    'role_id' => $roleId
                 ]);
 
                 $dataDiri = DataDiri::create([
                     'nama_lengkap' => $data->nama,
-                    'jenis_kelamin' => ($data->kelamin != '') ? $data->kelamin : 'L',
+                    'jenis_kelamin' => ($data->kelamin != '') ? $data->kelamin : "L",
                     'lahir_tempat' => $data->tmplahir,
                     'lahir_tanggal' => $data->tgllahir,
                     'no_hp' => $data->hp,
                     'alamat_ktp' => $data->alamat,
                     'alamat_domisili' => $data->alamat,
+                    'nik' => (isset($data->nik) ? $data->nik : '0000000000000000'),
                 ]);
 
-                if ($kategori == "mahasiswa") {
-                    $prodi = MasterProdi::where('prodi_kode', $data->idprodi)->first();
+                if ($request->jenis_akun == "mahasiswa") {
+                    // $prodiSia = $data->idprodi;
+                    // if ($prodiSia == "FSK")
+                    // $prodiSia = "TFSK";
+                    $prodi = Organisasi::where('organisasi_singkatan_sia', $data->idprodi)->first();
                     $mahasiswa = Mahasiswa::create([
-                        'iddata' => $data->iddata,
                         'nim' => $data->nim,
                         'data_diri_id' => $dataDiri->id,
-                        'master_prodi_id' => $prodi->id,
+                        'organisasi_id' => $prodi->id,
                     ]);
                     $userMahasiswa = UserMahasiswa::create([
                         'user_id' => $user->id,
@@ -358,6 +361,7 @@ class ApiController extends Controller
                             'pegawai_id' => $pegawai->id,
                             'nidn' => $data->nidn,
                             'dosen_status' => $data->statusdosen,
+
                         ]);
                     }
                 }
