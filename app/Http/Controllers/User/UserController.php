@@ -54,7 +54,11 @@ class UserController extends Controller
         }, 'bagianAwalAkhir'])->where([
             'survei_untuk' => $role,
             'is_aktif' => 1,
-        ])->orderBy('is_wajib', 'DESC')->get();
+            'survei_status' => 0,
+        ])
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('is_sia', 'DESC')
+            ->get();
         // $data['first'] = BagianAwalAkhir::where('survei_id', 4)->first();
         $data['user_id'] = Auth::user()->id;
         $data['role'] = $role;
@@ -683,27 +687,27 @@ class UserController extends Controller
         // return $request->all();
         // return Auth::user()->id;
         try {
-            // if ($request->awal == 1) {
-            //     $userSesi = SurveiSesi::where([
-            //         'id' => $request->sesi_id,
-            //         'sesi_status' => "1"
-            //     ])->count();
-            //     if ($userSesi == 0) {
-            //         SurveiSesi::updateOrCreate(
-            //             [
-            //                 'id' => $request->sesi_id
-            //             ],
-            //             [
-            //                 'sesi_tanggal' => \Carbon\Carbon::now(),
-            //                 'sesi_status' => "0"
-            //             ]
-            //         );
-            //     }
-            // } else if ($request->akhir == 1) {
-            //     $surveiSesi = SurveiSesi::find($request->sesi_id);
-            //     $surveiSesi->sesi_status = "1";
-            //     $surveiSesi->save();
-            // }
+            if ($request->awal == 1) {
+                $userSesi = SurveiSesi::where([
+                    'id' => $request->sesi_id,
+                    'sesi_status' => "1"
+                ])->count();
+                if ($userSesi == 0) {
+                    SurveiSesi::updateOrCreate(
+                        [
+                            'id' => $request->sesi_id
+                        ],
+                        [
+                            'sesi_tanggal' => \Carbon\Carbon::now(),
+                            'sesi_status' => "0"
+                        ]
+                    );
+                }
+            } else if ($request->akhir == 1) {
+                $surveiSesi = SurveiSesi::find($request->sesi_id);
+                $surveiSesi->sesi_status = "1";
+                $surveiSesi->save();
+            }
             // return $surveiSesi;
             foreach ($request->input as $key => $value) {
                 if (gettype($value) == "array") {  //ini untuk jawaban yang pilihan lebih dari satu

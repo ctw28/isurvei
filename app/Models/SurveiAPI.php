@@ -19,6 +19,7 @@ class SurveiAPI extends Model
         'survei_untuk',
         'is_aktif',
         'is_wajib',
+        'is_sia',
         'organisasi_id',
         'created_by',
         'updated_by',

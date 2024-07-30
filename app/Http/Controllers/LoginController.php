@@ -61,23 +61,38 @@ class LoginController extends Controller
         return view('login');
     }
 
-    public function index2($token)
+    public function index2($id)
     // public function index2(Request $request)
     {
         // return "ggwp";
         // return Auth::user();
-        if (Auth::check()) {
+        if (Auth::check())
             return redirect()->route('user.dashboard');
-        }
-        $tokenParts = explode(".", $token);
-        $tokenPayload = base64_decode($tokenParts[1]);
-        $jwtPayload = json_decode($tokenPayload);
-        $user = User::where('username', $jwtPayload->id)->first();
+
+        // $tokenParts = explode(".", $token);
+        // $tokenPayload = base64_decode($tokenParts[1]);
+        // $jwtPayload = json_decode($tokenPayload);
+        // $user = User::where('username', $jwtPayload->id)->first();
+        $user = User::where('username', $id)->first();
         // return $user;
         if ($user) {
             Auth::login($user);
-            $role = Auth::user()->userRole->role->nama_role;
-            session(['role' => $role]);
+            // $request->session()->regenerate();
+            $role = Auth::user()->userRole->role->role_nama;
+            $session = [
+                'default_role' => $role,
+                'role_aktif' => (object)[
+                    'role' => $role,
+                    'detail' => []
+                ],
+            ];
+            session(['session_role' => (object) $session]);
+            // return $session('session_role')[0];
+            if ($role == "admin_organisasi") {
+                return redirect()->intended(route('admin.dashboard'));
+            } else if ($role == "mahasiswa" || $role == "pegawai") {
+                return redirect()->intended(route('user.dashboard'));
+            }
             // return Auth::user();
             return redirect()->route('user.dashboard');
         } else {

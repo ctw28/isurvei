@@ -39,7 +39,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Route::post('/', [LoginController::class, 'index2'])->middleware('guest');
 Route::get('/csrf', [LoginController::class, 'index3'])->middleware('guest');
 Route::get('/', [LoginController::class, 'index'])->name('login-page')->middleware('guest');
-Route::get('/{token}', [LoginController::class, 'index2']);
+Route::get('/masuk-survei/{token}', [LoginController::class, 'index2']);
 
 Route::get('/konfirmasi-akun/{username}/{password}', [LoginController::class, 'konfirmasi'])->name('confirm.user')->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login');

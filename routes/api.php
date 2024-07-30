@@ -9,6 +9,7 @@ use App\Http\Controllers\API\BagianController as BagianAPI;
 use App\Http\Controllers\API\PertanyaanController;
 use App\Http\Controllers\API\JawabanController;
 use App\Http\Controllers\API\GeneralController;
+use App\Http\Controllers\API\SurveiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,3 +75,4 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('logout', [ApiController::class, 'logout']);
 });
 Route::post('cek-ikut-survei', [ApiController::class, 'isParticipated'])->name('is.participated');
+Route::get('survei/organisasi/{organisasi}/untuk/{untuk}', [SurveiController::class, 'index'])->name('survei.untuk');

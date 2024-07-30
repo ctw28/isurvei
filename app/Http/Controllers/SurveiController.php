@@ -32,7 +32,7 @@ class SurveiController extends Controller
         }
 
         // return $data;
-        return view('admin.survei-data', compact('title', 'data'));
+        return view('admin.survei-data', compact('title', 'data', 'organisasiId'));
     }
 
     public function add()
@@ -72,7 +72,15 @@ class SurveiController extends Controller
         $is_wajib = false;
         if (!empty($request->is_wajib))
             $is_wajib = true;
+        $is_sia = false;
+        if (!empty($request->is_sia))
+            $is_sia = true;
+        $is_multiple = false;
+        if (!empty($request->is_multiple))
+            $is_multiple = true;
         $survei->is_wajib = $is_wajib;
+        $survei->is_sia = $is_sia;
+        $survei->is_multiple = $is_multiple;
         $survei->save();
 
         return redirect()->route('admin.survei.data');

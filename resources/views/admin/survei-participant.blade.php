@@ -18,12 +18,16 @@
             <h4>Pilih Survei</h4>
             <div class="row">
                 <div class="col-md-12">
-                    <select class="form-select" id="survei">
-                        <option value="">-- Pilih Survei --</option>
-                        @foreach($data as $item)
-                        <option value="{{$item->id}}">{{$item->survei_nama}} ({{$item->survei_untuk}})</option>
-                        @endforeach
+                    <select class="form-select" onchange="showSurvei(this)">
+                        <option value="">-- Survei Untuk --</option>
+                        <option value="mahasiswa">Mahasiswa</option>
+                        <option value="dosen">Dosen</option>
+                        <option value="pegawai">Tendik</option>
+                        <option value="mitra">Mitra</option>
                     </select>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <select class="form-select" id="survei"></select>
                 </div>
                 <div class="col-md-12 mt-4">
                     <button class="btn btn-primary btn-icon btn-icon-start ms-1" id="partisipan-button">
@@ -182,6 +186,22 @@
     const partisipanButton = document.querySelector('#partisipan-button')
     const statistikButton = document.querySelector('#statistik-button')
     const eksportButton = document.querySelector('#eksport-button')
+
+    async function showSurvei(e) {
+        // console.log();
+        let url = "{{route('survei.untuk',[':organisasi',':untuk'])}}"
+        url = url.replace(":organisasi", "{{$organisasiId}}")
+        url = url.replace(":untuk", e.value)
+        let request = await fetch(url)
+        response = await request.json()
+        console.log(response);
+        contents = `<option value="">-- Pilih Survei --</option>`
+        response.data.map((data, index) => {
+            contents += `<option value="${data.id}">${data.survei_nama}</option>`
+        })
+        document.querySelector("#survei").innerHTML = ``
+        document.querySelector("#survei").innerHTML = contents
+    }
 
     document.querySelector("#survei").addEventListener("change", async function(e) {
         let surveiId = e.target.options[e.target.selectedIndex].value

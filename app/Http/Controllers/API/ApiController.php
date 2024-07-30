@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\BagianAwalAkhir;
 use Illuminate\Http\Request;
 use App\Models\SurveiPertanyaan;
 use App\Models\Jawaban;
@@ -279,8 +280,9 @@ class ApiController extends Controller
         // $kategori = $payload['kategori'];
         $id = $request->user;
         $kategori = $request->kategori;
-
+        // return $id;
         $user = User::where('username', $id)->first();
+        // return $user;
         if (empty($user)) {
             $url = 'https://sia.iainkendari.ac.id/konseling_api/pegawai/' . $kategori . '/' . $id;
             $data = (object) json_decode(file_get_contents($url), true);
@@ -405,6 +407,8 @@ class ApiController extends Controller
                     'survei_untuk' => $kategori,
                     'is_wajib' => true,
                     'is_aktif' => true,
+                    'is_sia' => true,
+
                 ])
                 ->get();
         } else {
@@ -421,38 +425,58 @@ class ApiController extends Controller
                     'survei_untuk' => $kategori,
                     'is_wajib' => true,
                     'is_aktif' => true,
+                    'is_sia' => true,
+                    'survei_status' => false,
                 ])
                 ->get();
         }
         $status = [];
-
+        $belumMulai = 0;
+        $belumSelesai = 0;
         foreach ($data as $item) {
             if (count($item->sesi) == 0) {
-                $status = [
-                    'status' => false,
-                    'pesan' => $pesan,
-                    // 'link' => "http://127.0.0.1:8000/" . $token,
-                    'link' => "https://isurvei.iainkendari.ac.id/" . $token,
-                ];
-                break;
-            } else if ($item->sesi[0]->sesi_status == "0") {
-                $status = [
-                    'status' => false,
-                    'pesan' => $pesan,
-                    // 'pesan' => "Mohon mengisi survei terlebih dahulu untuk dapat menggunakan aplikasi",
-                    // 'link' => "http://127.0.0.1:8000/" . $token,
-                    'link' => "https://isurvei.iainkendari.ac.id/" . $token,
-                ];
-                break;
-            } else {
-                $status = [
-                    'status' => true,
-                    'pesan' => "sudah selesaimi",
-                    'link' => null,
-                ];
+                $belumMulai++;
+                // break;
             }
+            foreach ($item->sesi as $sesi) {
+                if ($sesi->sesi_status == "0") {
+
+                    $belumSelesai++;
+                    // break;
+                }
+            }
+            // else {
+            //     $status = [
+            //         'status' => true,
+            //         'pesan' => "sudah selesaimi",
+            //         'link' => null,
+            //     ];
+            // }
         };
-        return response()->json($status);
+        $pesan = '';
+        $status = true;
+        if ($belumMulai > 0) {
+            $pesan .= $belumMulai . " Survei belum dimulai, ";
+        }
+        if ($belumSelesai > 0) {
+            $pesan .= $belumSelesai . " Survei belum diselesaikan";
+        }
+        $link = '';
+        if ($belumMulai != 0 || $belumSelesai != 0) {
+
+            $status = false;
+            // $link = "https://isurvei.iainkendari.ac.id/masuk-survei/" . $id;
+            $link = "http://127.0.0.1:8001/masuk-survei/" . $id;
+        } else {
+            $pesan = 'sudah selesaimi';
+        }
+        $cek = [
+            'status' => $status,
+            'pesan' => $pesan,
+            // 'link' => "http://127.0.0.1:8000/" . $token,
+            'link' => $link
+        ];
+        return response()->json($cek);
         return array('data' => $status);
     }
 
@@ -504,13 +528,15 @@ class ApiController extends Controller
 
         try {
             //code...
-            $data = Survei::with(['bagian.pertanyaan.pilihanJawaban'])->find($surveiIdCopy);
+            $data = Survei::with(['bagian.pertanyaan.pilihanJawaban', 'BagianAwalAkhir'])->find($surveiIdCopy);
+            // return $data;
             $survei = SurveiAPI::create([
                 'survei_nama' => "copy of " . $data->survei_nama,
                 'survei_deskripsi' => $data->survei_deskripsi,
                 'survei_untuk' => $data->survei_untuk,
                 'is_aktif' => 0,
                 'is_wajib' => 0,
+                'is_sia' => 0,
                 'organisasi_id' => $data->organisasi_id,
                 'created_by' => $data->created_by,
                 'updated_by' => $data->updated_by,
@@ -546,6 +572,11 @@ class ApiController extends Controller
                     }
                 }
             }
+            BagianAwalAkhir::create([
+                'survei_id' => $survei->id,
+                'bagian_id_first' => $data->bagianAwalAkhir->bagian_id_first,
+                'bagian_id_last' => $data->bagianAwalAkhir->bagian_id_last,
+            ]);
             DB::commit();
             return response()->json([
                 'status' => true,

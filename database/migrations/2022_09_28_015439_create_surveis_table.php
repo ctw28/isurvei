@@ -20,6 +20,8 @@ class CreateSurveisTable extends Migration
             $table->string('survei_untuk');
             $table->boolean('is_aktif')->default(false); //ini untuk publish/draft
             $table->boolean('is_wajib')->default(false); //ini untuk wajib diisi/tidak
+            $table->boolean('is_sia')->default(false); //ini untuk wajib diisi/tidak
+            $table->boolean('is_multiple')->default(false); //ini untuk wajib diisi/tidak
             $table->boolean('survei_status')->default(false); //ini untuk selesai / belum
             $table->unsignedBigInteger('organisasi_id');
             $table->unsignedBigInteger('created_by');

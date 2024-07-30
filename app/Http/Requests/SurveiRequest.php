@@ -20,8 +20,16 @@ class SurveiRequest extends FormRequest
         $is_wajib = false;
         if ($request->is_wajib == 1)
             $is_wajib = true;
+        $is_sia = false;
+        if ($request->is_sia == 1)
+            $is_sia = true;
+        $is_multiple = false;
+        if ($request->is_multiple == 1)
+            $is_multiple = true;
         $request->merge([
             'is_wajib' => $is_wajib,
+            'is_sia' => $is_sia,
+            'is_multiple' => $is_multiple,
             'organisasi_id' => Auth::user()->adminOrganisasi->organisasi_id,
         ]);
     }
@@ -47,6 +55,8 @@ class SurveiRequest extends FormRequest
             'survei_status' => 'boolean',
             'is_wajib' => 'boolean',
             'is_aktif' => 'boolean',
+            'is_sia' => 'boolean',
+            'is_multiple' => 'boolean',
         ];
     }
 

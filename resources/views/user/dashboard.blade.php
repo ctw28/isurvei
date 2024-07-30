@@ -22,7 +22,9 @@
                 <th width="2%">No</th>
                 <th width="20%">Survei</th>
                 <th width="30%">Deskripsi</th>
-                <th width="10%">Wajib</th>
+                <!-- <th width="10%">Wajib</th> -->
+                <th width="10%">Wajib SIA</th>
+                <th width="10%">Jumlah Pengisian</th>
                 <th width="5%">Aksi</th>
             </thead>
             <tbody>
@@ -40,11 +42,28 @@
                     </td> -->
                     <td>{{$item->survei_nama}}</td>
                     <td>{{$item->survei_deskripsi}}</td>
-                    <td class="text-center">
+                    <!-- <td class="text-center">
                         @if($item->is_wajib==true)
                         <span class="badge bg-danger text-uppercase">Wajib diisi</span>
                         @else
                         -
+                        @endif
+                    </td> -->
+                    <td class="text-center">
+                        @if($item->is_sia==true)
+                        <span class="badge bg-danger text-uppercase">WAJIB diisi agar SIA Terbuka</span>
+                        @else
+                        -
+                        @endif
+                    </td>
+                    <td class="text-center">
+                        @if($item->is_multiple==true)
+
+                        <span class="badge bg-info text-uppercase">Multiple</span>
+
+                        @else
+                        <span class="badge bg-success text-uppercase">Sekali pengisian</span>
+
                         @endif
                     </td>
                     <td class="text-center">
@@ -160,6 +179,7 @@
         response.data.map((data, index) => {
 
             let status = (data.sesi_status == 1) ? '<span class="badge bg-success">Selesai</span>' : '<span class="badge bg-warning">Belum Selesai</span>'
+            let tombol = (data.sesi_status == 1) ? 'Selesai' : 'Lanjut'
             let link = "{{route('user.show.pertanyaan',[':surveiId',':bagianId',':sesiId'])}}"
             link = link.replace(':surveiId', id)
             link = link.replace(':bagianId', bagian)
@@ -169,7 +189,7 @@
                 <td>${index+1}</td>
                 <td>${formatDate(data.created_at)}</td>
                 <td>${status}</td>
-                <td ><a class="btn btn-info btn-sm" href="${link}">Isi Survei</a></td>
+                <td ><a class="btn btn-info btn-sm" href="${link}">${tombol}</a></td>
             </tr>`
         })
         document.querySelector('#show-sesi').innerHTML = html

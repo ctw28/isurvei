@@ -54,7 +54,7 @@ class DashboardController extends Controller
 
         // $data['stepData'] = Step::with('stepChild')->whereNull('step_parent')->orderBy('step_urutan', 'ASC')->get();
         // return $data;
-        return view('admin.survei-participant', compact('title', 'data'));
+        return view('admin.survei-participant', compact('title', 'data', 'organisasiId'));
     }
 
     public function setsesi()

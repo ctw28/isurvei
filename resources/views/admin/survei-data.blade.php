@@ -12,67 +12,29 @@
     </div>
     <div class="card mb-5">
         <div class="card-body">
-            <div style="overflow-x:auto;">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" onclick="show('mahasiswa')" data-bs-toggle="tab" data-bs-target="#survei-mahasiswa" type="button" role="tab" aria-controls="home" aria-selected="true">Mahasiswa</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" onclick="show('dosen')" data-bs-toggle="tab" data-bs-target="#survei-dosen" type="button" role="tab" aria-controls="profile" aria-selected="false">Dosen</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab" onclick="show('pegawai')" data-bs-toggle="tab" data-bs-target="#survei-pegawai" type="button" role="tab" aria-controls="contact" aria-selected="false">Tendik</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab" onclick="show('mitra')" data-bs-toggle="tab" data-bs-target="#survei-mitra" type="button" role="tab" aria-controls="contact" aria-selected="false">Mitra</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="survei-mahasiswa" role="tabpanel" aria-labelledby="home-tab">
 
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr class="text-center">
-                            <th scope="col" width="3%">No</th>
-                            <!-- <th scope="col" width="20%">Dibuat Oleh</th> -->
-                            <th scope="col" width="30%">Nama Survei</th>
-                            <th scope="col" width="10%">Untuk</th>
-                            <th scope="col" width="10%">Wajib</th>
-                            <th scope="col" width="5%">Publish</th>
-                            <th scope="col" width="5%">Selesai</th>
-                            <th scope="col" width="15%">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($data as $index => $item)
-                        <tr>
-                            <td class="text-center">{{$index+1}}</td>
-                            <!-- <td>gg</td> -->
-                            <td>{{$item->survei_nama}}</td>
-                            <td class="text-center">{{$item->survei_untuk}}</td>
-                            <td class="text-center">
-                                {{($item->is_wajib) ? 'Ya' : '-'}}
-                            </td>
-                            <td class="text-center">
-                                <div class="form-check form-switch">
-                                    <input onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}>
-                                    <!-- @if($item->is_aktif==1) -->
-                                    <!-- <input disabled onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}> -->
-                                    <!-- @else -->
-                                    <!-- <input onclick="update('is_aktif',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" {{($item->is_aktif) ? 'checked' : ''}}> -->
-                                    <!-- @endif -->
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-check form-switch">
-                                    <input onclick="update('survei_status',event)" data-id="{{$item->id}}" class="form-check-input" type="checkbox" id="survei_status" name="survei_status" value="1" {{($item->survei_status) ? 'checked' : ''}}>
-                                </div>
-                            </td>
-                            <td>
-                                <a href="{{route('admin.bagian.data',$item->id)}}" class="btn btn-info btn-sm">Bagian</a>
-                                @if($item->survei_untuk=="mitra")
-                                <button onclick="setLInk('{{$item->decrypt_id}}')" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-warning btn-sm">Link</button>
-                                @endif
-                                <button onclick="linkCoba('{{$item->id_encrypt}}','{{$item->bagianAwalAkhir->bagian_id_first_encrypt}}')" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-success btn-sm">Link Coba</button>
-                                <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
-                                    <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
-                                    <a class="dropdown-item" href="{{route('admin.survei.edit',$item->id)}}">Ubah</a>
-                                    <a class="dropdown-item" href="{{route('admin.survei.delete',$item->id)}}" onclick="return confirm('Yakin Hapus')">Hapus</a>
-                                    <a class="dropdown-item" onclick="duplikat('{{$item->id}}')">Duplikat</a>
-                                </div>
-                            </td>
-                        </tr>
-
-                        @endforeach
-                    </tbody>
-                </table>
+                </div>
+                <div class="tab-pane fade" id="survei-dosen" role="tabpanel" aria-labelledby="profile-tab"></div>
+                <div class="tab-pane fade" id="survei-pegawai" role="tabpanel" aria-labelledby="contact-tab"></div>
+                <div class="tab-pane fade" id="survei-mitra" role="tabpanel" aria-labelledby="contact-tab"></div>
             </div>
+
         </div>
     </div>
 </section>
@@ -98,6 +60,107 @@
 
 @section('js')
 <script>
+    show('mahasiswa')
+    // console.log("{{$organisasiId}}");
+    async function show(untuk) {
+        // console.log(untuk);
+        let url = "{{route('survei.untuk',[':organisasi',':untuk'])}}"
+        url = url.replace(":organisasi", "{{$organisasiId}}")
+        url = url.replace(":untuk", untuk)
+        let request = await fetch(url)
+        response = await request.json()
+        console.log(response);
+        const surveiDataShow = document.querySelector(`#survei-${untuk}`)
+
+        contents = `
+        <div style="overflow-x:auto;">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr class="text-center">
+                            <th scope="col" width="3%">No</th>
+                            <th scope="col" width="30%">Nama Survei</th>
+                            <th scope="col" width="10%">Untuk</th> 
+        `
+        if (untuk == "mahasiswa" || untuk == "dosen")
+            contents += `<th scope="col" width="10%">Wajib SIA</th>
+                            <th scope="col" width="10%">Multiple</th>
+                `
+        if (untuk == "pegawai")
+            contents += `<th scope="col" width="10%">Wajib SIMPEG</th>
+                            <th scope="col" width="10%">Multiple</th>
+                `
+        contents += `
+                                <th scope="col" width="5%">Publish</th>
+                            <th scope="col" width="5%">Tutup</th>
+                            <th scope="col" width="15%">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>       
+        `
+        response.data.map((data, index) => {
+            let urlBagian = "{{route('admin.bagian.data',':id')}}"
+            urlBagian = urlBagian.replace(":id", data.id)
+            let urlEdit = "{{route('admin.survei.edit',':id')}}"
+            urlEdit = urlEdit.replace(":id", data.id)
+            let urlHapus = "{{route('admin.survei.delete',':id')}}"
+            urlHapus = urlHapus.replace(":id", data.id)
+            contents += `
+                        <tr>
+                            <td class="text-center">${index+1}</td>
+                            <td>${data.survei_nama}</td>
+                            <td class="text-center">${data.survei_untuk}</td>`
+            if (untuk != "mitra")
+
+                contents += `
+                            <td class="text-center">
+                                ${(data.is_sia)?'Ya':''}
+                            </td>
+                            <td class="text-center">
+                                ${(data.is_multiple) ? 'Ya' : ''}
+                            </td>`
+            contents += `
+                            <td class="text-center">
+                                <div class="form-check form-switch">
+                                    <input onclick="update('is_aktif',event)" data-id="${data.id}" class="form-check-input" type="checkbox" id="is_aktif" name="is_aktif" value="1" ${(data.is_aktif)?'checked':''}>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input onclick="update('survei_status',event)" data-id="${data.id}" class="form-check-input" type="checkbox" id="survei_status" name="survei_status" value="1" ${(data.survei_status)?'checked':''}>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="${urlBagian}" class="btn btn-info btn-sm">Bagian</a>     
+            `
+
+            if (data.survei_untuk == "mitra") {
+                contents += `
+                                <button onclick="setLInk('${data.decrypt_id}')" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-warning btn-sm">Link</button>
+                            `
+            }
+            contents += `
+                                <button onclick="linkCoba('${data.id_encrypt}','${data.bagian_awal_akhir.bagian_id_first_encrypt}')" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-success btn-sm">Preview</button>
+                                <button class="btn btn-icon btn-icon-only btn-sm btn-background shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+                                    <i data-cs-icon="more-horizontal" data-acorn-size="15"></i>. . .
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end shadow">
+                                    <a class="dropdown-item" href="${urlEdit}">Ubah</a>
+                                    <a class="dropdown-item" href="${urlHapus}" onclick="return confirm('Yakin Hapus')">Hapus</a>
+                                    <a class="dropdown-item" onclick="duplikat('${data.id}')">Duplikat</a>
+                                </div>
+                            </td>
+                        </tr>           
+        `
+        })
+        contents += `
+                    </tbody>
+                </table>
+            </div>`
+        surveiDataShow.innerHTML = ''
+        surveiDataShow.innerHTML = contents
+
+
+    }
     async function duplikat(id) {
         let konfirm = confirm("Yakin Copy? semua bagian dan pertanyaan akan ikut tercopy. anda bisa edit setelahnya")
         if (!konfirm)

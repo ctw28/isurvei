@@ -26,6 +26,18 @@
                         <label class="form-check-label" for="is_wajib">Wajib diisi</label>
                     </div>
                 </div>
+                <div class="col-md-12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="is_sia" name="is_sia" value="1">
+                        <label class="form-check-label" for="is_sia">Wajib SIA / SIMPEG</label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="is_multiple" name="is_multiple" value="1">
+                        <label class="form-check-label" for="is_multiple">Bisa Isi Lebih dari 1 Kali</label>
+                    </div>
+                </div>
                 <div class="col-md-4">
                     <label for="inputState" class="form-label">Untuk</label>
                     <select id="survei_untuk" class="form-select" name="survei_untuk" required>
