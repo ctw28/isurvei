@@ -26,6 +26,8 @@
                     <div class="row">
                         <!-- Title Start -->
                         <div class="col-12 col-md-7">
+                            <img src="{{asset('/')}}logo.png" alt="logo" style="width:70px">
+
                             <h1 class="mb-0 pb-0 display-4" id="title">{{$title}}</h1>
                             <nav class="breadcrumb-container d-inline-block" aria-label="breadcrumb">
                                 <ul class="breadcrumb pt-0">

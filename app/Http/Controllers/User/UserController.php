@@ -782,7 +782,7 @@ class UserController extends Controller
 
     public function showPertanyaanCoba($surveiIdEncrypt, $bagianIdEncrypt)
     {
-        $data['title'] = "Survei";
+        $data['title'] = "i-Survei";
         $data['survei_id'] = Crypt::decrypt($surveiIdEncrypt);
         $bagianId = Crypt::decrypt($bagianIdEncrypt);
         $data['bagianData'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) {
