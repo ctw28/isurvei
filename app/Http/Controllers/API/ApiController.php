@@ -465,8 +465,8 @@ class ApiController extends Controller
         if ($belumMulai != 0 || $belumSelesai != 0) {
 
             $status = false;
-            // $link = "https://isurvei.iainkendari.ac.id/masuk-survei/" . $id;
-            $link = "http://127.0.0.1:8001/masuk-survei/" . $id;
+            $link = "https://isurvei.iainkendari.ac.id/masuk-survei/" . $id;
+            // $link = "http://127.0.0.1:8001/masuk-survei/" . $id;
         } else {
             $pesan = 'sudah selesaimi';
         }
