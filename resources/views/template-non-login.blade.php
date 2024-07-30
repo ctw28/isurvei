@@ -19,7 +19,7 @@
     <div>
 
 
-        <main style="padding-left: none !important;">
+        <main style="padding-left: 5% !important;">
             <div class="container">
                 <!-- Title and Top Buttons Start -->
                 <div class="page-title-container">
