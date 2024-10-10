@@ -95,7 +95,7 @@ class SurveiController extends Controller
 
     public function cetak($surveiId)
     {
-        $limit = 100;
+        $limit = 10;
         $survei = Survei::find($surveiId);
         // return $survei;
         if ($survei->survei_untuk == "mahasiswa")
