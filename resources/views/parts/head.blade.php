@@ -18,7 +18,8 @@
 <link rel="icon" type="image/png" href="img/favicon/favicon-32x32.png" sizes="32x32" />
 <link rel="icon" type="image/png" href="img/favicon/favicon-16x16.png" sizes="16x16" />
 <link rel="icon" type="image/png" href="img/favicon/favicon-128.png" sizes="128x128" /> -->
-<link rel="shortcut icon" href="https://sia.iainkendari.ac.id/assets/images/favicon.ico" type="image/x-icon">
+<!-- <link rel="shortcut icon" href="https://sia.iainkendari.ac.id/assets/images/favicon.ico" type="image/x-icon"> -->
+<link rel="shortcut icon" href="https://sia2.iainkendari.ac.id/assets/images/favicon.ico" type="image/x-icon">
 <meta name="application-name" content="&nbsp;" />
 <meta name="msapplication-TileColor" content="#FFFFFF" />
 <meta name="msapplication-TileImage" content="img/favicon/mstile-144x144.png" />

@@ -108,7 +108,8 @@
             // console.log(dataId);
             let dataSend = new FormData()
             dataSend.append('iddata', JSON.stringify(dataId))
-            let response = await fetch('https://sia.iainkendari.ac.id/alumni/tracer/data-alumni', {
+            // let response = await fetch('https://sia.iainkendari.ac.id/alumni/tracer/data-alumni', {
+            let response = await fetch('https://sia2.iainkendari.ac.id/alumni/tracer/data-alumni', {
                 method: "POST",
                 body: dataSend
             })

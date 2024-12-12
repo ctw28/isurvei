@@ -293,7 +293,8 @@
             prodi.disabled = true
             getFakultas();
             async function getFakultas() {
-                response = await fetch('https://sia.iainkendari.ac.id/data-fakultas')
+                // response = await fetch('https://sia.iainkendari.ac.id/data-fakultas')
+                response = await fetch('https://sia2.iainkendari.ac.id/data-fakultas')
                 responseMessage = await response.json()
                 // console.log(responseMessage);
                 let fragment = document.createDocumentFragment();
@@ -314,7 +315,8 @@
                 else
                     prodi.disabled = false
                 let fragment = document.createDocumentFragment();
-                response = await fetch(`https://sia.iainkendari.ac.id/data-prodi/${fakultas.options[fakultas.selectedIndex].value}`)
+                // response = await fetch(`https://sia.iainkendari.ac.id/data-prodi/${fakultas.options[fakultas.selectedIndex].value}`)
+                response = await fetch(`https://sia2.iainkendari.ac.id/data-prodi/${fakultas.options[fakultas.selectedIndex].value}`)
                 responseMessage = await response.json()
                 responseMessage.forEach(function(data, i) {
                     let option = document.createElement('option');
