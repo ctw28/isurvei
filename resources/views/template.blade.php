@@ -15,7 +15,8 @@
 </head>
 
 <body>
-    <div id="root">
+    <!-- <div id="root"> -->
+    <div>
         <div id="nav" class="nav-container d-flex">
             <div class="nav-content d-flex">
                 <!-- Logo Start -->
