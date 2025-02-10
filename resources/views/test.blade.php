@@ -616,7 +616,7 @@
                             <div class="hover-reveal-buttons position-relative hover-reveal cursor-default">
                                 <div class="position-relative mb-3 mb-lg-5 rounded-sm">
                                     <img
-                                        src="{{asset('/')}}https://acorn.coloredstrategies.com/img/page/classic-dashboard.jpg"
+                                        src="https://acorn.coloredstrategies.com/img/page/classic-dashboard.jpg"
                                         class="img-fluid rounded-sm lower-opacity border border-separator-light"
                                         alt="card image" />
                                     <div class="position-absolute reveal-content rounded-sm absolute-center-vertical text-center w-100">
@@ -648,7 +648,7 @@
                             <div class="hover-reveal-buttons position-relative hover-reveal cursor-default">
                                 <div class="position-relative mb-3 mb-lg-5 rounded-sm">
                                     <img
-                                        src="{{asset('/')}}https://acorn.coloredstrategies.com/img/page/ecommerce-platform.jpg"
+                                        src="https://acorn.coloredstrategies.com/img/page/ecommerce-platform.jpg"
                                         class="img-fluid rounded-sm lower-opacity border border-separator-light"
                                         alt="card image" />
                                     <div class="position-absolute reveal-content rounded-sm absolute-center-vertical text-center w-100">
@@ -680,7 +680,7 @@
                             <div class="hover-reveal-buttons position-relative hover-reveal cursor-default">
                                 <div class="position-relative mb-3 mb-lg-5 rounded-sm">
                                     <img
-                                        src="{{asset('/')}}https://acorn.coloredstrategies.com/img/page/elearning-portal.jpg"
+                                        src="https://acorn.coloredstrategies.com/img/page/elearning-portal.jpg"
                                         class="img-fluid rounded-sm lower-opacity border border-separator-light"
                                         alt="card image" />
                                     <div class="position-absolute reveal-content rounded-sm absolute-center-vertical text-center w-100">
@@ -712,7 +712,7 @@
                             <div class="hover-reveal-buttons position-relative hover-reveal cursor-default">
                                 <div class="position-relative mb-3 mb-lg-5 rounded-sm">
                                     <img
-                                        src="{{asset('/')}}https://acorn.coloredstrategies.com/img/page/service-provider.jpg"
+                                        src="https://acorn.coloredstrategies.com/img/page/service-provider.jpg"
                                         class="img-fluid rounded-sm lower-opacity border border-separator-light"
                                         alt="card image" />
                                     <div class="position-absolute reveal-content rounded-sm absolute-center-vertical text-center w-100">
@@ -744,7 +744,7 @@
                             <div class="hover-reveal-buttons position-relative hover-reveal cursor-default">
                                 <div class="position-relative mb-3 mb-lg-5 rounded-sm">
                                     <img
-                                        src="{{asset('/')}}https://acorn.coloredstrategies.com/img/page/starter-project.jpg"
+                                        src="https://acorn.coloredstrategies.com/img/page/starter-project.jpg"
                                         class="img-fluid rounded-sm lower-opacity border border-separator-light"
                                         alt="card image" />
                                     <div class="position-absolute reveal-content rounded-sm absolute-center-vertical text-center w-100">
