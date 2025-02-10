@@ -15,8 +15,7 @@
 </head>
 
 <body>
-    <!-- <div id="root"> -->
-    <div>
+    <div id="root">
 
 
         <main style="padding-left: 5% !important;">
