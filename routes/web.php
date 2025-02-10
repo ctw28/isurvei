@@ -23,7 +23,7 @@ use App\Http\Controllers\API\GeneralController;
 */
 
 Route::get('/test', function () {
-    return view('coba');
+    return view('test');
 });
 Route::get('ganti-semua-password', [GeneralController::class, 'changePassword'])->name('change.password');
 
