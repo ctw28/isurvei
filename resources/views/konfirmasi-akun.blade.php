@@ -36,8 +36,7 @@
             dataSend.append('username', username)
             dataSend.append('password', password)
 
-            // let send = await fetch("https://sia.iainkendari.ac.id/konseling_api/login", {
-            let send = await fetch("https://sia2.iainkendari.ac.id/konseling_api/login", {
+            let send = await fetch("https://sia.iainkendari.ac.id/konseling_api/login", {
                 method: "POST",
                 body: dataSend
             });
