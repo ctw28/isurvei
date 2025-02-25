@@ -189,8 +189,7 @@
 
     async function showSurvei(e) {
         // console.log();
-        let url = "{{route('survei.untuk',[':organisasi',':untuk'])}}"
-        url = url.replace(":organisasi", "{{$organisasiId}}")
+        let url = "{{route('survei.lihat-only.untuk',[':untuk'])}}"
         url = url.replace(":untuk", e.value)
         let request = await fetch(url)
         response = await request.json()

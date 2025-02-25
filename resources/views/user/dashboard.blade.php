@@ -1,22 +1,56 @@
 @extends('template')
 
+@section('style')
+<style>
+    @keyframes blink {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+    }
+
+    .attention {
+        font-size: 40px;
+        font-weight: bold;
+        color: red;
+        text-align: center;
+        animation: blink 1s infinite;
+    }
+</style>
+@endsection
 @section('content')
 
 <div class="card mb-5">
     <div class="card-body">
         <h2>Selamat Datang di I-Survei</h2>
-        @if($role=="pegawai")
-        <button onclick="gantiKeDosen()" class="btn btn-warning btn-sm">Ubah ke Dosen</button>
-        @endif
-        @if($role=="dosen")
-        <button onclick="gantiKePegawai()" class="btn btn-warning btn-sm">Ubah jadi Tendik</button>
-        @endif
+
         <!-- <p><b>SI-LANNI atau Sistem Informasi Pelacakan Alumni</b> merupakan metode yang digunakan oleh IAIN Kendari untuk menerima umpan balik dari para alumninya. Umpan balik yang diperoleh dari alumni tersebut digunakan oleh program studi di IAIN Kendari sebagai evaluasi untuk pengembangan kualitas dan sistem Pendidikan yang dilaksanakan di perguruan tinggi. Umpan balik ini dapat bermanfaat pula bagi program studi di IAIN Kendari untuk memetakan lapangan kerja dan usaha agar sesuai dengan tuntutan dunia kerja.</p> -->
     </div>
 </div>
 <h2 class="small-title">Daftar Survei / Kuisioner</h2>
 <div class="card mb-5">
     <div class="card-body">
+        @if($role=="pegawai")
+        <div class="alert alert-warning" role="alert">
+            <h1><strong><span class="attention">PERHATIAN!!</span><br>JIKA ANDA <span style="color:red">DOSEN</span> TAPI SURVEI YANG MUNCUL ADALAH SURVEI TENDIK, SILAHKAN UBAH DENGAN KLIK TOMBOL
+                    "UBAH KE SURVEI DOSEN" DI BAWAH INI
+                    AGAR SURVEI DIALIHKAN KE SURVEI DOSEN. TERIMA KASIH</strong></h1>
+            <button onclick="gantiKeDosen()" class="btn btn-dark btn-lg">Ubah ke survei Dosen</button>
+        </div>
+        @endif
+        @if($role=="dosen")
+        <div class="alert alert-warning" role="alert">
+            <h1><strong>PERHATIAN!! <br>JIKA ANDA <span style="color:red">TENDIK</span> TAPI SURVEI YANG MUNCUL ADALAH SURVEI DOSEN, SILAHKAN UBAH DENGAN KLIK TOMBOL
+                    "UBAH KE SURVEI TENDIK" DI BAWAH INI
+                    AGAR SURVEI DIALIHKAN KE SURVEI TENDIK. TERIMA KASIH</strong></h1>
+            <button onclick="gantiKePegawai()" class="btn btn-dark btn-lg">Ubah ke survei Tendik</button>
+        </div>
+        @endif
         <table class="table table-striped table-hover">
             <thead class="text-center">
                 <th width="2%">No</th>

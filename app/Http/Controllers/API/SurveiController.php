@@ -33,4 +33,26 @@ class SurveiController extends Controller
             'data' => $data,
         ], 200);
     }
+    public function indexLihatOnly($untuk)
+    {
+        // return $untuk;
+        $data = Survei::where([
+            'survei_untuk' => $untuk
+        ])
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('is_sia', 'DESC')
+
+            ->get();
+        foreach ($data as $item) {
+            if ($item->survei_untuk == "mitra")
+                $item->decrypt_id = Crypt::encrypt($item->id);
+            $item->id_encrypt = Crypt::encrypt($item->id);
+            $item->bagianAwalAkhir->bagian_id_first_encrypt = Crypt::encrypt($item->bagianAwalAkhir->bagian_id_first);
+        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Data ditemukan',
+            'data' => $data,
+        ], 200);
+    }
 }
