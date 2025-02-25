@@ -56,8 +56,8 @@
                 <th width="2%">No</th>
                 <th width="20%">Survei</th>
                 <th width="30%">Deskripsi</th>
-                <!-- <th width="10%">Wajib</th> -->
                 <th width="10%">Wajib SIA</th>
+                <th width="10%">Untuk</th>
                 <th width="10%">Jumlah Pengisian</th>
                 <th width="5%">Aksi</th>
             </thead>
@@ -90,6 +90,15 @@
                         -
                         @endif
                     </td>
+                    <td class="text-center"><b>
+                            @if($item->survei_untuk=="pegawai")
+                            TENDIK
+                            @elseif ($item->survei_untuk=="dosen")
+                            DOSEN
+                            @else
+                            MAHASISWA
+                            @endif
+                        </b></td>
                     <td class="text-center">
                         @if($item->is_multiple==true)
 
