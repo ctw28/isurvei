@@ -77,3 +77,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 Route::post('cek-ikut-survei', [ApiController::class, 'isParticipated'])->name('is.participated');
 Route::get('survei/organisasi/{organisasi}/untuk/{untuk}', [SurveiController::class, 'index'])->name('survei.untuk');
 Route::get('survei/lihat-only/untuk/{untuk}', [SurveiController::class, 'indexLihatOnly'])->name('survei.lihat-only.untuk');
+
+Route::get('survei/{id}/sesi', [SurveiController::class, 'getSesi'])->name('survei.sesi');
+Route::get('survei/{id}/get-pertanyaan', [SurveiController::class, 'getPertanyaanCetak'])->name('survei.pertanyaan.cetak');
+Route::get('/get-jawaban', [SurveiController::class, 'getJawaban'])->name('get.jawaban.sesi');

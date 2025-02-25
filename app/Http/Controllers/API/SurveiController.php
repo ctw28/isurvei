@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Jawaban;
 use App\Models\Survei;
+use App\Models\SurveiBagian;
+use App\Models\SurveiPertanyaan;
+use App\Models\SurveiSesi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -55,5 +59,64 @@ class SurveiController extends Controller
             'message' => 'Data ditemukan',
             'data' => $data,
         ], 200);
+    }
+
+    public function getSesi($surveiId)
+    {
+
+        $survei = Survei::find($surveiId);
+        // return $survei;
+        if ($survei->survei_untuk == "mahasiswa")
+            $sesi = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri', 'user.userMahasiswa.mahasiswa.prodi'])->where('survei_id', $surveiId)->get();
+        else if ($survei->survei_untuk == "dosen" || $survei->survei_untuk == "pegawai")
+            $sesi = SurveiSesi::with(['user.userPegawai.pegawai.dataDiri'])->where('survei_id', $surveiId)->get();
+        else
+            $sesi = MitraSesi::with(['mitra'])->where('survei_id', $surveiId)->get();
+        // $bagian = SurveiBagian::with(['pertanyaan', 'survei'])->where('survei_id', $surveiId)->get();
+        return $sesi;
+
+        // $surveiId = $request->survei_id;
+        // $fakultas = $request->fakultas;
+        // $fakultasId = match ($fakultas) {
+        //     "02" => 3,
+        //     "03" => 4,
+        //     "04" => 5,
+        //     "05" => 6,
+        //     default => 2,
+        // };
+
+        // $sesi = SurveiSesi::with(['user.mahasiswa.dataDiri', 'user.mahasiswa.prodi'])
+        //     ->whereHas('user.mahasiswa.prodi', function ($prodi) use ($fakultasId) {
+        //         $prodi->where('organisasi_parent_id', $fakultasId);
+        //     })
+        //     ->where('survei_id', $surveiId)
+        //     ->whereHas('jawaban')
+        //     ->get();
+
+        // return response()->json($sesi);
+    }
+
+
+    public function getJawaban(Request $request)
+    {
+        $jawaban = Jawaban::where('sesi_id', $request->sesi_id)
+            ->select('pertanyaan_id', 'jawaban')
+            ->get()
+            ->groupBy('pertanyaan_id');
+
+        return response()->json($jawaban);
+    }
+
+    public function getPertanyaanCetak($surveiId)
+    {
+        $stepIds = SurveiBagian::where('survei_id', $surveiId)->pluck('id');
+        // return $stepIds;
+        $pertanyaan = SurveiPertanyaan::whereIn('bagian_id', $stepIds)
+            ->select('id', 'bagian_id', 'pertanyaan', 'pertanyaan_urutan')
+            ->orderBy('bagian_id')
+            ->orderBy('pertanyaan_urutan')
+            ->get();
+
+        return response()->json($pertanyaan);
     }
 }

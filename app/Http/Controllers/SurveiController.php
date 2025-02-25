@@ -154,6 +154,14 @@ class SurveiController extends Controller
             $data = [];
         }
         // return $jawaban;
-        return view('admin.cetak', compact(['survei', 'bagian', 'jawaban']));
+        // return view('admin.cetak', compact(['survei', 'bagian', 'jawaban']));
+        return view('admin.cetak2', compact(['survei', 'bagian', 'jawaban']));
+    }
+    public function cetak2($surveiId)
+    {
+        $data['survei_id'] = $surveiId;
+        $bagian = SurveiBagian::with(['pertanyaan', 'survei'])->where('survei_id', $surveiId)->get();
+
+        return view('admin.cetak2', compact(['data', 'bagian']));
     }
 }

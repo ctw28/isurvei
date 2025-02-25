@@ -34,19 +34,20 @@
 
 
 <body>
+    <h1>{{$bagian[0]->survei->survei_untuk}} : Data Survei {{$bagian[0]->survei->survei_nama}}</h1>
     <table border="1">
         <thead>
             <tr>
                 <th rowspan="3">No</th>
                 <th rowspan="3">Tanggal</th>
-                <th rowspan="3">NIM</th>
+                <th rowspan="3">{{($bagian[0]->survei->survei_untuk=="mahasiswa" ? "NIM" : "NIP")}}</th>
                 <th rowspan="3">Nama</th>
-                <th rowspan="3">Prodi</th>
+                {!! ($bagian[0]->survei->survei_untuk == "mahasiswa" ? "<th rowspan='3'>Prodi</th>" : "") !!}
             </tr>
             <tr>
                 @foreach ($bagian as $row)
                 <th colspan="{{ count($row->pertanyaan) }}" style="text-align:center; white-space: nowrap;">
-                    {{ $row->step_kode }}. {{ $row->step_nama }}
+                    {{ $row->bagian_kode }}. {{ $row->bagian_nama }}
                 </th>
                 @endforeach
             </tr>
@@ -66,45 +67,58 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Ambil path URL
+            const untuk = "{{$bagian[0]->survei->survei_untuk}}"
             const pathSegments = window.location.pathname.split("/");
 
             // Cari posisi "periode" dan "fakultas" dalam URL
-            const periodeIndex = pathSegments.indexOf("periode");
-            const fakultasIndex = pathSegments.indexOf("fakultas");
+            const surveiIndex = pathSegments.indexOf("survei");
 
             // Ambil nilai periode dan fakultas
-            const periode = periodeIndex !== -1 ? pathSegments[periodeIndex + 1] : null;
-            const fakultas = fakultasIndex !== -1 ? pathSegments[fakultasIndex + 1] : null;
+            const surveiId = surveiIndex !== -1 ? pathSegments[surveiIndex + 1] : null;
 
-            if (!periode || !fakultas) {
-                console.error("Periode atau fakultas tidak ditemukan dalam URL!");
+            if (!surveiId) {
+                console.error("Survei tidak ditemukan dalam URL!");
                 return;
             }
 
-            console.log(`Periode: ${periode}, Fakultas: ${fakultas}`); // Debugging
+            console.log(`Periode: ${surveiId}`); // Debugging
 
             const sesiContainer = document.getElementById("sesi-container");
 
             // Ambil daftar pertanyaan dari backend untuk menentukan urutan kolom
-            fetch(`/api/get-pertanyaan`)
+            fetch(`/api/survei/${surveiId}/get-pertanyaan`)
                 .then(response => response.json())
                 .then(pertanyaanList => {
+                    console.log(pertanyaanList)
+                    // return
                     const pertanyaanIds = pertanyaanList.map(p => p.id); // Urutan ID pertanyaan
                     console.log("Pertanyaan:", pertanyaanIds);
 
                     // Ambil sesi dengan AJAX
-                    fetch(`/api/get-sesi?periode=${periode}&fakultas=${fakultas}`)
+                    fetch(`/api/survei/${surveiId}/sesi`)
                         .then(response => response.json())
                         .then(sesiList => {
+                            console.log(sesiList);
+
                             sesiList.forEach((sesi, index) => {
                                 let row = document.createElement("tr");
-                                row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${new Date(sesi.sesi_tanggal).toLocaleDateString("id-ID")}</td>
-                            <td>${sesi.user?.mahasiswa?.nim ?? '-'}</td>
-                            <td>${sesi.user?.mahasiswa?.data_diri?.nama_lengkap ?? '-'}</td>
-                            <td>${sesi.user?.mahasiswa?.prodi?.organisasi_singkatan ?? '-'}</td>
-                        `;
+                                if (untuk == "mahasiswa") {
+                                    row.innerHTML = `
+                                        <td>${index + 1}</td>
+                                        <td>${new Date(sesi.sesi_tanggal).toLocaleDateString("id-ID")}</td>
+                                        <td>${sesi.user?.user_mahasiswa?.mahasiswa?.nim ?? '-'}</td>
+                                        <td>${sesi.user?.user_mahasiswa?.mahasiswa?.data_diri?.nama_lengkap ?? '-'}</td>
+                                        <td>${sesi.user?.user_mahasiswa?.mahasiswa?.prodi?.organisasi_singkatan ?? '-'}</td>
+                                    `;
+                                } else {
+                                    row.innerHTML = `
+                                        <td>${index + 1}</td>
+                                        <td>${new Date(sesi.sesi_tanggal).toLocaleDateString("id-ID")}</td>
+                                        <td>${sesi.user?.user_pegawai?.pegawai?.pegawai_nomor_induk ?? '-'}</td>
+                                        <td>${sesi.user?.user_pegawai?.pegawai?.data_diri?.nama_lengkap ?? '-'}</td>
+                                    `;
+
+                                }
 
                                 // Tambahkan kolom kosong untuk jawaban, sesuai dengan urutan pertanyaan
                                 pertanyaanIds.forEach(pertanyaanId => {

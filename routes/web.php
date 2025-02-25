@@ -65,7 +65,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/survei/{id}/edit', [SurveiController::class, 'edit'])->name('admin.survei.edit');
         Route::post('/survei/{id}/update', [SurveiController::class, 'update'])->name('admin.survei.update');
         Route::get('/survei/{id}/hapus', [SurveiController::class, 'delete'])->name('admin.survei.delete');
-        Route::get('/survei/{id}/cetak', [SurveiController::class, 'cetak'])->name('admin.survei.cetak');
+        Route::get('/survei/{id}/cetak', [SurveiController::class, 'cetak2'])->name('admin.survei.cetak');
 
         //BAGIAN
         Route::get('/survei/{id}/bagian', [BagianController::class, 'index'])->name('admin.bagian.data');
