@@ -196,7 +196,7 @@
         console.log(response);
         contents = `<option value="">-- Pilih Survei --</option>`
         response.data.map((data, index) => {
-            contents += `<option value="${data.id}">${data.survei_nama}</option>`
+            contents += `<option value="${data.id}">(${data.created_by?.admin_organisasi?.sebutan || "Admin"}) - ${data.survei_nama}</option>`
         })
         document.querySelector("#survei").innerHTML = ``
         document.querySelector("#survei").innerHTML = contents

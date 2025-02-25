@@ -36,9 +36,10 @@ class SurveiController extends Controller
     public function indexLihatOnly($untuk)
     {
         // return $untuk;
-        $data = Survei::where([
-            'survei_untuk' => $untuk
-        ])
+        $data = Survei::with('createdBy.adminOrganisasi')
+            ->where([
+                'survei_untuk' => $untuk
+            ])
             ->orderBy('created_at', 'DESC')
             ->orderBy('is_sia', 'DESC')
 
