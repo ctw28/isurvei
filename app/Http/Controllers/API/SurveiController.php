@@ -75,6 +75,7 @@ class SurveiController extends Controller
                         $query->where('id', $prodi_id);
                     })
                     ->where('survei_id', $surveiId)->get();
+            // ->where(['survei_id' => $surveiId, 'sesi_status' => "1"])->get();
         } else if ($survei->survei_untuk == "dosen" || $survei->survei_untuk == "pegawai") {
 
             $sesi = SurveiSesi::with(['user.userPegawai.pegawai.dataDiri'])->where('survei_id', $surveiId)->get();
