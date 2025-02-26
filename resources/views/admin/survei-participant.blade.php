@@ -839,7 +839,7 @@
                         text = "&raquo;"
                     a.innerHTML = text
                     // a.className = ""
-                    a.setAttribute('onclick', `showPartisipan(${id}, '${link.url}')`)
+                    a.setAttribute('onclick', `showPartisipan(${id}, '${link.url ? link.url.replace(/^http:/, 'https:') : link.url}')`);
                     a.className = `page-link link`
                     li.appendChild(a)
                     paginate.appendChild(li)
