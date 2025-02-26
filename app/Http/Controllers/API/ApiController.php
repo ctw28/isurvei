@@ -474,7 +474,8 @@ class ApiController extends Controller
             'status' => $status,
             'pesan' => $pesan,
             // 'link' => "http://127.0.0.1:8000/" . $token,
-            'link' => $link
+            'link' => $link,
+            'data' => $data
         ];
         return response()->json($cek);
         return array('data' => $status);
