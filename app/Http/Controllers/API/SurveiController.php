@@ -61,17 +61,26 @@ class SurveiController extends Controller
         ], 200);
     }
 
-    public function getSesi($surveiId)
+    public function getSesi($surveiId, Request $request)
     {
-
+        // return $surveiId;
+        // return $prodi_id;
         $survei = Survei::find($surveiId);
         // return $survei;
-        if ($survei->survei_untuk == "mahasiswa")
-            $sesi = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri', 'user.userMahasiswa.mahasiswa.prodi'])->where('survei_id', $surveiId)->get();
-        else if ($survei->survei_untuk == "dosen" || $survei->survei_untuk == "pegawai")
+        if ($survei->survei_untuk == "mahasiswa") {
+            $prodi_id = $request->input('prodi_id');
+            if ($prodi_id)
+                $sesi = SurveiSesi::with(['user.userMahasiswa.mahasiswa.dataDiri', 'user.userMahasiswa.mahasiswa.prodi'])
+                    ->whereHas('user.userMahasiswa.mahasiswa.prodi', function ($query) use ($prodi_id) {
+                        $query->where('id', $prodi_id);
+                    })
+                    ->where('survei_id', $surveiId)->get();
+        } else if ($survei->survei_untuk == "dosen" || $survei->survei_untuk == "pegawai") {
+
             $sesi = SurveiSesi::with(['user.userPegawai.pegawai.dataDiri'])->where('survei_id', $surveiId)->get();
-        else
+        } else {
             $sesi = MitraSesi::with(['mitra'])->where('survei_id', $surveiId)->get();
+        }
         // $bagian = SurveiBagian::with(['pertanyaan', 'survei'])->where('survei_id', $surveiId)->get();
         return $sesi;
 
