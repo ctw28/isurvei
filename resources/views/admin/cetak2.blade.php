@@ -40,8 +40,10 @@
             <tr>
                 <th rowspan="3">No</th>
                 <th rowspan="3">Tanggal</th>
-                <th rowspan="3">{{($bagian[0]->survei->survei_untuk=="mahasiswa" ? "NIM" : "NIP")}}</th>
+                @if($bagian[0]->survei->survei_untuk!="mahasiswa")
+                <th rowspan="3">NIP</th>
                 <th rowspan="3">Nama</th>
+                @endif
                 {!! ($bagian[0]->survei->survei_untuk == "mahasiswa" ? "<th rowspan='3'>Prodi</th>" : "") !!}
             </tr>
             <tr>
@@ -106,10 +108,15 @@
                                     row.innerHTML = `
                                         <td>${index + 1}</td>
                                         <td>${new Date(sesi.sesi_tanggal).toLocaleDateString("id-ID")}</td>
-                                        <td>${sesi.user?.user_mahasiswa?.mahasiswa?.nim ?? '-'}</td>
-                                        <td>${sesi.user?.user_mahasiswa?.mahasiswa?.data_diri?.nama_lengkap ?? '-'}</td>
                                         <td>${sesi.user?.user_mahasiswa?.mahasiswa?.prodi?.organisasi_singkatan ?? '-'}</td>
                                     `;
+                                    // row.innerHTML = `
+                                    //     <td>${index + 1}</td>
+                                    //     <td>${new Date(sesi.sesi_tanggal).toLocaleDateString("id-ID")}</td>
+                                    //     <td>${sesi.user?.user_mahasiswa?.mahasiswa?.nim ?? '-'}</td>
+                                    //     <td>${sesi.user?.user_mahasiswa?.mahasiswa?.data_diri?.nama_lengkap ?? '-'}</td>
+                                    //     <td>${sesi.user?.user_mahasiswa?.mahasiswa?.prodi?.organisasi_singkatan ?? '-'}</td>
+                                    // `;
                                 } else {
                                     row.innerHTML = `
                                         <td>${index + 1}</td>
