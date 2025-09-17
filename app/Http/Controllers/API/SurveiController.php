@@ -124,7 +124,7 @@ class SurveiController extends Controller
         $pertanyaan = SurveiPertanyaan::whereIn('bagian_id', $stepIds)
             ->select('id', 'bagian_id', 'pertanyaan', 'pertanyaan_urutan')
             ->orderBy('bagian_id')
-            ->orderBy('pertanyaan_urutan')
+            // ->orderBy('pertanyaan_urutan')
             ->get();
 
         return response()->json($pertanyaan);

@@ -17,7 +17,7 @@ class Jawaban extends Model
 
     public function pertanyaan()
     {
-        return $this->belongsTo('App\Models\Pertanyaan', 'pertanyaan_id');
+        return $this->belongsTo('App\Models\SurveiPertanyaan', 'pertanyaan_id');
     }
 
     public function sesi()
