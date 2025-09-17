@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Jawaban;
+use App\Models\MitraJawaban;
 use App\Models\Survei;
 use App\Models\SurveiBagian;
 use App\Models\SurveiPertanyaan;
 use App\Models\SurveiSesi;
+use App\Models\MitraSesi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -109,10 +111,18 @@ class SurveiController extends Controller
 
     public function getJawaban(Request $request)
     {
-        $jawaban = Jawaban::where('sesi_id', $request->sesi_id)
-            ->select('pertanyaan_id', 'jawaban')
-            ->get()
-            ->groupBy('pertanyaan_id');
+        if ($request->filled('untuk') && $request->untuk == "mitra") {
+            // jalankan logika khusus mitra
+            $jawaban = MitraJawaban::where('mitra_sesi_id', $request->sesi_id)
+                ->select('pertanyaan_id', 'jawaban')
+                ->get()
+                ->groupBy('pertanyaan_id');
+        } else {
+            $jawaban = Jawaban::where('sesi_id', $request->sesi_id)
+                ->select('pertanyaan_id', 'jawaban')
+                ->get()
+                ->groupBy('pertanyaan_id');
+        }
 
         return response()->json($jawaban);
     }

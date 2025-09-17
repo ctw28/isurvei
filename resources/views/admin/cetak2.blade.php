@@ -54,9 +54,13 @@
                 <tr>
                     <th rowspan="3">No</th>
                     <th rowspan="3">Tanggal</th>
-                    @if($bagian[0]->survei->survei_untuk!="mahasiswa")
+                    @if($bagian[0]->survei->survei_untuk=="pegawai" || $bagian[0]->survei->survei_untuk=="dosen")
                     <th rowspan="3">NIP</th>
                     <th rowspan="3">Nama</th>
+                    @elseif($bagian[0]->survei->survei_untuk=="mitra")
+                    <th rowspan="3">Nama</th>
+                    <th rowspan="3">Jabatan</th>
+                    <th rowspan="3">Instansi</th>
                     @endif
                     {!! ($bagian[0]->survei->survei_untuk == "mahasiswa" ? "<th rowspan='3'>Prodi</th>" : "") !!}
                 </tr>
@@ -80,11 +84,81 @@
             </tbody>
         </table>
     </div>
-
+    @if($bagian[0]->survei->survei_untuk==="mitra")
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const untuk = "{{$bagian[0]->survei->survei_untuk}}"
+            const pathSegments = window.location.pathname.split("/");
 
+            // Cari posisi "periode" dan "fakultas" dalam URL
+            const surveiIndex = pathSegments.indexOf("survei");
+
+            // Ambil nilai periode dan fakultas
+            const surveiId = surveiIndex !== -1 ? pathSegments[surveiIndex + 1] : null;
+
+            if (!surveiId) {
+                console.error("Survei tidak ditemukan dalam URL!");
+                return;
+            }
+
+            console.log(`Periode: ${surveiId}`); // Debugging
+
+            const sesiContainer = document.getElementById("sesi-container");
+            fetch(`/api/survei/${surveiId}/get-pertanyaan`)
+                .then(response => response.json())
+                .then(pertanyaanList => {
+                    console.log(pertanyaanList)
+                    // return
+                    const pertanyaanIds = pertanyaanList.map(p => p.id); // Urutan ID pertanyaan
+                    console.log("Pertanyaan:", pertanyaanIds);
+
+                    // Ambil sesi dengan AJAX
+                    fetch(`/api/survei/${surveiId}/sesi`)
+                        .then(response => response.json())
+                        .then(sesiList => {
+                            console.log('aaa');
+                            console.log(sesiList);
+
+                            sesiList.forEach((sesi, index) => {
+                                let row = document.createElement("tr");
+
+                                row.innerHTML = `
+                                        <td>${index + 1}</td>
+                                        <td>${new Date(sesi.sesi_tanggal).toLocaleDateString("id-ID")}</td>
+                                        <td>${sesi.mitra?.mitra_nama ?? '-'}</td>
+                                        <td>${sesi.mitra?.mitra_jabatan ?? '-'}</td>
+                                        <td>${sesi.mitra?.mitra_instansi ?? '-'}</td>
+                                    `;
+
+
+                                // Tambahkan kolom kosong untuk jawaban, sesuai dengan urutan pertanyaan
+                                pertanyaanIds.forEach(pertanyaanId => {
+                                    let cell = document.createElement("td");
+                                    cell.id = `jawaban-${sesi.id}-${pertanyaanId}`;
+                                    cell.innerHTML = "Loading...";
+                                    row.appendChild(cell);
+                                });
+
+                                sesiContainer.appendChild(row);
+
+                                // Ambil jawaban dari backend
+                                fetch(`/api/get-jawaban?sesi_id=${sesi.id}&untuk=mitra`)
+                                    .then(response => response.json())
+                                    .then(jawabanData => {
+                                        // console.log(jawabanData);
+
+                                        pertanyaanIds.forEach(pertanyaanId => {
+                                            let jawabanCell = document.getElementById(`jawaban-${sesi.id}-${pertanyaanId}`);
+                                            let jawaban = jawabanData[pertanyaanId]?.map(j => j.jawaban).join(", ") ?? "-";
+                                            jawabanCell.innerHTML = jawaban;
+                                        });
+                                    });
+                            });
+                        });
+                });
+        });
     </script>
-    @if($bagian[0]->survei->survei_untuk!="mahasiswa")
+    @elseif($bagian[0]->survei->survei_untuk!="mahasiswa")
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const untuk = "{{$bagian[0]->survei->survei_untuk}}"
