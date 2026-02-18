@@ -5,8 +5,8 @@
 <section class="scroll-section" id="basic">
     <div class="card mb-3">
         <div class="card-body">
-            <h2 class="mb-0">Survei: {{$bagianData->survei->survei_nama}}</h2>
-            <p>{{$bagianData->survei->survei_deskripsi}}</p>
+            <h2 class="mb-2">Survei: {{$bagianData->survei->survei_nama}}</h2>
+            <p class="mb-0">{{$bagianData->survei->survei_deskripsi}}</p>
         </div>
     </div>
     <!-- Basic Start -->
