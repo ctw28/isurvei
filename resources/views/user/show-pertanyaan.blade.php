@@ -3,7 +3,7 @@
 @section('content')
 
 <section class="scroll-section" id="basic">
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-body">
             <h2 class="mb-0">Survei: {{$bagianData->survei->survei_nama}}</h2>
             <p>{{$bagianData->survei->survei_deskripsi}}</p>
