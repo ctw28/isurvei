@@ -158,7 +158,7 @@ class UserController extends Controller
         $data['title'] = "Survei";
         // $data['iddata'] = session('iddata');
 
-        $data['bagianData'] = SurveiBagian::with(['pertanyaan' => function ($pertanyaan) {
+        $data['bagianData'] = SurveiBagian::with(['survei', 'pertanyaan' => function ($pertanyaan) {
             $pertanyaan->with(['pilihanJawaban', 'textProperties'])->orderBy('pertanyaan_urutan', 'ASC');;
         }, 'bagianDirect'])->where('id', $bagianId)->first();
 
